@@ -5,6 +5,9 @@ const nextConfig = {
     '@prisma/orm-mongo',
     'mongodb-connection-string-url',
   ],
+  devIndicators: {
+    position: 'bottom-right',
+  },
   images: {
     remotePatterns: [
       { hostname: 'images.app.goo.gl' },

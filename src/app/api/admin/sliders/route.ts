@@ -33,13 +33,14 @@ export async function GET(req: NextRequest) {
       collection = collection.where((s: any) => s.title.ilike(`%${search}%`));
     }
 
+    const total = await collection.count();
+
     const sliders = await collection
       .orderBy([(s: any) => s.order.asc(), (s: any) => s.createdAt.desc()])
       .offset(skip)
       .limit(limit)
       .all();
 
-    const total = sliders.length;
 
     return NextResponse.json({
       success: true,

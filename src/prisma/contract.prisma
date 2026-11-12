@@ -76,6 +76,7 @@ model Product {
   price              Double?
   discountPrice      Double?
   discountParcent    Double?
+  costPrice          Double?
   productType        String?
   selectedAttributes Json?
   categoryId         ObjectId?
@@ -196,6 +197,7 @@ model OrderItem {
   quantity         Int32
   price            Double
   salePrice        Double
+  costPrice        Double?
   subtotal         Double
   selectedVariants Json?
   categoryName     String?
@@ -320,6 +322,8 @@ model AppSetting {
   features          Json?
   layouts           Json?
   maintenanceMode   Bool?
+  maintenanceMessage String?
+  tax               Json?
   customCss         String?
   customJs          String?
   orderStatusConfig Json?
@@ -347,4 +351,18 @@ model AppConfig {
   updatedAt  temporal.UpdatedAt
 
   @@map("app_configs")
+}
+
+model Expense {
+  id        ObjectId           @id @map("_id")
+  title     String
+  category  String?
+  amount    Double
+  date      Date
+  note      String?
+  createdAt temporal.CreatedAt
+  updatedAt temporal.UpdatedAt
+
+  @@index([date])
+  @@map("expenses")
 }

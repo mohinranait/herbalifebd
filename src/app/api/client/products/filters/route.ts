@@ -50,6 +50,8 @@ export async function GET(req: NextRequest) {
       query = query.where((p: any) => p.name.ilike(`%${search}%`));
     }
 
+    const total = await query.count();
+
     let orderedQuery = query
       .include("brand", (b: any) => b.select("id", "name", "logo"))
       .include("category", (c: any) => c.select("id", "name", "slug"))
@@ -79,7 +81,6 @@ export async function GET(req: NextRequest) {
 
     const skip = (page - 1) * limit;
     const products = await orderedQuery.offset(skip).limit(limit).all();
-    const total = products.length;
 
     return NextResponse.json({
       success: true,

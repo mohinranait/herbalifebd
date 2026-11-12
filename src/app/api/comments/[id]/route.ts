@@ -1,4 +1,5 @@
-import { getAuthUser } from "@/lib/authUser";
+import { getAuthUser, getOptionalAuthUser, isAdminUser } from "@/lib/authUser";
+import { normalizeRating, recalculateProductRating } from "@/lib/comment-utils";
 import { db } from "@/prisma/db";
 import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
@@ -12,8 +13,10 @@ export async function GET(
     const { searchParams } = new URL(req.url);
 
     const productId = id;
-    const userId = searchParams.get("userId") || null;
     const accessMode = searchParams.get("accessMode") || "public";
+
+    // Who is asking decides what they may see; the query string is not trusted for that
+    const viewer = await getOptionalAuthUser();
 
     if (!productId) {
       return NextResponse.json(
@@ -24,9 +27,9 @@ export async function GET(
 
     let collection = db.orm.public.Comment.where({ productId });
 
-    if (accessMode === "auth" && userId) {
-      collection = collection.where({ userId });
-    } else if (accessMode === "admin") {
+    if (accessMode === "auth" && viewer) {
+      collection = collection.where({ userId: viewer.id });
+    } else if (accessMode === "admin" && isAdminUser(viewer)) {
       // Admin sees all
     } else {
       collection = collection.where({ isApproved: true });
@@ -90,11 +93,9 @@ export async function PATCH(
       );
     }
 
-    if (
-      authUser.role?.toLowerCase() !== "admin" &&
-      authUser.role?.toLowerCase() !== "manager" &&
-      authUser.id !== existComment.userId
-    ) {
+    const isModerator = ["admin", "manager"].includes(authUser.role?.toLowerCase());
+
+    if (!isModerator && authUser.id !== existComment.userId) {
       return NextResponse.json(
         { success: false, message: "Can't update comments without permission" },
         { status: 403 }
@@ -103,10 +104,13 @@ export async function PATCH(
 
     await db.orm.public.Comment.where({ id }).update({
       comment: body.comment !== undefined ? body.comment : existComment.comment,
-      rating: body.rating !== undefined ? parseInt(body.rating) : existComment.rating,
-      isApproved: body.isApproved !== undefined ? Boolean(body.isApproved) : existComment.isApproved,
-      isFeature: body.isFeature !== undefined ? Boolean(body.isFeature) : existComment.isFeature,
+      rating: body.rating !== undefined ? normalizeRating(body.rating, existComment.rating ?? 5) : existComment.rating,
+      // Approving and featuring is moderation: customers cannot do it to their own reviews
+      isApproved: isModerator && body.isApproved !== undefined ? Boolean(body.isApproved) : existComment.isApproved,
+      isFeature: isModerator && body.isFeature !== undefined ? Boolean(body.isFeature) : existComment.isFeature,
     });
+
+    await recalculateProductRating(existComment.productId);
 
     const updated = await db.orm.public.Comment.first({ id });
 
@@ -137,6 +141,14 @@ export async function DELETE(
   try {
     const { id } = await params;
 
+    const authUser = await getOptionalAuthUser();
+    if (!authUser) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized access" },
+        { status: 401 }
+      );
+    }
+
     const comment = await db.orm.public.Comment.first({ id });
     if (!comment) {
       return NextResponse.json(
@@ -148,7 +160,15 @@ export async function DELETE(
       );
     }
 
+    if (!isAdminUser(authUser) && authUser.id !== comment.userId) {
+      return NextResponse.json(
+        { success: false, message: "Can't delete comments without permission" },
+        { status: 403 }
+      );
+    }
+
     await db.orm.public.Comment.where({ id }).delete();
+    await recalculateProductRating(comment.productId);
 
     return NextResponse.json(
       {

@@ -107,6 +107,13 @@ function wrapCollection(collection: any): any {
           return wrapCollection(target.where(resolved));
         };
       }
+      if (prop === "count") {
+        // The Mongo ORM has no count terminal; fetch only ids for the current filters.
+        return async function () {
+          const rows = await target.select("id").all();
+          return rows.length;
+        };
+      }
       if (prop === "orderBy") {
         return function (spec: any) {
           return wrapCollection(target.orderBy(toSortSpec(spec)));

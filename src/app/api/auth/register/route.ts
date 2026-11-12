@@ -34,8 +34,9 @@ export async function POST(req: NextRequest) {
       name,
       phone,
       password: hashedPassword,
-      role: body.role || "User",
-      status: body.status || "Active",
+      // Public sign-up always creates a normal customer; admins are made from the admin panel
+      role: "User",
+      status: "Active",
     });
 
     const { password: _, ...user } = newUser as any;

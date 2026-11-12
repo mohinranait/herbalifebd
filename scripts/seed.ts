@@ -341,6 +341,8 @@ async function seed() {
       gallery: [img(p.image), img("sample.jpg")],
       price: p.price,
       discountPrice: p.discount,
+      // demo buying cost: 60% of the regular price
+      costPrice: Math.round(p.price * 0.6),
       discountParcent: p.price ? Math.round((p.discount / p.price) * 100) : 0,
       productType: isVariant ? "variant" : "single",
       categoryId: categoryMap.get(p.category)?.id ?? null,
@@ -368,6 +370,7 @@ async function seed() {
         name: v.name,
         price: v.price,
         offerPriceFixed: v.discount,
+        costPrice: Math.round(v.price * 0.6),
         stock: v.stock,
         isDefault: v.isDefault,
         images: [img(p.image)],

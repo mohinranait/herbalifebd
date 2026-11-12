@@ -1,5 +1,4 @@
 import { categorySchema } from "@/components/validations/categories";
-import { getAllDescendantIds } from "@/lib/category-utils";
 import { db } from "@/prisma/db";
 import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
@@ -35,35 +34,53 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    const total = await collection.count();
+
     const categories = await collection
       .orderBy((c: any) => c.createdAt.desc())
       .offset(skip)
       .limit(limit)
       .all();
 
-    const total = categories.length; // Approximate for paginated or count if needed
+    // totalProducts = products in the category itself plus all its sub-categories.
+    // The category tree and the products are each loaded once for the whole page.
+    const [tree, activeProducts] = await Promise.all([
+      db.orm.public.Category.where({ isDelete: false, status: true }).select("id", "parentId").all(),
+      db.orm.public.Product.where({ status: true, isDelete: false }).select("categoryId").all(),
+    ]);
 
-    // Add totalProducts for each category
-    const categoriesWithCount = await Promise.all(
-      categories.map(async (cat: any) => {
-        const descendantIds = await getAllDescendantIds(cat.id);
-        const descendantSet = new Set(descendantIds);
+    const childrenOf = new Map<string, string[]>();
+    for (const node of tree as any[]) {
+      if (!node.parentId) continue;
+      const parentId = String(node.parentId);
+      childrenOf.set(parentId, [...(childrenOf.get(parentId) || []), String(node.id)]);
+    }
 
-        const allProducts = await db.orm.public.Product
-          .where({ status: true, isDelete: false })
-          .select("categoryId")
-          .all();
+    const directCount = new Map<string, number>();
+    for (const product of activeProducts as any[]) {
+      if (!product.categoryId) continue;
+      const categoryId = String(product.categoryId);
+      directCount.set(categoryId, (directCount.get(categoryId) || 0) + 1);
+    }
 
-        const totalProducts = allProducts.filter(
-          (p: any) => p.categoryId && descendantSet.has(p.categoryId)
-        ).length;
+    const countWithDescendants = (categoryId: string) => {
+      let count = 0;
+      const seen = new Set<string>();
+      const queue = [categoryId];
+      while (queue.length > 0) {
+        const current = queue.shift()!;
+        if (seen.has(current)) continue; // guards against a parent/child loop
+        seen.add(current);
+        count += directCount.get(current) || 0;
+        queue.push(...(childrenOf.get(current) || []));
+      }
+      return count;
+    };
 
-        return {
-          ...cat,
-          totalProducts,
-        };
-      })
-    );
+    const categoriesWithCount = categories.map((cat: any) => ({
+      ...cat,
+      totalProducts: countWithDescendants(String(cat.id)),
+    }));
 
     return NextResponse.json({
       success: true,

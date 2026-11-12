@@ -40,6 +40,7 @@ export async function POST(req: Request) {
       price: body.price !== undefined ? parseFloat(body.price) : null,
       discountPrice: body.discountPrice !== undefined ? parseFloat(body.discountPrice) : null,
       discountParcent: body.discountParcent !== undefined ? parseFloat(body.discountParcent) : null,
+      costPrice: body.costPrice !== undefined && body.costPrice !== "" ? parseFloat(body.costPrice) : null,
       productType: productType || "single",
       selectedAttributes: body.selectedAttributes || null,
       categoryId: catId,
@@ -132,6 +133,8 @@ export async function GET(req: NextRequest) {
       collection = collection.where((p: any) => p.name.ilike(`%${search}%`));
     }
 
+    const total = await collection.count();
+
     const products = await collection
       .include("category", (c: any) => c.select("id", "name", "slug"))
       .include("brand", (b: any) => b.select("id", "name", "slug"))
@@ -141,7 +144,6 @@ export async function GET(req: NextRequest) {
       .limit(limit)
       .all();
 
-    const total = products.length;
 
     return NextResponse.json({
       success: true,

@@ -80,13 +80,14 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "10");
     const skip = (page - 1) * limit;
 
+    const total = await db.orm.public.Media.count();
+
     const medias = await db.orm.public.Media
       .orderBy((m: any) => m.createdAt.desc())
       .offset(skip)
       .limit(limit)
       .all();
 
-    const total = medias.length;
 
     return NextResponse.json({
       success: true,

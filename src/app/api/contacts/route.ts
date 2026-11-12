@@ -76,13 +76,14 @@ export async function GET(req: NextRequest) {
       collection = collection.where((c: any) => c.fullName.ilike(`%${search}%`));
     }
 
+    const total = await collection.count();
+
     const contacts = await collection
       .orderBy((c: any) => c.createdAt.desc())
       .offset((page - 1) * limit)
       .limit(limit)
       .all();
 
-    const total = contacts.length;
 
     return NextResponse.json({
       data: formatMongoCompat(contacts),

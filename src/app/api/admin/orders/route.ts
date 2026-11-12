@@ -1,24 +1,24 @@
 import { NextResponse } from "next/server";
 import { db } from "@/prisma/db";
 import { formatOrderForUI } from "@/lib/order-utils";
+import { getOptionalAuthUser, isAdminUser } from "@/lib/authUser";
 
 /* -------------------------------------------------------------------------- */
 /*                              CREATE ORDER API                              */
 /* -------------------------------------------------------------------------- */
 
+type PreparedItem = {
+  product: any;
+  variation: any | null;
+  quantity: number;
+  row: Record<string, unknown>;
+};
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const {
-      userId,
-      items,
-      shippingAddress,
-      payment,
-      coupon,
-      customerNote,
-      pricing,
-    } = body;
+    const { items, shippingAddress, payment, customerNote, pricing } = body;
 
     /* ---------------------------------------------------------------------- */
     /*                               VALIDATION                               */
@@ -28,91 +28,113 @@ export async function POST(req: Request) {
       throw new Error("Order items are required");
     }
 
-    if (!shippingAddress) {
-      throw new Error("Shipping address is required");
+    if (!shippingAddress?.fullName || !shippingAddress?.phone || !shippingAddress?.address) {
+      throw new Error("Shipping name, phone and address are required");
     }
 
-    /* ---------------------------------------------------------------------- */
-    /*                              PROCESS ORDER ITEMS                       */
-    /* ---------------------------------------------------------------------- */
+    const requester = await getOptionalAuthUser();
+    const isAdmin = isAdminUser(requester);
 
-    const orderItemsData = [];
+    /* ---------------------------------------------------------------------- */
+    /*                     STEP 1: CHECK EVERY ITEM FIRST                     */
+    /* ---------------------------------------------------------------------- */
+    // Prices and costs always come from the database, never from the request.
+    // Nothing is written until every item has passed, so a failing item cannot
+    // leave earlier items with reduced stock and no order.
+
+    const prepared: PreparedItem[] = [];
+    const requestedByStockKey = new Map<string, number>();
     let subtotal = 0;
     let totalQuantity = 0;
+    let needsShipping = false;
 
     for (const cartItem of items) {
+      const quantity = Math.floor(Number(cartItem.quantity));
+      if (!Number.isFinite(quantity) || quantity < 1) {
+        throw new Error(`Invalid quantity for ${cartItem.productName || "an item"}`);
+      }
+
       const product = await db.orm.public.Product.first({
         id: cartItem.productId || cartItem._id,
       });
 
-      if (!product) {
-        throw new Error(`Product not found: ${cartItem.productName}`);
+      if (!product || product.isDelete || product.status === false) {
+        throw new Error(`Product is not available: ${cartItem.productName || "unknown"}`);
       }
 
-      const { productType, quantity: requestedQty, variationId } = cartItem;
+      let variation: any = null;
+      let unitPrice: number;
+      let unitDiscount: number;
+      let unitCost: number | null = product.costPrice ?? null;
+      let available: number;
 
-      /* --------------------------- STOCK CHECK & UPDATE --------------------------- */
-
-      if (productType === "single") {
-        if ((product.stock || 0) < requestedQty) {
-          throw new Error(
-            `Insufficient stock for ${product.name}. Available: ${product.stock || 0}, Requested: ${requestedQty}`
-          );
-        }
-
-        await db.orm.public.Product.where({ id: product.id }).update({
-          stock: Math.max(0, (product.stock || 0) - requestedQty),
-          totalSold: (product.totalSold || 0) + requestedQty,
-        });
-      } else {
-        if (!variationId) {
+      if (product.productType === "variant") {
+        if (!cartItem.variationId) {
           throw new Error(`Variation ID is required for ${product.name}`);
         }
 
-        const variation = await db.orm.public.ProductVariation.first({
-          id: variationId,
-        });
-
-        if (!variation) {
+        variation = await db.orm.public.ProductVariation.first({ id: cartItem.variationId });
+        if (!variation || String(variation.productId) !== String(product.id)) {
           throw new Error(`Variation not found for ${product.name}`);
         }
 
-        if ((variation.stock || 0) < requestedQty) {
-          throw new Error(
-            `Insufficient stock for ${product.name} (${variation.name || "Variant"}). Available: ${variation.stock || 0}, Requested: ${requestedQty}`
-          );
+        unitPrice = variation.price || 0;
+        unitDiscount = variation.offerPriceFixed || 0;
+        available = variation.stock || 0;
+        if (variation.costPrice !== null && variation.costPrice !== undefined) {
+          unitCost = variation.costPrice;
         }
-
-        await db.orm.public.ProductVariation.where({ id: variation.id }).update({
-          stock: Math.max(0, (variation.stock || 0) - requestedQty),
-        });
-
-        await db.orm.public.Product.where({ id: product.id }).update({
-          stock: Math.max(0, (product.stock || 0) - requestedQty),
-          totalSold: (product.totalSold || 0) + requestedQty,
-        });
+      } else {
+        unitPrice = product.price || 0;
+        unitDiscount = product.discountPrice || 0;
+        available = product.stock || 0;
       }
 
-      /* ------------------------------ PRICE CALCULATION ------------------------------- */
+      const salePrice = Math.max(0, unitPrice - unitDiscount);
+      if (salePrice <= 0) {
+        throw new Error(`${product.name} has no price set and cannot be ordered`);
+      }
 
-      const itemSubtotal = (cartItem.salePrice || cartItem.price) * requestedQty;
+      // The same product can appear in the cart more than once
+      const stockKey = variation ? `v:${variation.id}` : `p:${product.id}`;
+      const requestedSoFar = (requestedByStockKey.get(stockKey) || 0) + quantity;
+      if (available < requestedSoFar) {
+        const label = variation ? `${product.name} (${variation.name || "Variant"})` : product.name;
+        throw new Error(
+          `Insufficient stock for ${label}. Available: ${available}, Requested: ${requestedSoFar}`
+        );
+      }
+      requestedByStockKey.set(stockKey, requestedSoFar);
+
+      if (!product.isFreeShipping) needsShipping = true;
+
+      const itemSubtotal = salePrice * quantity;
       subtotal += itemSubtotal;
-      totalQuantity += requestedQty;
+      totalQuantity += quantity;
 
-      orderItemsData.push({
-        productId: product.id,
-        variationId: cartItem.variationId || null,
-        productName: cartItem.productName,
-        productImage: cartItem.productImage || null,
-        productSlug: cartItem.productSlug || "",
-        sku: cartItem.sku || "",
-        quantity: requestedQty,
-        price: parseFloat(cartItem.price) || 0,
-        salePrice: parseFloat(cartItem.salePrice || cartItem.price) || 0,
-        subtotal: itemSubtotal,
-        selectedVariants: cartItem.selectedVariants || null,
-        categoryName: cartItem.categoryName || "",
-        brandName: cartItem.brandName || "",
+      prepared.push({
+        product,
+        variation,
+        quantity,
+        row: {
+          productId: product.id,
+          variationId: variation?.id || null,
+          productName: product.name,
+          productImage:
+            variation?.images?.[0] || product.thumbnail || product.gallery?.[0] || cartItem.productImage || null,
+          productSlug: product.slug,
+          sku: variation?.sku || cartItem.sku || "",
+          quantity,
+          price: unitPrice,
+          salePrice,
+          // Buying cost at the moment of sale, so later cost changes do not
+          // rewrite the profit of past orders
+          costPrice: unitCost,
+          subtotal: itemSubtotal,
+          selectedVariants: cartItem.selectedVariants || null,
+          categoryName: cartItem.categoryName || "",
+          brandName: cartItem.brandName || "",
+        },
       });
     }
 
@@ -120,44 +142,98 @@ export async function POST(req: Request) {
     /*                                PRICING                                 */
     /* ---------------------------------------------------------------------- */
 
-    const shippingCharge = pricing?.shippingCharge || 0;
-    const couponDiscount = coupon?.discountAmount || 0;
+    // The delivery charge must be one the shop actually offers
+    let shippingCharge = 0;
+    if (needsShipping) {
+      const setting = await db.orm.public.AppSetting.first();
+      const shipping = (setting?.shipping as any) || {};
+      const zoneFees: number[] = Array.isArray(shipping.shippingZones)
+        ? shipping.shippingZones
+            .map((zone: any) => Number(zone.fee))
+            .filter((fee: number) => Number.isFinite(fee))
+        : [];
+      const requestedFee = Number(pricing?.shippingCharge);
+
+      if (zoneFees.length === 0) {
+        shippingCharge = Number(shipping.defaultShippingFee) || 0;
+      } else if (zoneFees.includes(requestedFee)) {
+        shippingCharge = requestedFee;
+      } else if (isAdmin && Number.isFinite(requestedFee) && requestedFee >= 0) {
+        shippingCharge = requestedFee;
+      } else {
+        throw new Error("Please select a delivery area");
+      }
+    }
+
+    // There is no coupon system yet, so a discount sent with the order is only
+    // honoured when an admin creates the order by hand.
+    const requestedDiscount = Number(body.coupon?.discountAmount) || 0;
+    const couponDiscount = isAdmin ? Math.min(Math.max(requestedDiscount, 0), subtotal) : 0;
+    const couponCode = isAdmin ? body.coupon?.code || "" : "";
+
     const total = subtotal - couponDiscount + shippingCharge;
 
-    const invoiceNumber = `INV-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
-    const trackingNumber = `TR-${Math.random().toString(36).slice(2, 9).toUpperCase()}`;
+    let invoiceNumber = "";
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const stamp = Date.now().toString(36).toUpperCase();
+      const random = Math.random().toString(36).slice(2, 5).toUpperCase();
+      invoiceNumber = `INV-${stamp}${random}`;
+      const taken = await db.orm.public.Order.where({ invoiceNumber }).first();
+      if (!taken) break;
+    }
+    const trackingNumber = `TR-${Math.random().toString(36).slice(2, 12).toUpperCase()}`;
 
     /* ---------------------------------------------------------------------- */
-    /*                              CREATE ORDER                              */
+    /*                  STEP 2: REDUCE STOCK, THEN CREATE ORDER               */
     /* ---------------------------------------------------------------------- */
+
+    for (const { product, variation, quantity } of prepared) {
+      if (variation) {
+        const freshVariation = await db.orm.public.ProductVariation.first({ id: variation.id });
+        await db.orm.public.ProductVariation.where({ id: variation.id }).update({
+          stock: Math.max(0, (freshVariation?.stock || 0) - quantity),
+        });
+      }
+
+      // Re-read so two lines for the same product do not overwrite each other
+      const freshProduct = await db.orm.public.Product.first({ id: product.id });
+      await db.orm.public.Product.where({ id: product.id }).update({
+        stock: Math.max(0, (freshProduct?.stock || 0) - quantity),
+        totalSold: (freshProduct?.totalSold || 0) + quantity,
+      });
+    }
 
     const createdOrder = await db.orm.public.Order.create({
       invoiceNumber,
       trackingNumber,
-      userId: userId || null,
-      totalItems: orderItemsData.length,
+      // A customer orders for themselves; only an admin may place an order for someone else
+      userId: isAdmin ? body.userId || null : requester?.id || null,
+      totalItems: prepared.length,
       totalQuantity,
       subtotal,
       discount: couponDiscount,
       shippingCharge,
       tax: 0,
       total,
-      couponCode: coupon?.code || "",
+      couponCode,
       couponDiscount,
-      fullName: shippingAddress.fullName || "",
-      phone: shippingAddress.phone || "",
-      address: shippingAddress.address || "",
+      fullName: shippingAddress.fullName,
+      phone: shippingAddress.phone,
+      address: shippingAddress.address,
       postalCode: shippingAddress.postalCode || "",
       paymentMethod: payment?.method || "COD",
-      paymentStatus: payment?.status || "PENDING",
+      // Payment is confirmed by an admin, not by the request
+      paymentStatus: isAdmin ? payment?.status || "PENDING" : "PENDING",
       transactionId: payment?.transactionId || "",
       customerNote: customerNote || "",
       orderStatus: "PENDING",
+      // Must be an explicit false: the order lists filter on `isDeleted: false`
+      isDeleted: false,
     });
 
-    for (const item of orderItemsData) {
+    for (const { row } of prepared) {
       await db.orm.public.OrderItem.create({
-        ...item,
+        ...row,
         orderId: createdOrder.id,
       });
     }
@@ -197,14 +273,17 @@ export async function GET(req: Request) {
     const userId = searchParams.get("userId");
     const status = searchParams.get("status");
     const method = searchParams.get("method");
+    const isDelete = searchParams.get("isDelete");
 
     const skip = (page - 1) * limit;
 
-    let query = db.orm.public.Order.where({ isDeleted: false });
+    let query = db.orm.public.Order.where({ isDeleted: isDelete === "true" });
 
     if (userId) query = query.where({ userId });
     if (status) query = query.where({ orderStatus: status });
     if (method) query = query.where({ paymentMethod: method });
+
+    const totalOrders = await query.count();
 
     const orders = await query
       .include("items", (i: any) => i.all())
@@ -214,12 +293,9 @@ export async function GET(req: Request) {
       .limit(limit)
       .all();
 
-    const formattedOrders = orders.map(formatOrderForUI);
-    const totalOrders = orders.length;
-
     return NextResponse.json({
       success: true,
-      data: formattedOrders,
+      data: orders.map(formatOrderForUI),
       meta: {
         total: totalOrders,
         page,

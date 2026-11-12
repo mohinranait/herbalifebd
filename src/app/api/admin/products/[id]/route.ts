@@ -102,6 +102,7 @@ export async function PATCH(
       price: body.price !== undefined ? parseFloat(body.price) : existingProduct.price,
       discountPrice: body.discountPrice !== undefined ? parseFloat(body.discountPrice) : existingProduct.discountPrice,
       discountParcent: body.discountParcent !== undefined ? parseFloat(body.discountParcent) : existingProduct.discountParcent,
+      costPrice: body.costPrice !== undefined && body.costPrice !== "" ? parseFloat(body.costPrice) : existingProduct.costPrice,
       productType: productType !== undefined ? productType : existingProduct.productType,
       selectedAttributes: body.selectedAttributes !== undefined ? body.selectedAttributes : existingProduct.selectedAttributes,
       categoryId: catId,

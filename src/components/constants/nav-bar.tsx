@@ -10,12 +10,19 @@ import {
   Settings,
   Image,
   Bolt,
-  Network,
   Users,
-  ArrowUpAZ,
   Columns2,
   FileUser,
   Webhook,
+  Calculator,
+  ShoppingCart,
+  HelpCircle,
+  MessageSquare,
+  Layers,
+  FolderTree,
+  Tag,
+  FileText,
+  SlidersHorizontal,
 } from "lucide-react";
 
 export interface SidebarNavItem {
@@ -105,105 +112,141 @@ export const ambulanceTypes = [
 export const sidebarData: SidebarData = {
   navGroups: [
     {
-      title: "General",
+      title: "Overview",
       items: [
         {
           title: "Dashboard",
           url: "/admin",
           icon: LayoutDashboard,
         },
-
+      ],
+    },
+    {
+      title: "Store Management",
+      items: [
         {
-          title: "Manage Product",
+          title: "Products",
           icon: Package,
           items: [
             {
               title: "All Products",
               url: "/admin/products",
+              icon: Package,
             },
             {
-              title: "New Product",
+              title: "Add Product",
               url: "/admin/products/form",
+              icon: Tag,
             },
-             {
+            {
               title: "Categories",
               url: "/admin/categories",
+              icon: FolderTree,
             },
             {
               title: "Brands",
               url: "/admin/brands",
-            },
-             {
-              title: "Attributes",
-              url: "/admin/attributes",
-            },
-             {
-              title: "Request Quotes",
-              url: "/admin/request-quotes",
+              icon: Tag,
             },
             {
-              title: "Comments",
+              title: "Attributes",
+              url: "/admin/attributes",
+              icon: Layers,
+            },
+            {
+              title: "Request Quotes",
+              url: "/admin/request-quotes",
+              icon: FileText,
+            },
+            {
+              title: "Reviews & Comments",
               url: "/admin/comments",
+              icon: MessageSquare,
             },
           ],
         },
         {
-          title: "Manage Order",
-          icon: Network ,
+          title: "Orders",
+          icon: ShoppingCart,
           items: [
             {
               title: "All Orders",
               url: "/admin/orders",
+              icon: ShoppingCart,
             },
-           
-            
+          ],
+        },
+      ],
+    },
+    {
+      title: "Finance & CRM",
+      items: [
+        {
+          title: "Accounts",
+          icon: Calculator,
+          items: [
+            {
+              title: "Profit & Loss",
+              url: "/admin/accounts/profit-loss",
+            },
+            {
+              title: "Expenses",
+              url: "/admin/accounts/expenses",
+            },
           ],
         },
         {
           title: "Users",
-          icon: Users ,
+          icon: Users,
           items: [
             {
               title: "All Users",
               url: "/admin/users",
+              icon: Users,
             },
-           
-            
           ],
         },
-      
+      ],
+    },
+    {
+      title: "Content & Marketing",
+      items: [
         {
-          title: "Media",
+          title: "Media Library",
           url: "/admin/media",
           icon: Image,
         },
         {
-          title: "Sliders",
+          title: "Hero Sliders",
           url: "/admin/sliders",
-          icon: Columns2 ,
+          icon: SlidersHorizontal,
         },
         {
-          title: "Contact Querys",
+          title: "Customer Queries",
           url: "/admin/contact-query",
-          icon: FileUser  ,
-        },
-         {
-          title: "Faqs",
-          url: "/admin/faqs",
-          icon: ArrowUpAZ ,
+          icon: FileUser,
         },
         {
-          title: "Setting",
-          url: "/admin/setting",
-          icon: Settings,
+          title: "FAQs",
+          url: "/admin/faqs",
+          icon: HelpCircle,
         },
         {
           title: "Site Content",
           url: "/admin/site-content",
-          icon: Webhook ,
+          icon: Webhook,
         },
-       
-         {
+      ],
+    },
+    {
+      title: "System & Settings",
+      items: [
+        {
+          title: "General Settings",
+          url: "/admin/setting",
+          icon: Settings,
+        },
+        {
           title: "Configurations",
           url: "/admin/configure",
           icon: Bolt,

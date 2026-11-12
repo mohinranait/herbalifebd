@@ -33,6 +33,8 @@ export async function GET(req: Request) {
       query = query.where({ isDeleted: false });
     }
 
+    const totalOrders = await query.count();
+
     const orders = await query
       .include("user", (u: any) => u.select("id", "name", "phone"))
       .include("items", (i: any) => i.all())
@@ -42,7 +44,6 @@ export async function GET(req: Request) {
       .all();
 
     const formattedOrders = orders.map(formatOrderForUI);
-    const totalOrders = orders.length;
 
     return NextResponse.json({
       success: true,

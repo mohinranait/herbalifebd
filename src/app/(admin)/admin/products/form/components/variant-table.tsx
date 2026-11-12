@@ -312,12 +312,16 @@ const VariantTable = ({
          
           <TableHeader>
             <TableRow className="">
-              <TableHead className="w-[22%] font-semibold">
+              <TableHead className="w-[20%] font-semibold">
                 Variant
               </TableHead>
 
-              <TableHead className="w-[14%] font-semibold">
+              <TableHead className="w-[12%] font-semibold">
                 Price
+              </TableHead>
+
+              <TableHead className="w-[12%] font-semibold">
+                Cost
               </TableHead>
 
               <TableHead className="w-[13%] font-semibold">
@@ -328,7 +332,7 @@ const VariantTable = ({
                 Discount(%)
               </TableHead>
 
-              <TableHead className="w-[15%] font-semibold">
+              <TableHead className="w-[13%] font-semibold">
                 SKU
               </TableHead>
 
@@ -471,6 +475,21 @@ const VariantTable = ({
                             },
                           }
                         )}
+                      />
+                    </TableCell>
+
+                    {/* Cost (buying price) */}
+                    <TableCell>
+                      <Input
+                        type="number"
+                        min={0}
+                        step="0.01"
+                        placeholder="0.00"
+                        aria-label="Cost price"
+                        {...register(
+                          `variations.${index}.costPrice`
+                        )}
+                        className="h-8 text-sm"
                       />
                     </TableCell>
 

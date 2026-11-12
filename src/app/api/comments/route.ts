@@ -1,6 +1,7 @@
 import { getAuthUser } from "@/lib/authUser";
 import { db } from "@/prisma/db";
 import { formatMongoCompat } from "@/lib/prisma";
+import { normalizeRating, recalculateProductRating } from "@/lib/comment-utils";
 import { NextRequest, NextResponse } from "next/server";
 
 // get all comments
@@ -33,6 +34,8 @@ export async function GET(req: NextRequest) {
       collection = collection.where((c: any) => c.comment.ilike(`%${search}%`));
     }
 
+    const total = await collection.count();
+
     const comments = await collection
       .include("product", (p: any) => p.select("id", "name"))
       .include("user", (u: any) => u.select("id", "name"))
@@ -46,8 +49,6 @@ export async function GET(req: NextRequest) {
       productId: c.product ? formatMongoCompat(c.product) : c.productId,
       userId: c.user ? formatMongoCompat(c.user) : c.userId,
     }));
-
-    const total = comments.length;
 
     return NextResponse.json({
       data: formatMongoCompat(formattedComments),
@@ -88,32 +89,24 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const product = await db.orm.public.Product.first({ id: productId });
+    if (!product) {
+      return NextResponse.json(
+        { success: false, message: "Product not found" },
+        { status: 404 }
+      );
+    }
+
     const savedComment = await db.orm.public.Comment.create({
       productId,
       userId: authUser.id,
       comment,
-      rating: rating ? parseInt(rating) : 5,
+      rating: normalizeRating(rating),
       isApproved: true,
       isFeature: false,
     });
 
-    // Update product ratings
-    const product = await db.orm.public.Product.first({ id: productId });
-    if (product) {
-      const oldTotal = product.totalReviews || 0;
-      const oldAverage = product.ratingsAverage || 0;
-      const numRating = rating ? parseInt(rating) : 5;
-
-      const newTotal = oldTotal + 1;
-      const newAverage = Number(
-        ((oldAverage * oldTotal + numRating) / newTotal).toFixed(1)
-      );
-
-      await db.orm.public.Product.where({ id: productId }).update({
-        totalReviews: newTotal,
-        ratingsAverage: newAverage,
-      });
-    }
+    await recalculateProductRating(productId);
 
     return NextResponse.json(
       {

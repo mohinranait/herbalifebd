@@ -27,6 +27,8 @@ export async function GET(req: NextRequest) {
       collection = collection.where((u: any) => u.name.ilike(`%${search}%`));
     }
 
+    const total = await collection.count();
+
     const users = await collection
       .orderBy((u: any) => u.createdAt.desc())
       .offset(skip)
@@ -38,7 +40,6 @@ export async function GET(req: NextRequest) {
       return rest;
     });
 
-    const total = users.length;
 
     return NextResponse.json({
       success: true,

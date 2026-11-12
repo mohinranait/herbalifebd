@@ -1,6 +1,9 @@
 import { db } from "@/prisma/db";
 import { formatOrderForUI } from "@/lib/order-utils";
+import { CLOSED_STATUSES, deductOrderStock, restoreOrderStock } from "@/lib/order-stock";
 import { NextRequest, NextResponse } from "next/server";
+
+const ORDER_STATUSES = ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED", "RETURNED"];
 
 export async function GET(
   req: Request,
@@ -51,33 +54,28 @@ export async function PATCH(
 
     const previousStatus = order.orderStatus;
 
-    // Restore stock if cancelled or returned
-    const shouldRestoreStock =
-      !["CANCELLED", "RETURNED"].includes(previousStatus) &&
-      ["CANCELLED", "RETURNED"].includes(orderStatus);
+    if (orderStatus && !ORDER_STATUSES.includes(orderStatus)) {
+      return NextResponse.json(
+        { success: false, message: `Unknown order status: ${orderStatus}` },
+        { status: 400 }
+      );
+    }
 
-    if (shouldRestoreStock && Array.isArray(order.items)) {
-      for (const item of order.items) {
-        const product = await db.orm.public.Product.first({ id: item.productId });
-        if (product) {
-          await db.orm.public.Product.where({ id: product.id }).update({
-            stock: (product.stock || 0) + item.quantity,
-            totalSold: Math.max(0, (product.totalSold || 0) - item.quantity),
-          });
-        }
-        if (item.variationId) {
-          const variation = await db.orm.public.ProductVariation.first({ id: item.variationId });
-          if (variation) {
-            await db.orm.public.ProductVariation.where({ id: variation.id }).update({
-              stock: (variation.stock || 0) + item.quantity,
-            });
-          }
-        }
-      }
+    const wasClosed = CLOSED_STATUSES.includes(previousStatus);
+    const willBeClosed = orderStatus ? CLOSED_STATUSES.includes(orderStatus) : wasClosed;
+
+    // Cancelled or returned: goods go back into stock.
+    // A cancelled order that is re-opened takes them out again.
+    if (!wasClosed && willBeClosed) {
+      await restoreOrderStock(order.items);
+    } else if (wasClosed && !willBeClosed) {
+      await deductOrderStock(order.items);
     }
 
     await db.orm.public.Order.where({ id }).update({
       orderStatus: orderStatus || order.orderStatus,
+      ...(orderStatus === "DELIVERED" && previousStatus !== "DELIVERED" ? { deliveredAt: new Date() } : {}),
+      ...(orderStatus === "CANCELLED" && previousStatus !== "CANCELLED" ? { cancelledAt: new Date() } : {}),
       paymentStatus: payment?.status || order.paymentStatus,
       paymentMethod: payment?.method || order.paymentMethod,
     });
@@ -95,6 +93,51 @@ export async function PATCH(
     });
   } catch (error: any) {
     console.error("Update order Error:", error);
+    return NextResponse.json(
+      { success: false, message: error?.message || "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
+
+// Deleting an order moves it to the trash (it can be restored) instead of erasing
+// the sales record. If its goods were still held for it, they go back into stock.
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+
+    const order = await db.orm.public.Order
+      .where({ id })
+      .include("items", (i: any) => i.all())
+      .first();
+
+    if (!order) {
+      return NextResponse.json(
+        { success: false, message: "Order not found" },
+        { status: 404 }
+      );
+    }
+
+    const isOpen = ![...CLOSED_STATUSES, "DELIVERED"].includes(order.orderStatus);
+    if (isOpen) {
+      await restoreOrderStock(order.items);
+    }
+
+    await db.orm.public.Order.where({ id }).update({
+      isDeleted: true,
+      ...(isOpen ? { orderStatus: "CANCELLED", cancelledAt: new Date() } : {}),
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "Order moved to trash",
+      data: formatOrderForUI({ ...order, isDeleted: true }),
+    });
+  } catch (error: any) {
+    console.error("Delete order Error:", error);
     return NextResponse.json(
       { success: false, message: error?.message || "Internal Server Error" },
       { status: 500 }

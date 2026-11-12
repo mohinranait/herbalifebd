@@ -22,9 +22,9 @@ import type {
 } from '@prisma/orm-mongo/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'ca98157a48b1e314bdb6ae49b34683bdfe3abd5775210034fe124c601f150989'>;
+  StorageHashBase<'828a1a4fab636231328a0c0b2596b01481abaac3a7a815866e299388271aff85'>;
 export type ExecutionHash =
-  ExecutionHashBase<'0f7764783ec7486d0f260d26061a6b4026b52daabf8616c98f1cb8bc8d8215d9'>;
+  ExecutionHashBase<'934e0cf7069d775533d99fda6afaece27282b0517b9613f26df335d196131318'>;
 export type ProfileHash =
   ProfileHashBase<'251b3ce23f6c9f561892e7c1af9d2cc941a13d64ba1aa7226b90036b09568cc3'>;
 
@@ -161,6 +161,17 @@ export namespace Models {
     updatedAt: FieldOutputTypes['__unbound__']['Contact']['updatedAt'];
     readonly [RelationKeys]?: never;
   };
+  export type unbound_Expense = {
+    amount: FieldOutputTypes['__unbound__']['Expense']['amount'];
+    category: FieldOutputTypes['__unbound__']['Expense']['category'];
+    createdAt: FieldOutputTypes['__unbound__']['Expense']['createdAt'];
+    date: FieldOutputTypes['__unbound__']['Expense']['date'];
+    id: FieldOutputTypes['__unbound__']['Expense']['id'];
+    note: FieldOutputTypes['__unbound__']['Expense']['note'];
+    title: FieldOutputTypes['__unbound__']['Expense']['title'];
+    updatedAt: FieldOutputTypes['__unbound__']['Expense']['updatedAt'];
+    readonly [RelationKeys]?: never;
+  };
   export type unbound_Faq = {
     contents: FieldOutputTypes['__unbound__']['Faq']['contents'];
     createdAt: FieldOutputTypes['__unbound__']['Faq']['createdAt'];
@@ -223,6 +234,7 @@ export namespace Models {
   export type unbound_OrderItem = {
     brandName: FieldOutputTypes['__unbound__']['OrderItem']['brandName'];
     categoryName: FieldOutputTypes['__unbound__']['OrderItem']['categoryName'];
+    costPrice: FieldOutputTypes['__unbound__']['OrderItem']['costPrice'];
     id: FieldOutputTypes['__unbound__']['OrderItem']['id'];
     orderId: FieldOutputTypes['__unbound__']['OrderItem']['orderId'];
     price: FieldOutputTypes['__unbound__']['OrderItem']['price'];
@@ -242,6 +254,7 @@ export namespace Models {
   export type unbound_Product = {
     brandId: FieldOutputTypes['__unbound__']['Product']['brandId'];
     categoryId: FieldOutputTypes['__unbound__']['Product']['categoryId'];
+    costPrice: FieldOutputTypes['__unbound__']['Product']['costPrice'];
     createdAt: FieldOutputTypes['__unbound__']['Product']['createdAt'];
     description: FieldOutputTypes['__unbound__']['Product']['description'];
     dimensionHeight: FieldOutputTypes['__unbound__']['Product']['dimensionHeight'];
@@ -364,6 +377,7 @@ export declare const models: {
     Category: Models.unbound_Category;
     Comment: Models.unbound_Comment;
     Contact: Models.unbound_Contact;
+    Expense: Models.unbound_Expense;
     Faq: Models.unbound_Faq;
     Media: Models.unbound_Media;
     Order: Models.unbound_Order;
@@ -732,6 +746,43 @@ type ContractBase = Omit<
                 readonly validationLevel: 'strict';
               };
             };
+            readonly expenses: {
+              readonly indexes: readonly [
+                {
+                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'date' }];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'date_1';
+                },
+              ];
+              readonly kind: 'mongo-collection';
+              readonly validator: {
+                readonly jsonSchema: {
+                  readonly additionalProperties: false;
+                  readonly bsonType: 'object';
+                  readonly properties: {
+                    readonly _id: { readonly bsonType: 'objectId' };
+                    readonly amount: { readonly bsonType: 'double' };
+                    readonly category: { readonly bsonType: readonly ['null', 'string'] };
+                    readonly createdAt: { readonly bsonType: 'date' };
+                    readonly date: { readonly bsonType: 'date' };
+                    readonly note: { readonly bsonType: readonly ['null', 'string'] };
+                    readonly title: { readonly bsonType: 'string' };
+                    readonly updatedAt: { readonly bsonType: 'date' };
+                  };
+                  readonly required: readonly [
+                    '_id',
+                    'amount',
+                    'createdAt',
+                    'date',
+                    'title',
+                    'updatedAt',
+                  ];
+                };
+                readonly kind: 'mongo-validator';
+                readonly validationAction: 'error';
+                readonly validationLevel: 'strict';
+              };
+            };
             readonly faqs: {
               readonly kind: 'mongo-collection';
               readonly validator: {
@@ -792,6 +843,7 @@ type ContractBase = Omit<
                     readonly _id: { readonly bsonType: 'objectId' };
                     readonly brandName: { readonly bsonType: readonly ['null', 'string'] };
                     readonly categoryName: { readonly bsonType: readonly ['null', 'string'] };
+                    readonly costPrice: { readonly bsonType: readonly ['null', 'double'] };
                     readonly orderId: { readonly bsonType: 'objectId' };
                     readonly price: { readonly bsonType: 'double' };
                     readonly productId: { readonly bsonType: 'objectId' };
@@ -1017,6 +1069,7 @@ type ContractBase = Omit<
                     readonly _id: { readonly bsonType: 'objectId' };
                     readonly brandId: { readonly bsonType: readonly ['null', 'objectId'] };
                     readonly categoryId: { readonly bsonType: readonly ['null', 'objectId'] };
+                    readonly costPrice: { readonly bsonType: readonly ['null', 'double'] };
                     readonly createdAt: { readonly bsonType: 'date' };
                     readonly description: { readonly bsonType: readonly ['null', 'string'] };
                     readonly dimensionHeight: { readonly bsonType: readonly ['null', 'double'] };
@@ -1254,6 +1307,10 @@ type ContractBase = Omit<
     readonly contacts: {
       readonly namespace: '__unbound__' & NamespaceId;
       readonly model: 'Contact';
+    };
+    readonly expenses: {
+      readonly namespace: '__unbound__' & NamespaceId;
+      readonly model: 'Expense';
     };
     readonly faqs: { readonly namespace: '__unbound__' & NamespaceId; readonly model: 'Faq' };
     readonly media: { readonly namespace: '__unbound__' & NamespaceId; readonly model: 'Media' };
@@ -1825,6 +1882,56 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly Expense: {
+            readonly fields: {
+              readonly amount: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/double@1' };
+              };
+              readonly category: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/date@1' };
+              };
+              readonly date: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/date@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/objectId@1' };
+              };
+              readonly note: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly title: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/date@1' };
+              };
+            };
+            readonly relations: Record<string, never>;
+            readonly storage: {
+              readonly collection: 'expenses';
+              readonly fields: {
+                readonly amount: { readonly field: 'amount' };
+                readonly category: { readonly field: 'category' };
+                readonly createdAt: { readonly field: 'createdAt' };
+                readonly date: { readonly field: 'date' };
+                readonly id: { readonly field: '_id' };
+                readonly note: { readonly field: 'note' };
+                readonly title: { readonly field: 'title' };
+                readonly updatedAt: { readonly field: 'updatedAt' };
+              };
+            };
+          };
           readonly Faq: {
             readonly fields: {
               readonly contents: {
@@ -2130,6 +2237,10 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
               };
+              readonly costPrice: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/double@1' };
+              };
               readonly id: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/objectId@1' };
@@ -2202,6 +2313,7 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly brandName: { readonly field: 'brandName' };
                 readonly categoryName: { readonly field: 'categoryName' };
+                readonly costPrice: { readonly field: 'costPrice' };
                 readonly id: { readonly field: '_id' };
                 readonly orderId: { readonly field: 'orderId' };
                 readonly price: { readonly field: 'price' };
@@ -2227,6 +2339,10 @@ type ContractBase = Omit<
               readonly categoryId: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/objectId@1' };
+              };
+              readonly costPrice: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/double@1' };
               };
               readonly createdAt: {
                 readonly nullable: false;
@@ -2402,6 +2518,7 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly brandId: { readonly field: 'brandId' };
                 readonly categoryId: { readonly field: 'categoryId' };
+                readonly costPrice: { readonly field: 'costPrice' };
                 readonly createdAt: { readonly field: 'createdAt' };
                 readonly description: { readonly field: 'description' };
                 readonly dimensionHeight: { readonly field: 'dimensionHeight' };
@@ -2924,6 +3041,23 @@ type ContractBase = Omit<
           readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
           readonly ref: {
             readonly entry: 'contacts';
+            readonly field: 'updatedAt';
+            readonly namespace: '__unbound__';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'expenses';
+            readonly field: 'createdAt';
+            readonly namespace: '__unbound__';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'expenses';
             readonly field: 'updatedAt';
             readonly namespace: '__unbound__';
           };

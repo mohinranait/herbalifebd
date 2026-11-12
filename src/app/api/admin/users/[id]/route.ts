@@ -3,6 +3,7 @@ import { db } from "@/prisma/db";
 import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { getAuthUser } from "@/lib/authUser";
 
 export async function GET(
   req: NextRequest,
@@ -94,6 +95,9 @@ export async function PATCH(
       }
     }
 
+    const requester = (await getAuthUser().catch(() => null)) as { role?: string } | null;
+    const isAdmin = requester?.role === "Admin";
+
     let password = existingUser.password;
     if (body.password && body.password.trim()) {
       const salt = bcrypt.genSaltSync(10);
@@ -103,8 +107,9 @@ export async function PATCH(
     await db.orm.public.User.where({ id }).update({
       name: body.name !== undefined ? body.name : existingUser.name,
       phone: body.phone !== undefined ? body.phone : existingUser.phone,
-      role: body.role !== undefined ? body.role : existingUser.role,
-      status: body.status !== undefined ? body.status : existingUser.status,
+      // Only an admin may change a role or status; customers edit just their own profile
+      role: isAdmin && body.role !== undefined ? body.role : existingUser.role,
+      status: isAdmin && body.status !== undefined ? body.status : existingUser.status,
       password,
     });
 

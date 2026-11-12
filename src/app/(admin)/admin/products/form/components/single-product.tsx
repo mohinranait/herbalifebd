@@ -20,6 +20,9 @@ const SingleProduct = ({ form }: Props) => {
   } = form;
 
   const price = Number(watch("price") || 0);
+  const costPrice = Number(watch("costPrice") || 0);
+  const sellingPrice = price - Number(watch("discountPrice") || 0);
+  const unitProfit = sellingPrice - costPrice;
 
   /**
    * Discount Price Change
@@ -131,6 +134,37 @@ const SingleProduct = ({ form }: Props) => {
           />
         </div>
 
+        {/* Cost Price */}
+        <div className="space-y-2 md:col-span-2">
+          <Label htmlFor="cost-price">Cost Price (your buying price)</Label>
+
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+              ৳
+            </span>
+
+            <Input
+              id="cost-price"
+              type="number"
+              placeholder="0.00"
+              min={0}
+              step="0.01"
+              className="pl-8 h-11"
+              {...register("costPrice")}
+            />
+          </div>
+
+          <p className="text-xs text-muted-foreground">
+            Never shown to customers. Used for the profit &amp; loss report.
+            {costPrice > 0 && sellingPrice > 0 && (
+              <span className={unitProfit >= 0 ? " font-medium text-emerald-600" : " font-medium text-red-600"}>
+                {" "}
+                {unitProfit >= 0 ? "Profit" : "Loss"} per unit: ৳{Math.abs(unitProfit).toFixed(2)}
+              </span>
+            )}
+          </p>
+        </div>
+
         {/* Discount Price */}
         <div className="space-y-2">
           <Label>Discount Price</Label>
@@ -181,6 +215,12 @@ const SingleProduct = ({ form }: Props) => {
         {errors.price && (
           <p className="text-sm text-red-500">
             {errors.price.message}
+          </p>
+        )}
+
+        {errors.costPrice && (
+          <p className="text-sm text-red-500">
+            {errors.costPrice.message}
           </p>
         )}
 

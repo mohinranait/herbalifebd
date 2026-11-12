@@ -76,6 +76,7 @@ export const productSchema = z.object({
   price: z.coerce.number().min(0).optional(),
   discountPrice: z.coerce.number().min(0).optional(),
   discountParcent: z.coerce.number().min(0).max(100).optional(),
+  costPrice: z.coerce.number().min(0).optional(),
 
   // productType: z.enum(["single", "variant"]).default("single"),
    productType: z.enum(["single", "variant"]),

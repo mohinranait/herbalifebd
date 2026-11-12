@@ -17,3 +17,18 @@ export async function getAuthUser() {
     throw new Error("Unauthorized: Invalid token");
   }
 }
+
+export type AuthUser = { id: string; phone: string; role?: string };
+
+/** The logged-in user, or null for a guest (never throws). */
+export async function getOptionalAuthUser(): Promise<AuthUser | null> {
+  try {
+    const decoded = await getAuthUser();
+    if (!decoded || typeof decoded === "string" || !("id" in decoded)) return null;
+    return decoded as AuthUser;
+  } catch {
+    return null;
+  }
+}
+
+export const isAdminUser = (user: AuthUser | null) => user?.role === "Admin";

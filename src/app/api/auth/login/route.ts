@@ -26,15 +26,15 @@ export async function POST(request: NextRequest) {
     const userDoc = await db.orm.public.User.where({ phone }).first();
     if (!userDoc) {
       return NextResponse.json(
-        { success: false, error: "User not found" },
-        { status: 404 }
+        { success: false, error: "Invalid credentials" },
+        { status: 401 }
       );
     }
 
     if (userDoc.status === "Banned") {
       return NextResponse.json(
         { success: false, error: "Your account has banned. Please contact Admin" },
-        { status: 404 }
+        { status: 403 }
       );
     }
 

@@ -33,13 +33,14 @@ export async function GET(req: NextRequest) {
       collection = collection.where((a: any) => a.name.ilike(`%${search}%`));
     }
 
+    const total = await collection.count();
+
     const attributes = await collection
       .orderBy((a: any) => a.createdAt.desc())
       .offset(skip)
       .limit(limit)
       .all();
 
-    const total = attributes.length;
 
     return NextResponse.json({
       success: true,
