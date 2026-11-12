@@ -1,17 +1,14 @@
-import connectDB from "@/lib/db";
-import Slider from "@/models/slider";
+import { db } from "@/prisma/db";
+import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-
 
 export async function PATCH(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectDB();
-    
     const { id } = await context.params;
-    const slider = await Slider.findById(id);
+    const slider = await db.orm.public.Slider.first({ id });
 
     if (!slider) {
       return NextResponse.json(
@@ -23,28 +20,27 @@ export async function PATCH(
       );
     }
 
-    //  TOGGLE soft delete
-    slider.isDelete = !slider.isDelete;
+    const newDeleteStatus = !slider.isDelete;
+    await db.orm.public.Slider.where({ id }).update({
+      isDelete: newDeleteStatus,
+    });
 
-    await slider.save();
+    const updated = await db.orm.public.Slider.first({ id });
 
     return NextResponse.json(
       {
         success: true,
-        message: slider.isDelete
-          ? "Moved to trash"
-          : "Restored successfully",
-        data: slider,
+        message: newDeleteStatus ? "Moved to trash" : "Restored successfully",
+        data: formatMongoCompat(updated),
       },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Soft Delete Error:", error);
-
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error",
+        message: error?.message || "Internal Server Error",
       },
       { status: 500 }
     );

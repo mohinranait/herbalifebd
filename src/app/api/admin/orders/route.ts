@@ -1,24 +1,13 @@
-import mongoose from "mongoose";
 import { NextResponse } from "next/server";
-
-import Product from "@/models/product";
-import connectDB from "@/lib/db";
-import Order from "@/models/order";
-
-
+import { db } from "@/prisma/db";
+import { formatOrderForUI } from "@/lib/order-utils";
 
 /* -------------------------------------------------------------------------- */
 /*                              CREATE ORDER API                              */
 /* -------------------------------------------------------------------------- */
 
 export async function POST(req: Request) {
-  await connectDB();
-
-  const session = await mongoose.startSession();
-
   try {
-    session.startTransaction();
-
     const body = await req.json();
 
     const {
@@ -28,7 +17,7 @@ export async function POST(req: Request) {
       payment,
       coupon,
       customerNote,
-      pricing
+      pricing,
     } = body;
 
     /* ---------------------------------------------------------------------- */
@@ -47,12 +36,14 @@ export async function POST(req: Request) {
     /*                              PROCESS ORDER ITEMS                       */
     /* ---------------------------------------------------------------------- */
 
-    const orderItems = [];
+    const orderItemsData = [];
     let subtotal = 0;
     let totalQuantity = 0;
 
     for (const cartItem of items) {
-      const product = await Product.findById(cartItem.productId).session(session);
+      const product = await db.orm.public.Product.first({
+        id: cartItem.productId || cartItem._id,
+      });
 
       if (!product) {
         throw new Error(`Product not found: ${cartItem.productName}`);
@@ -63,29 +54,24 @@ export async function POST(req: Request) {
       /* --------------------------- STOCK CHECK & UPDATE --------------------------- */
 
       if (productType === "single") {
-        // Single Product
         if ((product.stock || 0) < requestedQty) {
           throw new Error(
             `Insufficient stock for ${product.name}. Available: ${product.stock || 0}, Requested: ${requestedQty}`
           );
         }
 
-        // Update stock
-        await Product.updateOne(
-          { _id: product._id },
-          { $inc: { stock: -requestedQty, totalSold: requestedQty } },
-          { session }
-        );
-      }
-      else {
-        // Variant Product
+        await db.orm.public.Product.where({ id: product.id }).update({
+          stock: Math.max(0, (product.stock || 0) - requestedQty),
+          totalSold: (product.totalSold || 0) + requestedQty,
+        });
+      } else {
         if (!variationId) {
           throw new Error(`Variation ID is required for ${product.name}`);
         }
 
-        const variation = product.variations.find(
-          (v: { _id: mongoose.Types.ObjectId }) => v._id.toString() === variationId.toString()
-        );
+        const variation = await db.orm.public.ProductVariation.first({
+          id: variationId,
+        });
 
         if (!variation) {
           throw new Error(`Variation not found for ${product.name}`);
@@ -93,50 +79,40 @@ export async function POST(req: Request) {
 
         if ((variation.stock || 0) < requestedQty) {
           throw new Error(
-            `Insufficient stock for ${product.name} (${variation.name || 'Variant'}). ` +
-            `Available: ${variation.stock || 0}, Requested: ${requestedQty}`
+            `Insufficient stock for ${product.name} (${variation.name || "Variant"}). Available: ${variation.stock || 0}, Requested: ${requestedQty}`
           );
         }
 
-        // Update Variant stock + Root product stock
-        await Product.updateOne(
-          {
-            _id: product._id,
-            "variations._id": variationId
-          },
-          {
-            $inc: {
-              "variations.$.stock": -requestedQty,
-              stock: -requestedQty,           // Root stock (sum of all variants)
-              totalSold: requestedQty,
-            },
-          },
-          { session }
-        );
+        await db.orm.public.ProductVariation.where({ id: variation.id }).update({
+          stock: Math.max(0, (variation.stock || 0) - requestedQty),
+        });
+
+        await db.orm.public.Product.where({ id: product.id }).update({
+          stock: Math.max(0, (product.stock || 0) - requestedQty),
+          totalSold: (product.totalSold || 0) + requestedQty,
+        });
       }
 
       /* ------------------------------ PRICE CALCULATION ------------------------------- */
 
-      const itemSubtotal = cartItem.salePrice * requestedQty;
+      const itemSubtotal = (cartItem.salePrice || cartItem.price) * requestedQty;
       subtotal += itemSubtotal;
       totalQuantity += requestedQty;
 
-      /* ---------------------------- PUSH ORDER ITEM ---------------------------- */
-
-      orderItems.push({
-        productId: product._id,
+      orderItemsData.push({
+        productId: product.id,
         variationId: cartItem.variationId || null,
         productName: cartItem.productName,
-        productImage: cartItem.productImage,
-        productSlug: cartItem.productSlug,
+        productImage: cartItem.productImage || null,
+        productSlug: cartItem.productSlug || "",
         sku: cartItem.sku || "",
         quantity: requestedQty,
-        price: cartItem.price,
-        salePrice: cartItem.salePrice,
+        price: parseFloat(cartItem.price) || 0,
+        salePrice: parseFloat(cartItem.salePrice || cartItem.price) || 0,
         subtotal: itemSubtotal,
-        selectedVariants: cartItem.selectedVariants || {},
-        categoryName: product?.category?.name || "",
-        brandName: product?.brand?.name || "",
+        selectedVariants: cartItem.selectedVariants || null,
+        categoryName: cartItem.categoryName || "",
+        brandName: cartItem.brandName || "",
       });
     }
 
@@ -148,10 +124,6 @@ export async function POST(req: Request) {
     const couponDiscount = coupon?.discountAmount || 0;
     const total = subtotal - couponDiscount + shippingCharge;
 
-    /* ---------------------------------------------------------------------- */
-    /*                            INVOICE & TRACKING                          */
-    /* ---------------------------------------------------------------------- */
-
     const invoiceNumber = `INV-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
     const trackingNumber = `TR-${Math.random().toString(36).slice(2, 9).toUpperCase()}`;
 
@@ -159,63 +131,65 @@ export async function POST(req: Request) {
     /*                              CREATE ORDER                              */
     /* ---------------------------------------------------------------------- */
 
-    const orderPayload = {
-      userId: userId || null,
-      items: orderItems,
-      totalItems: orderItems.length,
-      totalQuantity,
-      pricing: {
-        subtotal,
-        discount: couponDiscount,
-        shippingCharge,
-        tax: 0,
-        total,
-      },
-      coupon: {
-        code: coupon?.code || "",
-        discountAmount: couponDiscount,
-      },
-      shippingAddress,
-      payment,
-      customerNote: customerNote || "",
-      orderStatus: "PENDING",
+    const createdOrder = await db.orm.public.Order.create({
       invoiceNumber,
       trackingNumber,
-    };
+      userId: userId || null,
+      totalItems: orderItemsData.length,
+      totalQuantity,
+      subtotal,
+      discount: couponDiscount,
+      shippingCharge,
+      tax: 0,
+      total,
+      couponCode: coupon?.code || "",
+      couponDiscount,
+      fullName: shippingAddress.fullName || "",
+      phone: shippingAddress.phone || "",
+      address: shippingAddress.address || "",
+      postalCode: shippingAddress.postalCode || "",
+      paymentMethod: payment?.method || "COD",
+      paymentStatus: payment?.status || "PENDING",
+      transactionId: payment?.transactionId || "",
+      customerNote: customerNote || "",
+      orderStatus: "PENDING",
+    });
 
-    const order = await Order.create([orderPayload], { session });
+    for (const item of orderItemsData) {
+      await db.orm.public.OrderItem.create({
+        ...item,
+        orderId: createdOrder.id,
+      });
+    }
 
-    await session.commitTransaction();
+    const fullOrder = await db.orm.public.Order
+      .where({ id: createdOrder.id })
+      .include("items", (i: any) => i.all())
+      .include("user", (u: any) => u.select("id", "name", "phone"))
+      .first();
 
     return NextResponse.json(
       {
         success: true,
         message: "Order created successfully",
-        data: order[0],
+        data: formatOrderForUI(fullOrder),
       },
       { status: 201 }
     );
-
-  } catch (error: unknown) {
-    const err = error instanceof Error ? error : new Error("An unknown error occurred");
-    await session.abortTransaction();
+  } catch (error: any) {
+    console.error("Order creation error:", error);
     return NextResponse.json(
       {
         success: false,
-        message: err.message || "Failed to create order",
+        message: error?.message || "Failed to create order",
       },
       { status: 400 }
     );
-  } finally {
-    session.endSession();
   }
 }
 
-
 export async function GET(req: Request) {
   try {
-    await connectDB();
-
     const { searchParams } = new URL(req.url);
 
     const page = parseInt(searchParams.get("page") || "1");
@@ -223,68 +197,41 @@ export async function GET(req: Request) {
     const userId = searchParams.get("userId");
     const status = searchParams.get("status");
     const method = searchParams.get("method");
-    const date = searchParams.get("date");
 
     const skip = (page - 1) * limit;
 
-    /* ----------------------------- FILTER QUERY ---------------------------- */
+    let query = db.orm.public.Order.where({ isDeleted: false });
 
-    const filter: any = {};
+    if (userId) query = query.where({ userId });
+    if (status) query = query.where({ orderStatus: status });
+    if (method) query = query.where({ paymentMethod: method });
 
-    if (userId) {
-      filter.userId = userId;
-    }
-
-    if (status) {
-      filter.orderStatus = status;
-    }
-
-    if (method) {
-      filter['payment.method'] = method;
-    }
-
-
-    if (date) {
-      const start = new Date(date);
-      const end = new Date(date);
-
-      end.setHours(23, 59, 59, 999);
-
-      filter.createdAt = {
-        $gte: start,
-        $lte: end,
-      };
-    }
-
-    /* ------------------------------ DATABASE ------------------------------- */
-
-    const orders = await Order.find(filter)
-      .sort({ createdAt: -1 })
-      .skip(skip)
+    const orders = await query
+      .include("items", (i: any) => i.all())
+      .include("user", (u: any) => u.select("id", "name", "phone"))
+      .orderBy((o: any) => o.createdAt.desc())
+      .offset(skip)
       .limit(limit)
-      .populate("userId", "name email")
-      .lean();
+      .all();
 
-    const totalOrders = await Order.countDocuments(filter);
-
-    /* ------------------------------ RESPONSE ------------------------------- */
+    const formattedOrders = orders.map(formatOrderForUI);
+    const totalOrders = orders.length;
 
     return NextResponse.json({
       success: true,
-      data: orders,
+      data: formattedOrders,
       meta: {
         total: totalOrders,
         page,
         limit,
-        totalPages: Math.ceil(totalOrders / limit),
+        totalPages: Math.ceil(totalOrders / limit) || 1,
       },
     });
-  } catch (error: unknown) {
-    const err = error instanceof Error ? error : new Error("An unknown error occurred");
+  } catch (error: any) {
     return NextResponse.json(
       {
         success: false,
-        message: err.message || "Failed to fetch orders",
+        message: error?.message || "Failed to fetch orders",
       },
       { status: 500 }
     );

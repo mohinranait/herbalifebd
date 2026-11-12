@@ -1,90 +1,79 @@
 import { getAuthUser } from "@/lib/authUser";
-import connectDB from "@/lib/db";
-import Comment from "@/models/comment";
-import "@/models/user.model"
+import { db } from "@/prisma/db";
+import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-
     const { id } = await params;
-
-    const { searchParams } = new URL(req.url,);
+    const { searchParams } = new URL(req.url);
 
     const productId = id;
-    const userId = searchParams.get("userId") || null
-    const accessMode = searchParams.get("accessMode") || "public" // auth, public
-
-    // const page = parseInt(searchParams.get("page") || "1");
-    // const limit = parseInt(searchParams.get("limit") || "10");
-
+    const userId = searchParams.get("userId") || null;
+    const accessMode = searchParams.get("accessMode") || "public";
 
     if (!productId) {
       return NextResponse.json(
         { success: false, message: "Product ID is required" },
-        { status: 401 }
+        { status: 400 }
       );
     }
 
+    let collection = db.orm.public.Comment.where({ productId });
 
-    const query: any = { productId };
-
-    // Authenticated user can cee her comments
-    if (accessMode === 'auth') {
-      // Commenter user can see her comments
-      query.userId = userId;
-    } else if (accessMode === 'admin') {
-      // Admin can see all comments
-      query['$or'] = [{ isApproved: false }, { isApproved: true }];
+    if (accessMode === "auth" && userId) {
+      collection = collection.where({ userId });
+    } else if (accessMode === "admin") {
+      // Admin sees all
     } else {
-      // Unauthenticated user can see only approved comments
-      query.isApproved = true;
+      collection = collection.where({ isApproved: true });
     }
 
-    await connectDB();
+    const comments = await collection
+      .include("user", (u: any) => u.select("id", "name"))
+      .orderBy((c: any) => c.createdAt.desc())
+      .all();
 
-    const comments = await Comment.find(query)
-      .populate('userId', 'name email')
-      .sort({ createdAt: -1 });
+    const formatted = comments.map((c: any) => ({
+      ...c,
+      userId: c.user ? formatMongoCompat(c.user) : c.userId,
+    }));
 
     return NextResponse.json(
       {
         success: true,
         message: "Successfully",
-        data: comments,
+        data: formatMongoCompat(formatted),
       },
-      { status: 201 }
+      { status: 200 }
     );
-
-  } catch (error) {
-    const err = error instanceof Error ? error : new Error("An unknown error occurred");
+  } catch (error: any) {
     return NextResponse.json(
       {
         success: false,
-        message: err.message || "Failed to fetch orders",
+        message: error?.message || "Failed to fetch comments",
       },
       { status: 500 }
     );
   }
 }
 
-
-
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectDB();
-
     const body = await req.json();
     const { id } = await params;
 
-    const authUser = await getAuthUser() as { id: string; phone: string; role: string };
-
-
-    const commentId = id;
+    const authUser = (await getAuthUser()) as {
+      id: string;
+      phone: string;
+      role: string;
+    };
 
     if (!authUser) {
       return NextResponse.json(
@@ -93,93 +82,62 @@ export async function PATCH(
       );
     }
 
-    const { comment } = body;
-
-
-
-    if (!comment) {
-      return NextResponse.json(
-        { success: false, message: "Product ID and comment are required" },
-        { status: 401 }
-      );
-    }
-
-
-    // find comment
-    const existComment = await Comment.findById(commentId);
-
-
+    const existComment = await db.orm.public.Comment.first({ id });
     if (!existComment) {
       return NextResponse.json(
         { success: false, message: "Comment not found" },
-        { status: 401 }
+        { status: 404 }
       );
     }
 
-
-    // check user permission
     if (
-      authUser.role !== 'admin' &&
-      authUser.role !== 'manager' &&
-      authUser.id.toString() !== existComment.userId.toString()
+      authUser.role?.toLowerCase() !== "admin" &&
+      authUser.role?.toLowerCase() !== "manager" &&
+      authUser.id !== existComment.userId
     ) {
       return NextResponse.json(
         { success: false, message: "Can't update comments without permission" },
-        { status: 401 }
+        { status: 403 }
       );
-
     }
 
-    const commentUpdate = await Comment.findByIdAndUpdate(commentId, {...body}, { new: true, runValidators: true });
+    await db.orm.public.Comment.where({ id }).update({
+      comment: body.comment !== undefined ? body.comment : existComment.comment,
+      rating: body.rating !== undefined ? parseInt(body.rating) : existComment.rating,
+      isApproved: body.isApproved !== undefined ? Boolean(body.isApproved) : existComment.isApproved,
+      isFeature: body.isFeature !== undefined ? Boolean(body.isFeature) : existComment.isFeature,
+    });
 
-    if (!commentUpdate) {
-      return NextResponse.json(
-        { success: false, message: "Comment not created" },
-        { status: 401 }
-      );
-    };
-
-
+    const updated = await db.orm.public.Comment.first({ id });
 
     return NextResponse.json(
       {
         success: true,
         message: "Successfully",
-        data: commentUpdate,
+        data: formatMongoCompat(updated),
       },
-      { status: 201 }
+      { status: 200 }
     );
-
-
-
-  } catch (error) {
+  } catch (error: any) {
     console.error("Update comment Error:", error);
-
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error",
+        message: error?.message || "Internal Server Error",
       },
       { status: 500 }
     );
   }
 }
 
-
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectDB();
+    const { id } = await params;
 
-   
-     const { id } = await  params;
-  
-
-    //  check comment exists
-    const comment = await Comment.findByIdAndDelete(id);
-
+    const comment = await db.orm.public.Comment.first({ id });
     if (!comment) {
       return NextResponse.json(
         {
@@ -190,23 +148,22 @@ export async function DELETE(
       );
     }
 
-  
+    await db.orm.public.Comment.where({ id }).delete();
 
     return NextResponse.json(
       {
         success: true,
-        message: "comment updated successfully",
-        data: comment,
+        message: "comment deleted successfully",
+        data: formatMongoCompat(comment),
       },
       { status: 200 }
     );
-  } catch (error) {
-    console.error("Update comment Error:", error);
-
+  } catch (error: any) {
+    console.error("Delete comment Error:", error);
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error",
+        message: error?.message || "Internal Server Error",
       },
       { status: 500 }
     );

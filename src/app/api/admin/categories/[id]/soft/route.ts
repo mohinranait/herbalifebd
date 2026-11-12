@@ -1,17 +1,14 @@
-import connectDB from "@/lib/db";
-import { Category } from "@/models/categories";
+import { db } from "@/prisma/db";
+import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-
 
 export async function PATCH(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectDB();
-    
     const { id } = await context.params;
-    const category = await Category.findById(id);
+    const category = await db.orm.public.Category.first({ id });
 
     if (!category) {
       return NextResponse.json(
@@ -23,28 +20,27 @@ export async function PATCH(
       );
     }
 
-    //  TOGGLE soft delete
-    category.isDelete = !category.isDelete;
+    const newDeleteStatus = !category.isDelete;
+    await db.orm.public.Category.where({ id }).update({
+      isDelete: newDeleteStatus,
+    });
 
-    await category.save();
+    const updated = await db.orm.public.Category.first({ id });
 
     return NextResponse.json(
       {
         success: true,
-        message: category.isDelete
-          ? "Moved to trash"
-          : "Restored successfully",
-        data: category,
+        message: newDeleteStatus ? "Moved to trash" : "Restored successfully",
+        data: formatMongoCompat(updated),
       },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Soft Delete Error:", error);
-
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error",
+        message: error?.message || "Internal Server Error",
       },
       { status: 500 }
     );

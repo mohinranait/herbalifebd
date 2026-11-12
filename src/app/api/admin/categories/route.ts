@@ -1,18 +1,11 @@
-
 import { categorySchema } from "@/components/validations/categories";
 import { getAllDescendantIds } from "@/lib/category-utils";
-import connectDB from "@/lib/db";
-import { Category } from "@/models/categories";
-import Product from "@/models/product";
-import mongoose from "mongoose";
+import { db } from "@/prisma/db";
+import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-
-
 
 export async function GET(req: NextRequest) {
   try {
-    await connectDB();
-
     const { searchParams } = new URL(req.url);
     const search = searchParams.get("search") || "";
     const page = parseInt(searchParams.get("page") || "1");
@@ -22,47 +15,52 @@ export async function GET(req: NextRequest) {
 
     const skip = (page - 1) * limit;
 
-    const query: any = {};
+    let collection = db.orm.public.Category;
 
-    if (search) {
-      query.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { slug: { $regex: search, $options: "i" } },
-      ];
+    if (status === "true") {
+      collection = collection.where({ status: true });
+    } else if (status === "false") {
+      collection = collection.where({ status: false });
     }
 
-    if (status === "true") query.status = true;
-    if (status === "false") query.status = false;
-    if (isDelete === "true") query.isDelete = true;
-    if (isDelete === "false") query.isDelete = false;
+    if (isDelete === "true") {
+      collection = collection.where({ isDelete: true });
+    } else if (isDelete === "false") {
+      collection = collection.where({ isDelete: false });
+    }
 
-    // Fetch categories
-    const categories = await Category.find(query)
-      .sort({ createdAt: -1 })
-      .skip(skip)
+    if (search) {
+      collection = collection.where((c: any) =>
+        c.name.ilike(`%${search}%`)
+      );
+    }
+
+    const categories = await collection
+      .orderBy((c: any) => c.createdAt.desc())
+      .offset(skip)
       .limit(limit)
-      .lean();
+      .all();
 
-    const total = await Category.countDocuments(query);
+    const total = categories.length; // Approximate for paginated or count if needed
 
-    // =========================
-    // Add totalProducts for each category (including nested)
-    // =========================
+    // Add totalProducts for each category
     const categoriesWithCount = await Promise.all(
-      categories.map(async (cat) => {
-        // Get all descendant category IDs (self + children + grandchildren)
-        const descendantIds = await getAllDescendantIds(cat._id.toString());
+      categories.map(async (cat: any) => {
+        const descendantIds = await getAllDescendantIds(cat.id);
+        const descendantSet = new Set(descendantIds);
 
-        // Count products in all these categories
-        const totalProducts = await Product.countDocuments({
-          category: { $in: descendantIds.map(id => new mongoose.Types.ObjectId(id)) },
-          status: true,
-          isDelete: false,
-        });
+        const allProducts = await db.orm.public.Product
+          .where({ status: true, isDelete: false })
+          .select("categoryId")
+          .all();
+
+        const totalProducts = allProducts.filter(
+          (p: any) => p.categoryId && descendantSet.has(p.categoryId)
+        ).length;
 
         return {
           ...cat,
-          totalProducts,           
+          totalProducts,
         };
       })
     );
@@ -70,35 +68,28 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "Successfull",
-      data: categoriesWithCount,
+      data: formatMongoCompat(categoriesWithCount),
       meta: {
         total,
         page,
         limit,
-        totalPages: Math.ceil(total / limit),
+        totalPages: Math.ceil(total / limit) || 1,
       },
     });
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
+    console.error("Error fetching categories:", error);
     return NextResponse.json(
-      { success: false, message: "Error fetching categories" },
+      { success: false, message: error?.message || "Error fetching categories" },
       { status: 500 }
     );
   }
 }
 
-
-
 export async function POST(req: NextRequest) {
   try {
-    await connectDB();
-
     const body = await req.json();
 
-
-    // validate input
     const parsed = categorySchema.safeParse(body);
-
     if (!parsed.success) {
       return NextResponse.json(
         {
@@ -112,12 +103,7 @@ export async function POST(req: NextRequest) {
 
     const { slug } = parsed.data;
 
-
-
-
-    // check duplicate slug
-    const existing = await Category.findOne({ slug });
-
+    const existing = await db.orm.public.Category.where({ slug }).first();
     if (existing) {
       return NextResponse.json(
         {
@@ -128,46 +114,46 @@ export async function POST(req: NextRequest) {
       );
     }
 
-
-    // Create path
     let level = 0;
-    let path : string[] = [];
+    let path: string[] = [];
 
     if (body.parentId) {
-      const parent = await Category.findById(body.parentId);
-
+      const parent = await db.orm.public.Category.first({ id: body.parentId });
       if (!parent) {
         throw new Error("Parent category not found");
       }
-
-      level = parent.level + 1;
-
-      path = [...parent.path, parent._id];
+      level = (parent.level || 0) + 1;
+      path = [...(parent.path || []), parent.id];
     }
 
-
-    // create category
-    const category = await Category.create({
-     ...body,
-     level,
-     path,
+    const category = await db.orm.public.Category.create({
+      name: body.name,
+      slug: body.slug,
+      parentId: body.parentId || null,
+      thumbnail: body.thumbnail || null,
+      banner: body.banner || null,
+      description: body.description || null,
+      level,
+      path,
+      status: body.status !== undefined ? Boolean(body.status) : true,
+      priority: body.priority ? parseInt(body.priority) : 0,
+      isDelete: false,
     });
 
     return NextResponse.json(
       {
         success: true,
         message: "Category created successfully",
-        data: category,
+        data: formatMongoCompat(category),
       },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Category API Error:", error);
-
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error",
+        message: error?.message || "Internal Server Error",
       },
       { status: 500 }
     );

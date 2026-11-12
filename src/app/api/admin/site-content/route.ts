@@ -1,70 +1,58 @@
-import connectDB from "@/lib/db";
-import SiteContent from "@/models/site-content";
+import { db } from "@/prisma/db";
+import { formatMongoCompat } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-
 
 // GET Site Content
 export async function GET() {
   try {
-    await connectDB();
+    let content = await db.orm.public.SiteContent.first();
 
-    let content = await SiteContent.findOne();
-
-
-    if(!content){
-       content = await SiteContent.create({
-        whyChooseUs:{
+    if (!content) {
+      content = await db.orm.public.SiteContent.create({
+        whyChooseUs: {
           title: "Why choose Us",
         },
         companyIntroduction: {
-          title: "About company"
-        }
-       });
+          title: "About company",
+        },
+      });
     }
 
     return NextResponse.json({
       success: true,
       message: "Site content fetched successfully",
-      data: content,
+      data: formatMongoCompat(content),
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
-
     return NextResponse.json(
       {
         success: false,
-        message: "Failed to fetch site content",
+        message: error?.message || "Failed to fetch site content",
       },
-      {
-        status: 500,
-      }
+      { status: 500 }
     );
   }
 }
 
-
 // CREATE OR UPDATE Site Content
 export async function PATCH(req: Request) {
   try {
-    await connectDB();
-
     const body = await req.json();
 
-    let content = await SiteContent.findOne();
+    let content = await db.orm.public.SiteContent.first();
 
     if (content) {
-      // Update existing document
-      content = await SiteContent.findByIdAndUpdate(
-        content._id,
-        body,
-        {
-          new: true,
-          runValidators: true,
-        }
-      );
+      await db.orm.public.SiteContent.where({ id: content.id }).update({
+        companyIntroduction: body.companyIntroduction !== undefined ? body.companyIntroduction : content.companyIntroduction,
+        whyChooseUs: body.whyChooseUs !== undefined ? body.whyChooseUs : content.whyChooseUs,
+      });
+      content = await db.orm.public.SiteContent.first({ id: content.id });
     } else {
-      // Create new document
-      content = await SiteContent.create(body);
+      content = await db.orm.public.SiteContent.create({
+        companyIntroduction: body.companyIntroduction,
+        whyChooseUs: body.whyChooseUs,
+      });
     }
 
     return NextResponse.json({
@@ -72,20 +60,16 @@ export async function PATCH(req: Request) {
       message: content
         ? "Site content saved successfully"
         : "Operation completed",
-      data: content,
+      data: formatMongoCompat(content),
     });
-
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
-
     return NextResponse.json(
       {
         success: false,
-        message: "Failed to save site content",
+        message: error?.message || "Failed to save site content",
       },
-      {
-        status: 500,
-      }
+      { status: 500 }
     );
   }
 }

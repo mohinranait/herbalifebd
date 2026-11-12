@@ -207,7 +207,7 @@ const ProductCard = ({ product }: Props) => {
           </h4>
         </Link>
 
-        {
+        {/* {
           appSetting?.features?.review &&
           <div className="flex items-center gap-2 mb-1 md:mb-2">
             <div className="flex items-center">
@@ -222,7 +222,7 @@ const ProductCard = ({ product }: Props) => {
               ({product.ratings.totalReviews})
             </span>
           </div>
-        }
+        } */}
 
         {/* Price + Variant */}
         <div className="flex items-center justify-between flex-wrap mb-1 lg:mb-3">

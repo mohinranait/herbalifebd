@@ -1,95 +1,101 @@
-
 import { NextRequest, NextResponse } from "next/server";
-
-import mongoose from "mongoose";
-import connectDB from "@/lib/db";
-import Product from "@/models/product";
-import "@/models/brand.model";   
-import "@/models/categories"; 
+import { db } from "@/prisma/db";
+import { formatMongoCompat } from "@/lib/prisma";
 import { getAllDescendantIds } from "@/lib/category-utils";
 
-
-
 export async function GET(req: NextRequest) {
-  await connectDB();
+  try {
+    const { searchParams } = req.nextUrl;
 
-  const { searchParams } = req.nextUrl;
+    const search = searchParams.get("search") || "";
+    const category = searchParams.get("category");
+    const brandParam = searchParams.get("brand");
+    const minPrice = searchParams.get("minPrice");
+    const maxPrice = searchParams.get("maxPrice");
+    const minRating = searchParams.get("minRating");
+    const sort = searchParams.get("sort") || "default";
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
 
-   const search = searchParams.get("search") || "";
-  const category  = searchParams.get("category");
-  const brandParam = searchParams.get("brand");
-  const minPrice  = searchParams.get("minPrice");
-  const maxPrice  = searchParams.get("maxPrice");
-  const minRating = searchParams.get("minRating");
-  const sort      = searchParams.get("sort") || "default";
-  const page      = parseInt(searchParams.get("page") || "1");
-  const limit     = parseInt(searchParams.get("limit") || "20");
+    const brands = brandParam
+      ? brandParam.split(",").map((b) => b.trim()).filter(Boolean)
+      : [];
 
-  const brands = brandParam
-    ? brandParam.split(",").map((b) => b.trim()).filter((b) => b.length === 24)
-    : [];
+    let query = db.orm.public.Product
+      .where({ isDelete: false, status: true });
 
-  const filter: Record<string, any> = {
-    isDelete: false,
-    status: true,
-  };
-
-  // Category + সব descendants
-  if (category) {
-    const categoryIds = await getAllDescendantIds(category);
-    filter.category = { $in: categoryIds };
-  }
-
-  if (brands.length > 0) {
-    filter.brand = { $in: brands.map((b) => new mongoose.Types.ObjectId(b)) };
-  }
-
-  if (minPrice || maxPrice) {
-    const priceFilter: Record<string, number> = {};
-    if (minPrice) priceFilter.$gte = Number(minPrice);
-    if (maxPrice) priceFilter.$lte = Number(maxPrice);
-
-    filter.$or = [
-      { productType: "single", price: priceFilter },
-      { productType: "variant", "variations.price": priceFilter },
-    ];
-  }
-
-  if (minRating) {
-    filter["ratings.average"] = { $gte: Number(minRating) };
-  }
-
-   if (search) {
-      filter.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { slug: { $regex: search, $options: "i" } },
-      ];
+    if (category) {
+      const categoryIds = await getAllDescendantIds(category);
+      if (categoryIds.length > 0) {
+        query = query.where((p: any) => p.categoryId.in(categoryIds));
+      }
     }
 
-  const sortMap: Record<string, Record<string, 1 | -1>> = {
-    price_asc:  { price: 1 },
-    price_desc: { price: -1 },
-    rating:     { "ratings.average": -1 },
-    newest:     { createdAt: -1 },
-    default:    { isFeatured: -1, createdAt: -1 },
-  };
-  const sortQuery = sortMap[sort] || sortMap.default;
-  const skip = (page - 1) * limit;
+    if (brands.length > 0) {
+      query = query.where((p: any) => p.brandId.in(brands));
+    }
 
-  const [products, total] = await Promise.all([
-    Product.find(filter)
-      .populate("brand", "name logo")
-      .populate("category", "name")
-      .sort(sortQuery)
-      .skip(skip)
-      .limit(limit)
-      .lean(),
-    Product.countDocuments(filter),
-  ]);
+    if (minPrice) {
+      query = query.where((p: any) => p.price.gte(parseFloat(minPrice)));
+    }
+    if (maxPrice) {
+      query = query.where((p: any) => p.price.lte(parseFloat(maxPrice)));
+    }
 
-  return NextResponse.json({
-    success: true,
-    data: products,
-    meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
-  });
+    if (minRating) {
+      query = query.where((p: any) => p.ratingsAverage.gte(parseFloat(minRating)));
+    }
+
+    if (search) {
+      query = query.where((p: any) => p.name.ilike(`%${search}%`));
+    }
+
+    let orderedQuery = query
+      .include("brand", (b: any) => b.select("id", "name", "logo"))
+      .include("category", (c: any) => c.select("id", "name", "slug"))
+      .include("variations", (v: any) => v.all());
+
+    switch (sort) {
+      case "price_asc":
+        orderedQuery = orderedQuery.orderBy((p: any) => p.price.asc());
+        break;
+      case "price_desc":
+        orderedQuery = orderedQuery.orderBy((p: any) => p.price.desc());
+        break;
+      case "rating":
+        orderedQuery = orderedQuery.orderBy((p: any) => p.ratingsAverage.desc());
+        break;
+      case "newest":
+        orderedQuery = orderedQuery.orderBy((p: any) => p.createdAt.desc());
+        break;
+      case "default":
+      default:
+        orderedQuery = orderedQuery.orderBy([
+          (p: any) => p.isFeatured.desc(),
+          (p: any) => p.createdAt.desc(),
+        ]);
+        break;
+    }
+
+    const skip = (page - 1) * limit;
+    const products = await orderedQuery.offset(skip).limit(limit).all();
+    const total = products.length;
+
+    return NextResponse.json({
+      success: true,
+      data: formatMongoCompat(products),
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit) || 1,
+      },
+    });
+  } catch (error: any) {
+    console.error("Filter products error:", error);
+    return NextResponse.json(
+      { success: false, error: error?.message || "Failed to filter products" },
+      { status: 500 }
+    );
+  }
 }

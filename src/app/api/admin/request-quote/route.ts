@@ -1,107 +1,82 @@
-import connectDB from "@/lib/db";
-import { RequestQuote } from "@/models/request-quote";
+import { db } from "@/prisma/db";
+import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+
 export async function GET(req: NextRequest) {
   try {
-    await connectDB();
-
     const { searchParams } = new URL(req.url);
-
     const search = searchParams.get("search") || "";
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
-    const date = searchParams.get("date");
-
     const skip = (page - 1) * limit;
 
-    // =========================
-    // BUILD QUERY
-    // =========================
-   const query: Record<string, any> = {};
+    let collection = db.orm.public.RequestQuote;
 
-    //  SEARCH (name or slug)
     if (search) {
-      query.$or = [
-        {
-          "request.name": {
-            $regex: search,
-            $options: "i",
-          },
-        },
-        {
-          "request.phone": {
-            $regex: search,
-            $options: "i",
-          },
-        },
-        {
-          "request.whatsappNumber": {
-            $regex: search,
-            $options: "i",
-          },
-        },
-        {
-          "location.district": {
-            $regex: search,
-            $options: "i",
-          },
-        },
-      ];
+      collection = collection.where((rq: any) => rq.name.ilike(`%${search}%`));
     }
 
-    // date filter
-    if (date) {
-      const start = new Date(date);
-      const end = new Date(date);
+    const quotes = await collection
+      .include("product", (p: any) => p.select("id", "name", "slug", "thumbnail"))
+      .orderBy((rq: any) => rq.createdAt.desc())
+      .offset(skip)
+      .limit(limit)
+      .all();
 
-      end.setHours(23, 59, 59, 999);
-
-      query.createdAt = {
-        $gte: start,
-        $lte: end,
-      };
-    }
-
-    const result = await RequestQuote.find(query)
-      .populate("productId")
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);;
+    const formatted = quotes.map((rq: any) => ({
+      ...rq,
+      productId: rq.product ? formatMongoCompat(rq.product) : rq.productId,
+      location: {
+        address: rq.address,
+        zipCode: rq.zipCode,
+        district: rq.district,
+      },
+      request: {
+        name: rq.name,
+        whatsappNumber: rq.whatsappNumber,
+        phone: rq.phone,
+      },
+    }));
 
     return NextResponse.json({
       success: true,
-      data: result,
+      data: formatMongoCompat(formatted),
     });
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+  } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: errorMessage },
+      { success: false, error: error?.message || "An unknown error occurred" },
       { status: 500 }
     );
   }
 }
 
-
 export async function POST(req: NextRequest) {
   try {
-    await connectDB();
-
     const body = await req.json();
 
-    const result = await RequestQuote.create(body);
+    const result = await db.orm.public.RequestQuote.create({
+      productId: body.productId || null,
+      address: body.location?.address || body.address || null,
+      zipCode: body.location?.zipCode || body.zipCode || null,
+      district: body.location?.district || body.district || null,
+      name: body.request?.name || body.name || null,
+      whatsappNumber: body.request?.whatsappNumber || body.whatsappNumber || null,
+      phone: body.request?.phone || body.phone || null,
+      quantity: body.quantity ? parseInt(body.quantity) : null,
+      notes: body.notes || null,
+    });
 
     return NextResponse.json(
       {
         success: true,
         message: "Request quote created successfully",
-        data: result,
+        data: formatMongoCompat(result),
       },
       { status: 201 }
     );
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+  } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: errorMessage },
+      { success: false, error: error?.message || "An unknown error occurred" },
       { status: 500 }
     );
   }

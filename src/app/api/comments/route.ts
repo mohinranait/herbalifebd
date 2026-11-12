@@ -1,15 +1,11 @@
 import { getAuthUser } from "@/lib/authUser";
-import connectDB from "@/lib/db";
-import Comment from "@/models/comment";
-import "@/models/user.model";
-import "@/models/product"
+import { db } from "@/prisma/db";
+import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import Product from "@/models/product";
 
 // get all comments
 export async function GET(req: NextRequest) {
   try {
-    await connectDB();
     const { searchParams } = new URL(req.url);
     const search = searchParams.get("search");
     const isFeature = searchParams.get("isFeature");
@@ -19,49 +15,62 @@ export async function GET(req: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
 
-    let query: any = {};
-    if (search) {
-      query.$or = [
-        { comment: { $regex: search, $options: "i" } },
-      ];
-    }
-    if (status) query.isApproved = status;
-    if (isFeature) query.isFeature = isFeature;
-    if (star) query.rating = parseInt(star);
-    if (productId) query.productId = productId;
+    let collection = db.orm.public.Comment;
 
-    const total = await Comment.countDocuments(query);
-    const comments = await Comment.find(query)
-      .populate("productId", "name")
-      .populate("userId", "name")
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit);
+    if (status !== null && status !== undefined) {
+      collection = collection.where({ isApproved: status === "true" });
+    }
+    if (isFeature !== null && isFeature !== undefined) {
+      collection = collection.where({ isFeature: isFeature === "true" });
+    }
+    if (star) {
+      collection = collection.where({ rating: parseInt(star) });
+    }
+    if (productId) {
+      collection = collection.where({ productId });
+    }
+    if (search) {
+      collection = collection.where((c: any) => c.comment.ilike(`%${search}%`));
+    }
+
+    const comments = await collection
+      .include("product", (p: any) => p.select("id", "name"))
+      .include("user", (u: any) => u.select("id", "name"))
+      .orderBy((c: any) => c.createdAt.desc())
+      .offset((page - 1) * limit)
+      .limit(limit)
+      .all();
+
+    const formattedComments = comments.map((c: any) => ({
+      ...c,
+      productId: c.product ? formatMongoCompat(c.product) : c.productId,
+      userId: c.user ? formatMongoCompat(c.user) : c.userId,
+    }));
+
+    const total = comments.length;
 
     return NextResponse.json({
-      data: comments,
+      data: formatMongoCompat(formattedComments),
       meta: {
         total,
         page,
         limit,
-        totalPages: Math.ceil(total / limit),
+        totalPages: Math.ceil(total / limit) || 1,
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching comments:", error);
     return NextResponse.json(
-      { error: "Failed to fetch comments" },
-      { status: 500 },
+      { error: error?.message || "Failed to fetch comments" },
+      { status: 500 }
     );
   }
 }
 
-
 export async function POST(req: NextRequest) {
   try {
-
     const body = await req.json();
-    const authUser = await getAuthUser() as { id: string; phone: string };
+    const authUser = (await getAuthUser()) as { id: string; phone: string };
 
     const userId = authUser?.id;
     if (!userId) {
@@ -71,69 +80,55 @@ export async function POST(req: NextRequest) {
       );
     }
 
-
     const { productId, comment, rating } = body;
-
     if (!productId || !comment) {
       return NextResponse.json(
         { success: false, message: "Product ID and comment are required" },
-        { status: 401 }
+        { status: 400 }
       );
     }
 
-    await connectDB();
-    const newComment = new Comment({ productId, userId: authUser.id, comment, rating });
-    const savedComment = await newComment.save();
+    const savedComment = await db.orm.public.Comment.create({
+      productId,
+      userId: authUser.id,
+      comment,
+      rating: rating ? parseInt(rating) : 5,
+      isApproved: true,
+      isFeature: false,
+    });
 
-    await Product.findByIdAndUpdate(productId, {})
-
-    if (!savedComment) {
-      return NextResponse.json(
-        { success: false, message: "Comment not created" },
-        { status: 401 }
-      );
-    }
-
-
-    // Update product review 
-    const product = await Product.findById(productId).select("ratings");
-
+    // Update product ratings
+    const product = await db.orm.public.Product.first({ id: productId });
     if (product) {
-      const oldTotal = product.ratings.totalReviews || 0;
-      const oldAverage = product.ratings.average || 0;
+      const oldTotal = product.totalReviews || 0;
+      const oldAverage = product.ratingsAverage || 0;
+      const numRating = rating ? parseInt(rating) : 5;
 
       const newTotal = oldTotal + 1;
       const newAverage = Number(
-        ((oldAverage * oldTotal + rating) / newTotal).toFixed(1)
+        ((oldAverage * oldTotal + numRating) / newTotal).toFixed(1)
       );
 
-      await Product.findByIdAndUpdate(productId, {
-        $inc: {
-          "ratings.totalReviews": 1,
-        },
-        $set: {
-          "ratings.average": newAverage,
-        },
+      await db.orm.public.Product.where({ id: productId }).update({
+        totalReviews: newTotal,
+        ratingsAverage: newAverage,
       });
     }
-
-
 
     return NextResponse.json(
       {
         success: true,
         message: "Successfully",
-        data: savedComment,
+        data: formatMongoCompat(savedComment),
       },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Comment API Error:", error);
-
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error",
+        message: error?.message || "Internal Server Error",
       },
       { status: 500 }
     );

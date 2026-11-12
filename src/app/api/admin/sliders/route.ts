@@ -1,123 +1,70 @@
-
 import { sliderSchema } from "@/components/validations/slider";
-import connectDB from "@/lib/db";
-import Slider from "@/models/slider";
+import { db } from "@/prisma/db";
+import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-
 
 export async function GET(req: NextRequest) {
   try {
-    await connectDB();
-
     const { searchParams } = new URL(req.url);
 
     const search = searchParams.get("search") || "";
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
-
-    const status = searchParams.get("status"); // true / false / all
-    const isDelete = searchParams.get("isDelete"); // true / false / all
-    const date = searchParams.get("date");
+    const status = searchParams.get("status");
+    const isDelete = searchParams.get("isDelete");
 
     const skip = (page - 1) * limit;
 
-    // =========================
-    // BUILD QUERY
-    // =========================
-    const query:  {
-      title?: string;
-       createdAt?: {
-        $gte?: Date;
-        $lte?: Date;
-      };
-      status?: boolean;
-      isDelete?: boolean;
-       $or?: {
-        title?: { $regex: string; $options: string };
-        description?: { $regex: string; $options: string };
-      }[];
-    } = {};
+    let collection = db.orm.public.Slider;
 
-    //  SEARCH (name or slug)
+    if (status === "true") {
+      collection = collection.where({ status: true });
+    } else if (status === "false") {
+      collection = collection.where({ status: false });
+    }
+
+    if (isDelete === "true") {
+      collection = collection.where({ isDelete: true });
+    } else if (isDelete === "false") {
+      collection = collection.where({ isDelete: false });
+    }
+
     if (search) {
-      query.$or = [
-        { description: { $regex: search, $options: "i" } },
-        { title: { $regex: search, $options: "i" } },
-      ];
+      collection = collection.where((s: any) => s.title.ilike(`%${search}%`));
     }
 
-    //  STATUS FILTER
-    if (status === "true") query.status = true;
-    if (status === "false") query.status = false;
+    const sliders = await collection
+      .orderBy([(s: any) => s.order.asc(), (s: any) => s.createdAt.desc()])
+      .offset(skip)
+      .limit(limit)
+      .all();
 
-    // 🗑 SOFT DELETE FILTER
-    if (isDelete === "true") query.isDelete = true;
-    if (isDelete === "false") query.isDelete = false;
+    const total = sliders.length;
 
-    
-    // date filter
-    if (date) {
-      const start = new Date(date);
-      const end = new Date(date);
-
-      end.setHours(23, 59, 59, 999);
-
-      query.createdAt = {
-        $gte: start,
-        $lte: end,
-      };
-    }
-
-
-    // console.log({query});
-    
-    
-
-    // =========================
-    // DB QUERY
-    // =========================
-    const sliders = await Slider.find(query)
-      .sort({
-        order: 1,       
-        createdAt: -1,
-       })
-      .skip(skip)
-      .limit(limit);
-
-    const total = await Slider.countDocuments(query);
-
-    // =========================
-    // RESPONSE
-    // =========================
     return NextResponse.json({
       success: true,
-      data: sliders,
+      data: formatMongoCompat(sliders),
       meta: {
         total,
         page,
         limit,
-        totalPages: Math.ceil(total / limit),
+        totalPages: Math.ceil(total / limit) || 1,
       },
     });
-  } catch (error) {
+  } catch (error: any) {
+    console.error("Error fetching sliders:", error);
     return NextResponse.json(
-      { success: false, message: "Error fetching sliders" },
+      { success: false, message: error?.message || "Error fetching sliders" },
       { status: 500 }
     );
   }
 }
 
-
 export async function POST(req: NextRequest) {
   try {
-    await connectDB();
-
     const body = await req.json();
 
-
-    // validate input
     const parsed = sliderSchema.safeParse(body);
-
     if (!parsed.success) {
       return NextResponse.json(
         {
@@ -129,28 +76,32 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    
-
-    // create slider
-    const slider = await Slider.create({
-     ...body
+    const slider = await db.orm.public.Slider.create({
+      title: body.title,
+      description: body.description || "",
+      link: body.link || "",
+      buttonName: body.buttonName || "Shop Now",
+      sliderType: body.sliderType || "withoutImage",
+      image: body.image || "",
+      status: body.status !== undefined ? Boolean(body.status) : true,
+      order: body.order ? parseInt(body.order) : 100,
+      isDelete: false,
     });
 
     return NextResponse.json(
       {
         success: true,
         message: "Slider created successfully",
-        data: slider,
+        data: formatMongoCompat(slider),
       },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Slider API Error:", error);
-
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error",
+        message: error?.message || "Internal Server Error",
       },
       { status: 500 }
     );

@@ -1,24 +1,17 @@
-
 import { categorySchema } from "@/components/validations/categories";
-import connectDB from "@/lib/db";
-import { Category } from "@/models/categories";
+import { db } from "@/prisma/db";
+import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: Promise< { id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectDB();
-
     const body = await req.json();
-     const { id } = await  params;
-    
+    const { id } = await params;
 
-    //  validate input
     const parsed = categorySchema.safeParse(body);
-
     if (!parsed.success) {
       return NextResponse.json(
         {
@@ -32,9 +25,7 @@ export async function PATCH(
 
     const { slug } = parsed.data;
 
-    //  check category exists
-    const existingCategory = await Category.findById(id);
-
+    const existingCategory = await db.orm.public.Category.first({ id });
     if (!existingCategory) {
       return NextResponse.json(
         {
@@ -45,12 +36,11 @@ export async function PATCH(
       );
     }
 
-    //  check duplicate slug (exclude current id)
-    if (slug  && slug !== existingCategory.slug) {
-      const duplicate = await Category.findOne({
-        slug,
-        _id: { $ne: id },
-      });
+    if (slug && slug !== existingCategory.slug) {
+      const duplicate = await db.orm.public.Category
+        .where({ slug })
+        .where((c: any) => c.id.neq(id))
+        .first();
 
       if (duplicate) {
         return NextResponse.json(
@@ -63,49 +53,49 @@ export async function PATCH(
       }
     }
 
-    //  update category
-    const updatedCategory = await Category.findByIdAndUpdate(
-      id,
-      { ...body },
-      { new: true, runValidators: true }
-    );
+    await db.orm.public.Category.where({ id }).update({
+      name: body.name !== undefined ? body.name : existingCategory.name,
+      slug: body.slug !== undefined ? body.slug : existingCategory.slug,
+      parentId: body.parentId !== undefined ? body.parentId || null : existingCategory.parentId,
+      thumbnail: body.thumbnail !== undefined ? body.thumbnail : existingCategory.thumbnail,
+      banner: body.banner !== undefined ? body.banner : existingCategory.banner,
+      description: body.description !== undefined ? body.description : existingCategory.description,
+      level: body.level !== undefined ? parseInt(body.level) : existingCategory.level,
+      status: body.status !== undefined ? Boolean(body.status) : existingCategory.status,
+      priority: body.priority !== undefined ? parseInt(body.priority) : existingCategory.priority,
+      isDelete: body.isDelete !== undefined ? Boolean(body.isDelete) : existingCategory.isDelete,
+    });
+
+    const updatedCategory = await db.orm.public.Category.first({ id });
 
     return NextResponse.json(
       {
         success: true,
         message: "Category updated successfully",
-        data: updatedCategory,
+        data: formatMongoCompat(updatedCategory),
       },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Update Category Error:", error);
-
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error",
+        message: error?.message || "Internal Server Error",
       },
       { status: 500 }
     );
   }
 }
 
-
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectDB();
+    const { id } = await params;
 
-   
-     const { id } = await  params;
-  
-
-    //  check category exists
-    const category = await Category.findByIdAndDelete(id);
-
+    const category = await db.orm.public.Category.first({ id });
     if (!category) {
       return NextResponse.json(
         {
@@ -116,23 +106,22 @@ export async function DELETE(
       );
     }
 
-  
+    await db.orm.public.Category.where({ id }).delete();
 
     return NextResponse.json(
       {
         success: true,
-        message: "Category updated successfully",
-        data: category,
+        message: "Category deleted successfully",
+        data: formatMongoCompat(category),
       },
       { status: 200 }
     );
-  } catch (error) {
-    console.error("Update Category Error:", error);
-
+  } catch (error: any) {
+    console.error("Delete Category Error:", error);
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error",
+        message: error?.message || "Internal Server Error",
       },
       { status: 500 }
     );

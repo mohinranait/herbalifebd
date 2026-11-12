@@ -1,117 +1,71 @@
 import { brandSchema } from "@/components/validations/brands";
-import connectDB from "@/lib/db";
-import Brand from "@/models/brand.model";
+import { db } from "@/prisma/db";
+import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-
 
 export async function GET(req: NextRequest) {
   try {
-    await connectDB();
-
     const { searchParams } = new URL(req.url);
 
     const search = searchParams.get("search") || "";
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
-
-    const status = searchParams.get("status"); // true / false / all
-    const isDelete = searchParams.get("isDelete"); // true / false / all
-    const date = searchParams.get("date");
+    const status = searchParams.get("status");
+    const isDelete = searchParams.get("isDelete");
 
     const skip = (page - 1) * limit;
 
-    // =========================
-    // BUILD QUERY
-    // =========================
-    const query:  {
-      name?: string;
-      slug?: string;
-       createdAt?: {
-        $gte?: Date;
-        $lte?: Date;
-      };
-      status?: boolean;
-      isDelete?: boolean;
-       $or?: {
-        name?: { $regex: string; $options: string };
-        slug?: { $regex: string; $options: string };
-      }[];
-    } = {};
+    let collection = db.orm.public.Brand;
 
-    //  SEARCH (name or slug)
+    if (status === "true") {
+      collection = collection.where({ status: true });
+    } else if (status === "false") {
+      collection = collection.where({ status: false });
+    }
+
+    if (isDelete === "true") {
+      collection = collection.where({ isDelete: true });
+    } else if (isDelete === "false") {
+      collection = collection.where({ isDelete: false });
+    }
+
     if (search) {
-      query.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { slug: { $regex: search, $options: "i" } },
-      ];
+      collection = collection.where((b: any) => b.name.ilike(`%${search}%`));
     }
 
-    //  STATUS FILTER
-    if (status === "true") query.status = true;
-    if (status === "false") query.status = false;
+    const brands = await collection
+      .orderBy((b: any) => b.createdAt.desc())
+      .offset(skip)
+      .limit(limit)
+      .all();
 
-    // 🗑 SOFT DELETE FILTER
-    if (isDelete === "true") query.isDelete = true;
-    if (isDelete === "false") query.isDelete = false;
+    const total = brands.length;
 
-    
-    // date filter
-    if (date) {
-      const start = new Date(date);
-      const end = new Date(date);
-
-      end.setHours(23, 59, 59, 999);
-
-      query.createdAt = {
-        $gte: start,
-        $lte: end,
-      };
-    }
-    
-
-    // =========================
-    // DB QUERY
-    // =========================
-    const brands = await Brand.find(query)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
-
-    const total = await Brand.countDocuments(query);
-
-    // =========================
-    // RESPONSE
-    // =========================
     return NextResponse.json({
       success: true,
       message: "Success",
-      data: brands,
+      data: formatMongoCompat(brands),
       meta: {
         total,
         page,
         limit,
-        totalPages: Math.ceil(total / limit),
+        totalPages: Math.ceil(total / limit) || 1,
       },
     });
-  } catch (error) {
+  } catch (error: any) {
+    console.error("Error fetching brands:", error);
     return NextResponse.json(
-      { success: false, message: "Error fetching brands" },
+      { success: false, message: error?.message || "Error fetching brands" },
       { status: 500 }
     );
   }
 }
 
-
 export async function POST(req: NextRequest) {
   try {
-    await connectDB();
-
     const body = await req.json();
 
-
-    // validate input
     const parsed = brandSchema.safeParse(body);
-
     if (!parsed.success) {
       return NextResponse.json(
         {
@@ -125,9 +79,7 @@ export async function POST(req: NextRequest) {
 
     const { slug } = parsed.data;
 
-    // check duplicate slug
-    const existing = await Brand.findOne({ slug });
-
+    const existing = await db.orm.public.Brand.where({ slug }).first();
     if (existing) {
       return NextResponse.json(
         {
@@ -138,26 +90,31 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // create brand
-    const brand = await Brand.create({
-     ...body
+    const brand = await db.orm.public.Brand.create({
+      name: body.name,
+      slug: body.slug,
+      description: body.description || null,
+      logo: body.logo || null,
+      banner: body.banner || null,
+      status: body.status !== undefined ? Boolean(body.status) : true,
+      priority: body.priority ? parseInt(body.priority) : 0,
+      isDelete: false,
     });
 
     return NextResponse.json(
       {
         success: true,
         message: "Brand created successfully",
-        data: brand,
+        data: formatMongoCompat(brand),
       },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Brand API Error:", error);
-
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error",
+        message: error?.message || "Internal Server Error",
       },
       { status: 500 }
     );

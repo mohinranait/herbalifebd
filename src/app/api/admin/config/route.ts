@@ -1,85 +1,86 @@
-
-import connectDB from "@/lib/db";
-import AppModel from "@/models/app-config";
+import { db } from "@/prisma/db";
+import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET: Fetch the configuration
 export async function GET() {
   try {
-    await connectDB();
-
-    // Get the single configuration document
-    let config = await AppModel.findOne();
+    let config = await db.orm.public.AppConfig.first();
 
     if (!config) {
-      // Create default config if none exists
-      config = await AppModel.create({
+      config = await db.orm.public.AppConfig.create({
         email: { user: "", password: "", status: false },
         cloudinary: { name: "", key: "", secret: "", status: false },
       });
     }
 
-    return NextResponse.json({ success: true, data: config }, { status: 200 });
-  } catch (error) {
+    return NextResponse.json(
+      { success: true, data: formatMongoCompat(config) },
+      { status: 200 }
+    );
+  } catch (error: any) {
     return NextResponse.json(
       { success: false, error: "Failed to fetch configuration" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
 
-// POST: Update the configuration (entire document)
+// POST: Update the configuration
 export async function POST(request: NextRequest) {
   try {
-    await connectDB();
     const body = await request.json();
     const { section, data, status } = body;
 
-    // Fetch the existing config document
-    let config = await AppModel.findOne();
+    let config = await db.orm.public.AppConfig.first();
+
+    const existingEmail = (config?.email as any) || {};
+    const existingCloudinary = (config?.cloudinary as any) || {};
 
     const email =
       section === "email"
-        ? { ...data, status: status !== undefined ? status : config?.email?.status }
-        : undefined;
+        ? {
+            ...existingEmail,
+            ...data,
+            status: status !== undefined ? status : existingEmail.status,
+          }
+        : existingEmail;
+
     const cloudinary =
       section === "cloudinary"
-        ? { ...data, status: status !== undefined ? status : config?.cloudinary?.status }
-        : undefined;
+        ? {
+            ...existingCloudinary,
+            ...data,
+            status: status !== undefined ? status : existingCloudinary.status,
+          }
+        : existingCloudinary;
 
     if (!config) {
-      // Create default if none exists
-      config = await AppModel.create({
+      config = await db.orm.public.AppConfig.create({
         email,
         cloudinary,
       });
+    } else {
+      await db.orm.public.AppConfig.where({ id: config.id }).update({
+        email,
+        cloudinary,
+      });
+      config = await db.orm.public.AppConfig.first({ id: config.id });
     }
-    
-
-    // Update the entire document with the provided body
-    if (email) {
-      config.email = email;
-    }
-
-    if (cloudinary) {
-      config.cloudinary = cloudinary;
-    }
-
-    await config.save();
 
     return NextResponse.json(
       {
         success: true,
         message: "Configuration updated successfully",
-        data: config,
+        data: formatMongoCompat(config),
         timestamp: new Date().toISOString(),
       },
-      { status: 200 },
+      { status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: "Failed to update configuration" },
-      { status: 500 },
+      { success: false, error: error?.message || "Failed to update configuration" },
+      { status: 500 }
     );
   }
 }

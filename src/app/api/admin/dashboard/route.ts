@@ -1,71 +1,42 @@
-import connectDB from "@/lib/db";
-import Order from "@/models/order";
+import { db } from "@/prisma/db";
+import { formatOrderForUI } from "@/lib/order-utils";
 import { NextRequest, NextResponse } from "next/server";
-
 
 export async function GET(req: NextRequest) {
   try {
-    await connectDB();
+    const deliveredOrders = await db.orm.public.Order
+      .where({ orderStatus: "DELIVERED", isDeleted: false })
+      .select("total")
+      .all();
 
+    const totalOrders = deliveredOrders.length;
+    const totalSales = deliveredOrders.reduce((sum: number, o: any) => sum + (o.total || 0), 0);
+    const averageOrderValue = totalOrders > 0 ? totalSales / totalOrders : 0;
 
-    const result = await Order.aggregate([
-      {
-        $match: {
-          orderStatus: "DELIVERED",
-          isDeleted: false,
-        },
-      },
-      {
-        $group: {
-          _id: null,
-
-          totalSales: {
-            $sum: "$pricing.total",
-          },
-
-          totalOrders: {
-            $sum: 1,
-          },
-
-         
-
-          averageOrderValue: {
-            $avg: "$pricing.total",
-          },
-        },
-      },
-    ]);
-
-
-
-    const orders = await Order.find()
-      .sort({ createdAt: -1 })
+    const recentOrders = await db.orm.public.Order
+      .include("user", (u: any) => u.select("id", "name", "phone"))
+      .include("items", (i: any) => i.all())
+      .orderBy((o: any) => o.createdAt.desc())
       .limit(5)
-      .populate("userId", "name email")
-      .lean();
-
-
+      .all();
 
     return NextResponse.json({
       success: true,
       data: {
-        ...result[0],
-
+        totalSales,
+        totalOrders,
+        averageOrderValue,
         totalProducts: 0,
-        lastOrders: orders,
-
+        lastOrders: recentOrders.map(formatOrderForUI),
       },
     });
-  } catch (error) {
-    const err = error instanceof Error ? error : new Error("An unknown error occurred");
+  } catch (error: any) {
     return NextResponse.json(
       {
         success: false,
-        message: err,
+        message: error?.message || "An unknown error occurred",
       },
-      {
-        status: 500,
-      }
+      { status: 500 }
     );
   }
 }

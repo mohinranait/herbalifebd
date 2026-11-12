@@ -1,59 +1,62 @@
 import { appSettingsSchema } from "@/components/validations/app-setting";
-import connectDB from "@/lib/db";
-import AppSetting from "@/models/app-setting";
+import { db } from "@/prisma/db";
+import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-
 
 // GET - Fetch Settings
 export async function GET() {
   try {
-    await connectDB();
-    let settings = await AppSetting.findOne();
+    let settings = await db.orm.public.AppSetting.first();
 
     if (!settings) {
-      settings = await AppSetting.create({
+      settings = await db.orm.public.AppSetting.create({
         siteName: "My Ecommerce",
         contactEmail: "admin@yourstore.com",
       });
     }
 
-    return NextResponse.json(settings);
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch settings" }, { status: 500 });
+    return NextResponse.json(formatMongoCompat(settings));
+  } catch (error: any) {
+    console.error("Fetch settings error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch settings" },
+      { status: 500 }
+    );
   }
 }
 
-// PUT - Update Settings
+// PATCH - Update Settings
 export async function PATCH(req: NextRequest) {
   try {
-
-
     const body = await req.json();
-    // console.log({body});
-    
     const validatedData = appSettingsSchema.parse(body);
-    // console.log({validatedData});
 
-    await connectDB();
+    let existing = await db.orm.public.AppSetting.first();
+    let updated;
 
-    const settings = await AppSetting.findOneAndUpdate(
-      {},
-      { 
+    if (existing) {
+      await db.orm.public.AppSetting.where({ id: existing.id }).update({
         ...validatedData,
-      },
-      { new: true, upsert: true, runValidators: true }
-    );
+      });
+      updated = await db.orm.public.AppSetting.first({ id: existing.id });
+    } else {
+      updated = await db.orm.public.AppSetting.create({
+        ...validatedData,
+      });
+    }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       message: "Settings updated successfully",
-      data: settings 
+      data: formatMongoCompat(updated),
     });
   } catch (error: any) {
-    console.log(error);
-    
-    return NextResponse.json({ 
-      error: error.errors || error.message 
-    }, { status: 400 });
+    console.error("Update settings error:", error);
+    return NextResponse.json(
+      {
+        error: error.errors || error.message,
+      },
+      { status: 400 }
+    );
   }
 }

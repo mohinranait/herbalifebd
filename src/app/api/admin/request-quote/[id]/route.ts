@@ -1,5 +1,4 @@
-import connectDB from "@/lib/db";
-import { RequestQuote } from "@/models/request-quote";
+import { db } from "@/prisma/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(
@@ -7,13 +6,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectDB();
-
     const { id } = await params;
 
-    const result = await RequestQuote.findByIdAndDelete(id);
-
-    if (!result) {
+    const existing = await db.orm.public.RequestQuote.first({ id });
+    if (!existing) {
       return NextResponse.json(
         {
           success: false,
@@ -23,16 +19,17 @@ export async function DELETE(
       );
     }
 
+    await db.orm.public.RequestQuote.where({ id }).delete();
+
     return NextResponse.json({
       success: true,
       message: "Request quote deleted successfully",
     });
-  } catch (error) {
-     const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+  } catch (error: any) {
     return NextResponse.json(
       {
         success: false,
-        message: errorMessage,
+        message: error?.message || "An unknown error occurred",
       },
       { status: 500 }
     );

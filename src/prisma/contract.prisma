@@ -1,0 +1,350 @@
+// use prisma-8
+
+model User {
+  id        ObjectId           @id @map("_id")
+  name      String
+  phone     String             @unique
+  password  String
+  role      String?
+  status    String?
+  createdAt temporal.CreatedAt
+  updatedAt temporal.UpdatedAt
+
+  @@map("users")
+}
+
+model Category {
+  id          ObjectId           @id @map("_id")
+  name        String
+  slug        String             @unique
+  parentId    ObjectId?
+  parent      Category?          @relation(fields: [parentId], references: [id])
+  thumbnail   String?
+  banner      String?
+  description String?
+  level       Int32?
+  path        String[]
+  status      Bool?
+  priority    Int32?
+  isDelete    Bool?
+  createdAt   temporal.CreatedAt
+  updatedAt   temporal.UpdatedAt
+
+  @@map("categories")
+}
+
+model Brand {
+  id          ObjectId           @id @map("_id")
+  name        String
+  slug        String             @unique
+  description String?
+  logo        String?
+  banner      String?
+  status      Bool?
+  priority    Int32?
+  isDelete    Bool?
+  createdAt   temporal.CreatedAt
+  updatedAt   temporal.UpdatedAt
+
+  @@map("brands")
+}
+
+model Attribute {
+  id          ObjectId           @id @map("_id")
+  name        String             @unique
+  displayName String?
+  description String?
+  values      String[]
+  status      Bool?
+  priority    Int32?
+  isDelete    Bool?
+  createdAt   temporal.CreatedAt
+  updatedAt   temporal.UpdatedAt
+
+  @@map("attributes")
+}
+
+model Product {
+  id                 ObjectId           @id @map("_id")
+  name               String
+  slug               String             @unique
+  videoUrl           String?
+  shortDescription   String?
+  description        String?
+  thumbnail          String?
+  gallery            String[]
+  price              Double?
+  discountPrice      Double?
+  discountParcent    Double?
+  productType        String?
+  selectedAttributes Json?
+  categoryId         ObjectId?
+  category           Category?          @relation(fields: [categoryId], references: [id])
+  brandId            ObjectId?
+  brand              Brand?             @relation(fields: [brandId], references: [id])
+  stock              Int32?
+  trackStock         Bool?
+  weight             Double?
+  dimensionLength    Double?
+  dimensionWidth     Double?
+  dimensionHeight    Double?
+  isFreeShipping     Bool?
+  seoTitle           String?
+  seoDescription     String?
+  seoKeywords        String[]
+  ratingsAverage     Double?
+  totalReviews       Int32?
+  tags               String[]
+  isFeatured         Bool?
+  totalSold          Int32?
+  isDelete           Bool?
+  status             Bool?
+  variations         ProductVariation[]
+  createdAt          temporal.CreatedAt
+  updatedAt          temporal.UpdatedAt
+
+  @@index([isFeatured])
+  @@index([totalSold])
+  @@index([categoryId])
+  @@index([brandId])
+  @@map("products")
+}
+
+model ProductVariation {
+  id                ObjectId           @id @map("_id")
+  productId         ObjectId
+  product           Product            @relation(fields: [productId], references: [id])
+  name              String
+  price             Double?
+  offerPriceFixed   Double?
+  offerPriceParcent Double?
+  costPrice         Double?
+  sku               String?            @unique
+  barcode           String?
+  stock             Int32?
+  lowStockAlert     Int32?
+  images            String[]
+  attributeConfig   Json?
+  weight            Double?
+  dimensionLength   Double?
+  dimensionWidth    Double?
+  dimensionHeight   Double?
+  isDefault         Bool?
+  createdAt         temporal.CreatedAt
+  updatedAt         temporal.UpdatedAt
+
+  @@map("product_variations")
+}
+
+model Order {
+  id                    ObjectId           @id @map("_id")
+  invoiceNumber         String             @unique
+  userId                ObjectId?
+  user                  User?              @relation(fields: [userId], references: [id])
+  totalItems            Int32
+  totalQuantity         Int32
+  subtotal              Double
+  discount              Double?
+  shippingCharge        Double?
+  tax                   Double?
+  total                 Double
+  couponCode            String?
+  couponDiscount        Double?
+
+  // Shipping Address
+  fullName              String
+  phone                 String
+  address               String
+  postalCode            String?
+
+  // Payment
+  paymentMethod         String?
+  paymentStatus         String?
+  transactionId         String?
+  paidAt                Date?
+
+  // Order Status
+  orderStatus           String?
+
+  trackingNumber        String?
+  courierName           String?
+  estimatedDeliveryDate Date?
+  customerNote          String?
+  adminNote             String?
+  deliveredAt           Date?
+  cancelledAt           Date?
+  isDeleted             Bool?
+  items                 OrderItem[]
+  createdAt             temporal.CreatedAt
+  updatedAt             temporal.UpdatedAt
+
+  @@index([userId])
+  @@index([orderStatus])
+  @@map("orders")
+}
+
+model OrderItem {
+  id               ObjectId @id @map("_id")
+  orderId          ObjectId
+  order            Order    @relation(fields: [orderId], references: [id])
+  productId        ObjectId
+  variationId      ObjectId?
+  productName      String
+  productImage     String?
+  productSlug      String
+  sku              String?
+  quantity         Int32
+  price            Double
+  salePrice        Double
+  subtotal         Double
+  selectedVariants Json?
+  categoryName     String?
+  brandName        String?
+
+  @@map("order_items")
+}
+
+model Comment {
+  id         ObjectId           @id @map("_id")
+  productId  ObjectId
+  product    Product            @relation(fields: [productId], references: [id])
+  userId     ObjectId
+  user       User               @relation(fields: [userId], references: [id])
+  comment    String
+  rating     Int32?
+  isApproved Bool?
+  isFeature  Bool?
+  createdAt  temporal.CreatedAt
+  updatedAt  temporal.UpdatedAt
+
+  @@map("comments")
+}
+
+model Contact {
+  id          ObjectId           @id @map("_id")
+  fullName    String?
+  email       String?
+  phone       String?
+  orderNumber String?
+  subject     String?
+  message     String?
+  createdAt   temporal.CreatedAt
+  updatedAt   temporal.UpdatedAt
+
+  @@map("contacts")
+}
+
+model Faq {
+  id        ObjectId           @id @map("_id")
+  title     String?
+  contents  String[]
+  priority  Int32?
+  status    Bool?
+  createdAt temporal.CreatedAt
+  updatedAt temporal.UpdatedAt
+
+  @@map("faqs")
+}
+
+model Media {
+  id         ObjectId           @id @map("_id")
+  fileUrl    String?
+  width      Int32?
+  height     Int32?
+  extension  String?
+  public_id  String?
+  secure_url String?
+  size       Int32?
+  createdAt  temporal.CreatedAt
+  updatedAt  temporal.UpdatedAt
+
+  @@map("media")
+}
+
+model Slider {
+  id          ObjectId           @id @map("_id")
+  title       String
+  description String?
+  link        String?
+  buttonName  String?
+  sliderType  String?
+  image       String?
+  status      Bool?
+  order       Int32?
+  isDelete    Bool?
+  createdAt   temporal.CreatedAt
+  updatedAt   temporal.UpdatedAt
+
+  @@map("sliders")
+}
+
+model RequestQuote {
+  id             ObjectId           @id @map("_id")
+  productId      ObjectId?
+  product        Product?           @relation(fields: [productId], references: [id])
+  address        String?
+  zipCode        String?
+  district       String?
+  name           String?
+  whatsappNumber String?
+  phone          String?
+  quantity       Int32?
+  notes          String?
+  createdAt      temporal.CreatedAt
+  updatedAt      temporal.UpdatedAt
+
+  @@map("request_quotes")
+}
+
+model AppSetting {
+  id                ObjectId           @id @map("_id")
+  siteName          String?
+  siteDescription   String?
+  logo              String?
+  footerLogo        String?
+  favicon           String?
+  contactEmail      String?
+  contactPhone      String?
+  address           Json?
+  metaTitle         String?
+  metaDescription   String?
+  metaKeyword       String?
+  ogImage           String?
+  marque            String?
+  currency          Json?
+  language          String?
+  timezone          String?
+  paymentMethods    Json?
+  shipping          Json?
+  socialLinks       Json?
+  features          Json?
+  layouts           Json?
+  maintenanceMode   Bool?
+  customCss         String?
+  customJs          String?
+  orderStatusConfig Json?
+  createdAt         temporal.CreatedAt
+  updatedAt         temporal.UpdatedAt
+
+  @@map("app_settings")
+}
+
+model SiteContent {
+  id                  ObjectId           @id @map("_id")
+  companyIntroduction Json?
+  whyChooseUs         Json?
+  createdAt           temporal.CreatedAt
+  updatedAt           temporal.UpdatedAt
+
+  @@map("site_contents")
+}
+
+model AppConfig {
+  id         ObjectId           @id @map("_id")
+  email      Json?
+  cloudinary Json?
+  createdAt  temporal.CreatedAt
+  updatedAt  temporal.UpdatedAt
+
+  @@map("app_configs")
+}

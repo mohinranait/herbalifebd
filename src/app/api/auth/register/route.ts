@@ -1,12 +1,11 @@
-import connectDB from "@/lib/db";
-import User from "@/models/user.model";
+import { db } from "@/prisma/db";
+import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-
     const { name, phone, password } = body;
 
     // validation
@@ -17,11 +16,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await connectDB()
-
-
-      // Duplicate check
-    const isExists = await User.findOne({ phone });
+    // Duplicate check
+    const isExists = await db.orm.public.User.where({ phone }).first();
     if (isExists) {
       return NextResponse.json(
         { success: false, error: "This phone already exists" },
@@ -29,28 +25,30 @@ export async function POST(req: NextRequest) {
       );
     }
 
-
-
     // Hash password
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(password, salt);
 
     // Create user
-    const userDoc = await User.create({
-      ...body,
+    const newUser = await db.orm.public.User.create({
+      name,
+      phone,
       password: hashedPassword,
+      role: body.role || "User",
+      status: body.status || "Active",
     });
 
-   const { password: _, ...user } = userDoc.toObject(); 
+    const { password: _, ...user } = newUser as any;
 
     return NextResponse.json({
       success: true,
       message: "User registered successfully",
-      data: user,
+      data: formatMongoCompat(user),
     });
-  } catch (error) {
+  } catch (error: any) {
+    console.error("Register error:", error);
     return NextResponse.json(
-      { success: false, message: "Something went wrong" },
+      { success: false, message: error?.message || "Something went wrong" },
       { status: 500 }
     );
   }

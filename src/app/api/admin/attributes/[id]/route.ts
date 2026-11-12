@@ -1,22 +1,17 @@
 import { attributeSchema } from "@/components/validations/attributes";
-import connectDB from "@/lib/db";
-import Attribute from "@/models/attributes";
+import { db } from "@/prisma/db";
+import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-
 
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectDB();
-
     const body = await req.json();
     const { id } = await params;
 
-    //  validate input
     const parsed = attributeSchema.safeParse(body);
-
     if (!parsed.success) {
       return NextResponse.json(
         {
@@ -30,11 +25,7 @@ export async function PATCH(
 
     const name = parsed.data.name;
 
-
-
-    //  check product exists
-    const existingAttr = await Attribute.findById(id);
-
+    const existingAttr = await db.orm.public.Attribute.first({ id });
     if (!existingAttr) {
       return NextResponse.json(
         {
@@ -45,12 +36,11 @@ export async function PATCH(
       );
     }
 
-    //  check duplicate slug (exclude current id)
     if (name && name !== existingAttr.name) {
-      const duplicate = await Attribute.findOne({
-        name,
-        _id: { $ne: id },
-      });
+      const duplicate = await db.orm.public.Attribute
+        .where({ name })
+        .where((a: any) => a.id.neq(id))
+        .first();
 
       if (duplicate) {
         return NextResponse.json(
@@ -63,51 +53,46 @@ export async function PATCH(
       }
     }
 
+    await db.orm.public.Attribute.where({ id }).update({
+      name: body.name !== undefined ? body.name : existingAttr.name,
+      displayName: body.displayName !== undefined ? body.displayName : existingAttr.displayName,
+      description: body.description !== undefined ? body.description : existingAttr.description,
+      values: Array.isArray(body.values) ? body.values : existingAttr.values,
+      status: body.status !== undefined ? Boolean(body.status) : existingAttr.status,
+      priority: body.priority !== undefined ? parseInt(body.priority) : existingAttr.priority,
+      isDelete: body.isDelete !== undefined ? Boolean(body.isDelete) : existingAttr.isDelete,
+    });
 
-
-    //  update attribute
-    const attribute = await Attribute.findByIdAndUpdate(
-      id,
-      { ...body },
-      { new: true, runValidators: true }
-    );
+    const updated = await db.orm.public.Attribute.first({ id });
 
     return NextResponse.json(
       {
         success: true,
         message: "Attribute updated successfully",
-        data: attribute,
+        data: formatMongoCompat(updated),
       },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Update Attribute Error:", error);
-
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error",
+        message: error?.message || "Internal Server Error",
       },
       { status: 500 }
     );
   }
 }
 
-
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectDB();
-
-
     const { id } = await params;
 
-
-    //  check attribute exists
-    const attribute = await Attribute.findByIdAndDelete(id);
-
+    const attribute = await db.orm.public.Attribute.first({ id });
     if (!attribute) {
       return NextResponse.json(
         {
@@ -118,27 +103,24 @@ export async function DELETE(
       );
     }
 
-
+    await db.orm.public.Attribute.where({ id }).delete();
 
     return NextResponse.json(
       {
         success: true,
-        message: "Attribute updated successfully",
-        data: attribute,
+        message: "Attribute deleted successfully",
+        data: formatMongoCompat(attribute),
       },
       { status: 200 }
     );
-  } catch (error) {
-    console.error("Update Attribute Error:", error);
-
+  } catch (error: any) {
+    console.error("Delete Attribute Error:", error);
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error",
+        message: error?.message || "Internal Server Error",
       },
       { status: 500 }
     );
   }
 }
-
-

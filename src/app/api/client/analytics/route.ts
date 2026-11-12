@@ -1,21 +1,7 @@
 import { getAuthUser } from "@/lib/authUser";
-import Order from "@/models/order";
+import { db } from "@/prisma/db";
 import { TOrderStatus } from "@/redux/service/orders/type";
-import { Types } from "mongoose";
 import { NextResponse } from "next/server";
-
-type TOrderAnalyticsResult = {
-  overview: {
-    totalOrders: number;
-    totalShopping: number;
-    totalSaving: number;
-  }[];
-
-  statusCounts: {
-    _id: TOrderStatus;
-    count: number;
-  }[];
-};
 
 export async function GET() {
   try {
@@ -25,7 +11,6 @@ export async function GET() {
     };
 
     const userId = decoded?.id;
-
     if (!userId) {
       return NextResponse.json(
         {
@@ -38,55 +23,13 @@ export async function GET() {
       );
     }
 
-    const result = await Order.aggregate<TOrderAnalyticsResult>([
-      {
-        $match: {
-          userId: new Types.ObjectId(userId),
-          isDeleted: false,
-        },
-      },
+    const orders = await db.orm.public.Order
+      .where({ userId, isDeleted: false })
+      .select("orderStatus", "total", "discount")
+      .all();
 
-      {
-        $facet: {
-          overview: [
-            {
-              $group: {
-                _id: null,
-
-                totalOrders: {
-                  $sum: 1,
-                },
-
-                totalShopping: {
-                  $sum: "$pricing.total",
-                },
-
-                totalSaving: {
-                  $sum: "$pricing.discount",
-                },
-              },
-            },
-          ],
-
-          statusCounts: [
-            {
-              $group: {
-                _id: "$orderStatus",
-                count: {
-                  $sum: 1,
-                },
-              },
-            },
-          ],
-        },
-      },
-    ]);
-
-    const overview = result[0]?.overview[0] || {
-      totalOrders: 0,
-      totalShopping: 0,
-      totalSaving: 0,
-    };
+    let totalShopping = 0;
+    let totalSaving = 0;
 
     const ordersByStatus: Record<TOrderStatus, number> = {
       PENDING: 0,
@@ -98,32 +41,32 @@ export async function GET() {
       RETURNED: 0,
     };
 
-    result[0]?.statusCounts.forEach((item) => {
-      ordersByStatus[item._id] = item.count;
-    });
+    for (const order of orders) {
+      totalShopping += order.total || 0;
+      totalSaving += order.discount || 0;
 
-    return NextResponse.json(
-      {
-        success: true,
-        message: "Customer analytics fetched successfully",
-        data: {
-          totalOrders: overview.totalOrders,
-          totalShopping: overview.totalShopping,
-          totalSaving: overview.totalSaving,
-          ordersByStatus,
-        },
-      },
-      {
-        status: 200,
+      const status = order.orderStatus as TOrderStatus;
+      if (ordersByStatus[status] !== undefined) {
+        ordersByStatus[status] += 1;
       }
-    );
-  } catch (error) {
-    console.error("Customer analytics error:", error);
+    }
 
+    return NextResponse.json({
+      success: true,
+      message: "Customer analytics fetched successfully",
+      data: {
+        totalOrders: orders.length,
+        totalShopping,
+        totalSaving,
+        ordersByStatus,
+      },
+    });
+  } catch (error: any) {
+    console.error("Customer analytics error:", error);
     return NextResponse.json(
       {
         success: false,
-        message: "Internal server error",
+        message: error?.message || "Internal server error",
       },
       {
         status: 500,

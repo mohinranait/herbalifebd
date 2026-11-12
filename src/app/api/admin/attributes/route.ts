@@ -1,116 +1,70 @@
 import { attributeSchema } from "@/components/validations/attributes";
-import connectDB from "@/lib/db";
-import Attribute from "@/models/attributes";
+import { db } from "@/prisma/db";
+import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-
 
 export async function GET(req: NextRequest) {
   try {
-    await connectDB();
-
     const { searchParams } = new URL(req.url);
 
     const search = searchParams.get("search") || "";
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
-
-    const status = searchParams.get("status"); // true / false / all
-    const isDelete = searchParams.get("isDelete"); // true / false / all
-    const date = searchParams.get("date");
+    const status = searchParams.get("status");
+    const isDelete = searchParams.get("isDelete");
 
     const skip = (page - 1) * limit;
 
-    // =========================
-    // BUILD QUERY
-    // =========================
-    const query: {
-      name?: string;
-      slug?: string;
-      createdAt?: {
-        $gte?: Date;
-        $lte?: Date;
-      };
-      status?: boolean;
-      isDelete?: boolean;
-      $or?: {
-        name?: { $regex: string; $options: string };
-        slug?: { $regex: string; $options: string };
-      }[];
-    } = {};
+    let collection = db.orm.public.Attribute;
 
-    //  SEARCH (name or slug)
+    if (status === "true") {
+      collection = collection.where({ status: true });
+    } else if (status === "false") {
+      collection = collection.where({ status: false });
+    }
+
+    if (isDelete === "true") {
+      collection = collection.where({ isDelete: true });
+    } else if (isDelete === "false") {
+      collection = collection.where({ isDelete: false });
+    }
+
     if (search) {
-      query.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { slug: { $regex: search, $options: "i" } },
-      ];
+      collection = collection.where((a: any) => a.name.ilike(`%${search}%`));
     }
 
-    //  STATUS FILTER
-    if (status === "true") query.status = true;
-    if (status === "false") query.status = false;
+    const attributes = await collection
+      .orderBy((a: any) => a.createdAt.desc())
+      .offset(skip)
+      .limit(limit)
+      .all();
 
-    // 🗑 SOFT DELETE FILTER
-    if (isDelete === "true") query.isDelete = true;
-    if (isDelete === "false") query.isDelete = false;
+    const total = attributes.length;
 
-
-    // date filter
-    if (date) {
-      const start = new Date(date);
-      const end = new Date(date);
-
-      end.setHours(23, 59, 59, 999);
-
-      query.createdAt = {
-        $gte: start,
-        $lte: end,
-      };
-    }
-
-
-    // =========================
-    // DB QUERY
-    // =========================
-    const attributes = await Attribute.find(query)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
-
-    const total = await Attribute.countDocuments(query);
-
-    // =========================
-    // RESPONSE
-    // =========================
     return NextResponse.json({
       success: true,
-      data: attributes,
+      data: formatMongoCompat(attributes),
       meta: {
         total,
         page,
         limit,
-        totalPages: Math.ceil(total / limit),
+        totalPages: Math.ceil(total / limit) || 1,
       },
     });
-  } catch (error) {
+  } catch (error: any) {
+    console.error("Error fetching attributes:", error);
     return NextResponse.json(
-      { success: false, message: "Error fetching attributes" },
+      { success: false, message: error?.message || "Error fetching attributes" },
       { status: 500 }
     );
   }
 }
 
-
 export async function POST(req: NextRequest) {
   try {
-    await connectDB();
-
     const body = await req.json();
 
-
-    // validate input
     const parsed = attributeSchema.safeParse(body);
-
     if (!parsed.success) {
       return NextResponse.json(
         {
@@ -122,8 +76,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-
-    const isExists = await Attribute.findOne({ name: parsed.data.name })
+    const isExists = await db.orm.public.Attribute.where({ name: parsed.data.name }).first();
     if (isExists) {
       return NextResponse.json(
         {
@@ -134,27 +87,30 @@ export async function POST(req: NextRequest) {
       );
     }
 
-
-    // create attribute
-    const attribute = await Attribute.create({
-      ...body
+    const attribute = await db.orm.public.Attribute.create({
+      name: body.name,
+      displayName: body.displayName || null,
+      description: body.description || null,
+      values: Array.isArray(body.values) ? body.values : [],
+      status: body.status !== undefined ? Boolean(body.status) : true,
+      priority: body.priority ? parseInt(body.priority) : 0,
+      isDelete: false,
     });
 
     return NextResponse.json(
       {
         success: true,
         message: "Attribute created successfully",
-        data: attribute,
+        data: formatMongoCompat(attribute),
       },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Attribute API Error:", error);
-
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error",
+        message: error?.message || "Internal Server Error",
       },
       { status: 500 }
     );

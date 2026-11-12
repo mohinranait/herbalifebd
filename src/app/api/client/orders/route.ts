@@ -1,18 +1,13 @@
 import { getAuthUser } from "@/lib/authUser";
-import connectDB from "@/lib/db";
-import Order from "@/models/order";
+import { db } from "@/prisma/db";
+import { formatOrderForUI } from "@/lib/order-utils";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   try {
-    await connectDB();
-
-
-    const decoded = await getAuthUser() as { id: string; phone: string };
+    const decoded = (await getAuthUser()) as { id: string; phone: string };
 
     const userId = decoded?.id;
-    // console.log({userId});
-    
     if (!userId) {
       return NextResponse.json(
         { success: false, message: "Unauthorized: Invalid token" },
@@ -28,55 +23,40 @@ export async function GET(req: Request) {
 
     const skip = (page - 1) * limit;
 
-    /* ----------------------------- FILTER QUERY ---------------------------- */
+    let query = db.orm.public.Order.where({ userId });
 
-    const filter: any = {
-      isDeleted: false,
-    };
-
-    if (userId) {
-      filter.userId = userId;
+    if (isDelete === "true") {
+      query = query.where({ isDeleted: true });
+    } else if (isDelete === "false") {
+      query = query.where({ isDeleted: false });
+    } else {
+      query = query.where({ isDeleted: false });
     }
 
-
-
-    // SOFT DELETE FILTER
-    if (isDelete === "true") filter.isDeleted = true;
-    if (isDelete === "false") filter.isDeleted = false;
-
-
-
-
-    /* ------------------------------ DATABASE ------------------------------- */
-
-    const orders = await Order.find(filter)
-      .sort({ createdAt: -1 })
-      .skip(skip)
+    const orders = await query
+      .include("user", (u: any) => u.select("id", "name", "phone"))
+      .include("items", (i: any) => i.all())
+      .orderBy((o: any) => o.createdAt.desc())
+      .offset(skip)
       .limit(limit)
-      .populate("userId", "name email")
-      .lean();
+      .all();
 
-    const totalOrders = await Order.countDocuments(filter);
-
-    /* ------------------------------ RESPONSE ------------------------------- */
+    const formattedOrders = orders.map(formatOrderForUI);
+    const totalOrders = orders.length;
 
     return NextResponse.json({
       success: true,
-      data: orders,
+      data: formattedOrders,
       meta: {
         total: totalOrders,
         page,
         limit,
-        totalPages: Math.ceil(totalOrders / limit),
+        totalPages: Math.ceil(totalOrders / limit) || 1,
       },
     });
-  } catch (error: unknown) {
-    const err= error instanceof Error ? error : new Error("An unknown error occurred");
+  } catch (error: any) {
     return NextResponse.json(
-      {
-        success: false,
-        message: err.message || "Failed to fetch orders",
-      },
+      { success: false, error: error?.message || "Internal server error" },
       { status: 500 }
     );
   }

@@ -1,22 +1,17 @@
 import { brandSchema } from "@/components/validations/brands";
-import connectDB from "@/lib/db";
-import Brand from "@/models/brand.model";
+import { db } from "@/prisma/db";
+import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: Promise< { id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectDB();
-
     const body = await req.json();
-     const { id } = await  params;
+    const { id } = await params;
 
-    //  validate input
     const parsed = brandSchema.safeParse(body);
-
     if (!parsed.success) {
       return NextResponse.json(
         {
@@ -30,9 +25,7 @@ export async function PATCH(
 
     const { slug } = parsed.data;
 
-    //  check brand exists
-    const existingBrand = await Brand.findById(id);
-
+    const existingBrand = await db.orm.public.Brand.first({ id });
     if (!existingBrand) {
       return NextResponse.json(
         {
@@ -43,12 +36,11 @@ export async function PATCH(
       );
     }
 
-    //  check duplicate slug (exclude current id)
-    if (slug  && slug !== existingBrand.slug) {
-      const duplicate = await Brand.findOne({
-        slug,
-        _id: { $ne: id },
-      });
+    if (slug && slug !== existingBrand.slug) {
+      const duplicate = await db.orm.public.Brand
+        .where({ slug })
+        .where((b: any) => b.id.neq(id))
+        .first();
 
       if (duplicate) {
         return NextResponse.json(
@@ -61,49 +53,47 @@ export async function PATCH(
       }
     }
 
-    //  update brand
-    const updatedBrand = await Brand.findByIdAndUpdate(
-      id,
-      { ...body },
-      { new: true, runValidators: true }
-    );
+    await db.orm.public.Brand.where({ id }).update({
+      name: body.name !== undefined ? body.name : existingBrand.name,
+      slug: body.slug !== undefined ? body.slug : existingBrand.slug,
+      description: body.description !== undefined ? body.description : existingBrand.description,
+      logo: body.logo !== undefined ? body.logo : existingBrand.logo,
+      banner: body.banner !== undefined ? body.banner : existingBrand.banner,
+      status: body.status !== undefined ? Boolean(body.status) : existingBrand.status,
+      priority: body.priority !== undefined ? parseInt(body.priority) : existingBrand.priority,
+      isDelete: body.isDelete !== undefined ? Boolean(body.isDelete) : existingBrand.isDelete,
+    });
+
+    const updated = await db.orm.public.Brand.first({ id });
 
     return NextResponse.json(
       {
         success: true,
         message: "Brand updated successfully",
-        data: updatedBrand,
+        data: formatMongoCompat(updated),
       },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Update Brand Error:", error);
-
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error",
+        message: error?.message || "Internal Server Error",
       },
       { status: 500 }
     );
   }
 }
 
-
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectDB();
+    const { id } = await params;
 
-   
-     const { id } = await  params;
-  
-
-    //  check brand exists
-    const brand = await Brand.findByIdAndDelete(id);
-
+    const brand = await db.orm.public.Brand.first({ id });
     if (!brand) {
       return NextResponse.json(
         {
@@ -114,27 +104,24 @@ export async function DELETE(
       );
     }
 
-  
+    await db.orm.public.Brand.where({ id }).delete();
 
     return NextResponse.json(
       {
         success: true,
-        message: "Brand updated successfully",
-        data: brand,
+        message: "Brand deleted successfully",
+        data: formatMongoCompat(brand),
       },
       { status: 200 }
     );
-  } catch (error) {
-    console.error("Update Brand Error:", error);
-
+  } catch (error: any) {
+    console.error("Delete Brand Error:", error);
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error",
+        message: error?.message || "Internal Server Error",
       },
       { status: 500 }
     );
   }
 }
-
-

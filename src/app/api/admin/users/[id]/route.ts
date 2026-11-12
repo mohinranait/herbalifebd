@@ -1,26 +1,17 @@
-
 import { userSchema } from "@/components/validations/user.schema";
-import connectDB from "@/lib/db";
-import User from "@/models/user.model";
+import { db } from "@/prisma/db";
+import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-
-
-
-
+import bcrypt from "bcryptjs";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise< { id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectDB();
+    const { id } = await params;
 
-     const { id } = await  params;
-
-   
-    //  check user exists
-    const existingUser = await User.findById(id).select('-password');
-
+    const existingUser = await db.orm.public.User.first({ id });
     if (!existingUser) {
       return NextResponse.json(
         {
@@ -31,44 +22,37 @@ export async function GET(
       );
     }
 
-   
+    const { password: _, ...userWithoutPass } = existingUser as any;
 
-   
     return NextResponse.json(
       {
         success: true,
         message: "Successfully",
-        data: existingUser,
+        data: formatMongoCompat(userWithoutPass),
       },
       { status: 200 }
     );
-  } catch (error) {
-    console.error("Update User Error:", error);
-
+  } catch (error: any) {
+    console.error("Get User Error:", error);
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error",
+        message: error?.message || "Internal Server Error",
       },
       { status: 500 }
     );
   }
 }
 
-
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: Promise< { id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectDB();
-
     const body = await req.json();
-     const { id } = await  params;
+    const { id } = await params;
 
-    //  validate input
     const parsed = userSchema.safeParse(body);
-
     if (!parsed.success) {
       return NextResponse.json(
         {
@@ -82,9 +66,7 @@ export async function PATCH(
 
     const { phone } = parsed.data;
 
-    //  check user exists
-    const existingUser = await User.findById(id);
-
+    const existingUser = await db.orm.public.User.first({ id });
     if (!existingUser) {
       return NextResponse.json(
         {
@@ -95,12 +77,11 @@ export async function PATCH(
       );
     }
 
-    //  check duplicate user (exclude current id)
-    if (phone  && phone !== existingUser.phone) {
-      const duplicate = await User.findOne({
-        phone,
-        _id: { $ne: id },
-      });
+    if (phone && phone !== existingUser.phone) {
+      const duplicate = await db.orm.public.User
+        .where({ phone })
+        .where((u: any) => u.id.neq(id))
+        .first();
 
       if (duplicate) {
         return NextResponse.json(
@@ -113,49 +94,51 @@ export async function PATCH(
       }
     }
 
-    //  update user
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      { ...body },
-      { new: true, runValidators: true }
-    );
+    let password = existingUser.password;
+    if (body.password && body.password.trim()) {
+      const salt = bcrypt.genSaltSync(10);
+      password = bcrypt.hashSync(body.password, salt);
+    }
+
+    await db.orm.public.User.where({ id }).update({
+      name: body.name !== undefined ? body.name : existingUser.name,
+      phone: body.phone !== undefined ? body.phone : existingUser.phone,
+      role: body.role !== undefined ? body.role : existingUser.role,
+      status: body.status !== undefined ? body.status : existingUser.status,
+      password,
+    });
+
+    const updatedUser = await db.orm.public.User.first({ id });
+    const { password: _, ...userWithoutPass } = updatedUser as any;
 
     return NextResponse.json(
       {
         success: true,
         message: "User updated successfully",
-        data: updatedUser,
+        data: formatMongoCompat(userWithoutPass),
       },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Update User Error:", error);
-
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error",
+        message: error?.message || "Internal Server Error",
       },
       { status: 500 }
     );
   }
 }
 
-
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectDB();
+    const { id } = await params;
 
-   
-     const { id } = await  params;
-  
-
-    //  check user exists
-    const user = await User.findByIdAndDelete(id);
-
+    const user = await db.orm.public.User.first({ id });
     if (!user) {
       return NextResponse.json(
         {
@@ -166,27 +149,26 @@ export async function DELETE(
       );
     }
 
-  
+    await db.orm.public.User.where({ id }).delete();
+
+    const { password: _, ...userWithoutPass } = user as any;
 
     return NextResponse.json(
       {
         success: true,
-        message: "User updated successfully",
-        data: user,
+        message: "User deleted successfully",
+        data: formatMongoCompat(userWithoutPass),
       },
       { status: 200 }
     );
-  } catch (error) {
-    console.error("Update User Error:", error);
-
+  } catch (error: any) {
+    console.error("Delete User Error:", error);
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error",
+        message: error?.message || "Internal Server Error",
       },
       { status: 500 }
     );
   }
 }
-
-
