@@ -1,20 +1,44 @@
-import Link from 'next/link'
-import React from 'react'
+import Link from 'next/link';
+import React from 'react';
+import { ChevronRight } from 'lucide-react';
 
-const Breadcrumb = ({ name }: { name: string }) => {
-  return (
-    <div className=" backdrop-blur-sm border-b bg-white border-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Link href="/" className="hover:text-slate-900">Home</Link>
-          <span>/</span>
-          <a href="#" className="hover:text-slate-900">Products</a>
-          <span>/</span>
-          <span className="text-accent-foreground font-medium">{name}</span>
-        </div>
-      </div>
-    </div>
-  )
+interface BreadcrumbProps {
+  name: string;
 }
 
-export default Breadcrumb
+const Breadcrumb = ({ name }: BreadcrumbProps) => {
+  return (
+    <div className="bg-white border-b border-slate-100">
+      <div className="container mx-auto px-4 max-w-[1276px] py-3">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs sm:text-sm text-slate-500 overflow-x-auto no-scrollbar">
+          <Link
+            href="/"
+            className="text-slate-600 hover:text-[#ff7a00] transition-colors shrink-0"
+          >
+            হোম
+          </Link>
+
+          <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+
+          <Link
+            href="/shop"
+            className="text-slate-600 hover:text-[#ff7a00] transition-colors shrink-0"
+          >
+            প্রডাক্টস
+          </Link>
+
+          <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+
+          <span
+            className="text-slate-800 font-medium truncate max-w-[240px] sm:max-w-md shrink-0"
+            title={name}
+          >
+            {name}
+          </span>
+        </nav>
+      </div>
+    </div>
+  );
+};
+
+export default Breadcrumb;

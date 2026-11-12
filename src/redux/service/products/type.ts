@@ -1,4 +1,5 @@
 import { IMetaPagination } from "@/types/common.type";
+import { IBrand } from "../brand/type";
 
 interface IProductSelectedVariant {
   attributeId: string,
@@ -35,7 +36,7 @@ export interface IProductBase {
     isFreeShipping: boolean;
   },
   category: string,
-  brand?: string,
+  brandInfo?: IBrand,
   price?:number,
   discountPrice?:number,
   discountParcent?: number;

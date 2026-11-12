@@ -1,7 +1,10 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { ICategory } from "@/redux/service/categories/type";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Folder } from "lucide-react";
 import { useState } from "react";
+
 interface CategoryNodeProps {
   node: ICategory;
   all: ICategory[];
@@ -14,7 +17,6 @@ function isDescendantActive(id: string, all: ICategory[], activeCat: string): bo
   return all.filter((c) => c.parentId === id).some((c) => isDescendantActive(c._id, all, activeCat));
 }
 
-
 function CategoryNode({ node, all, activeCat, handleCatChange }: CategoryNodeProps) {
   const children = all.filter((c) => c.parentId === node._id);
   const hasKids = children.length > 0;
@@ -23,40 +25,47 @@ function CategoryNode({ node, all, activeCat, handleCatChange }: CategoryNodePro
 
   return (
     <div>
-      <div className="flex items-center gap-0.5">
-        {/* Arrow — শুধু accordion */}
+      <div className="flex items-center gap-1">
+        {/* Accordion toggle arrow */}
         <button
+          type="button"
           onClick={() => hasKids && setOpen((p) => !p)}
           className={cn(
-            'p-1 rounded transition-colors shrink-0',
-            hasKids ? 'hover:bg-muted cursor-pointer' : 'opacity-0 pointer-events-none'
+            "p-1 rounded-md transition-colors shrink-0",
+            hasKids ? "hover:bg-slate-100 text-slate-400 cursor-pointer" : "opacity-0 pointer-events-none w-5"
           )}
         >
           <ChevronRight
             className={cn(
-              'w-3.5 h-3.5 text-muted-foreground transition-transform duration-200',
-              open && 'rotate-90'
+              "w-3.5 h-3.5 transition-transform duration-200",
+              open && "rotate-90 text-slate-700"
             )}
           />
         </button>
 
-        {/* Label — শুধু category select */}
+        {/* Category button */}
         <button
-          onClick={() => handleCatChange(isActive ? '' : node._id)}
+          type="button"
+          onClick={() => handleCatChange(isActive ? "" : node._id)}
           className={cn(
-            'flex-1 text-left justify-between  px-2 py-1.5 rounded-lg transition-colors text-sm',
+            "flex-1 flex items-center justify-between text-left px-2.5 py-1.5 rounded-lg text-xs sm:text-sm transition-colors cursor-pointer",
             isActive
-              ? 'bg-primary/10 text-primary font-medium'
-              : 'text-foreground hover:bg-muted'
+              ? "bg-orange-50 text-orange-600 font-semibold border border-orange-200"
+              : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
           )}
         >
-          {node.name} <span className="text-sm text-muted-foreground">({node?.totalProducts})</span>
+          <span className="line-clamp-1">{node.name}</span>
+          {node?.totalProducts !== undefined && (
+            <span className={cn("text-[11px] ml-1 shrink-0", isActive ? "text-orange-500 font-bold" : "text-slate-400")}>
+              ({node.totalProducts})
+            </span>
+          )}
         </button>
       </div>
 
-      {/* Children */}
+      {/* Children Subcategories */}
       {hasKids && open && (
-        <div className="ml-5 pl-2.5 border-l border-border mt-0.5 space-y-0.5">
+        <div className="ml-5 pl-2 border-l border-slate-200 mt-0.5 space-y-0.5">
           {children.map((child) => (
             <CategoryNode
               key={child._id}
@@ -72,7 +81,6 @@ function CategoryNode({ node, all, activeCat, handleCatChange }: CategoryNodePro
   );
 }
 
-
 export function CategoryTree({
   categories,
   activeCat,
@@ -86,23 +94,28 @@ export function CategoryTree({
 
   return (
     <div>
-      <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-2">
-        Categories
-      </p>
-      <div className="space-y-0.5">
-        {/* All products */}
-        <div className="flex items-center gap-0.5">
-          <span className="w-6 shrink-0" />
+      <div className="flex items-center gap-1.5 pb-2 mb-2 border-b border-slate-100">
+        <Folder className="w-3.5 h-3.5 text-orange-500" />
+        <span className="text-xs font-bold text-slate-800 uppercase tracking-wide">
+          ক্যাটাগরি
+        </span>
+      </div>
+
+      <div className="space-y-0.5 max-h-60 overflow-y-auto pr-1">
+        {/* All Products Item */}
+        <div className="flex items-center gap-1">
+          <span className="w-5 shrink-0" />
           <button
-            onClick={() => handleCatChange('')}
+            type="button"
+            onClick={() => handleCatChange("")}
             className={cn(
-              'flex-1 text-left px-2 py-1.5 rounded-lg transition-colors text-sm',
+              "flex-1 text-left px-2.5 py-1.5 rounded-lg text-xs sm:text-sm transition-colors cursor-pointer",
               !activeCat
-                ? 'bg-primary/10 text-primary font-medium'
-                : 'text-foreground hover:bg-muted'
+                ? "bg-orange-50 text-orange-600 font-semibold border border-orange-200"
+                : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
             )}
           >
-            All products
+            সকল প্রডাক্ট
           </button>
         </div>
 

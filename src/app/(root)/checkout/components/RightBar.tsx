@@ -1,6 +1,5 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useAppSelector } from "@/hooks/hooks";
 import { CURRENCY } from "@/lib/envSecret";
@@ -11,143 +10,161 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { TCheckoutForm } from "@/components/validations/checkout";
+
 type Props = {
   deliveryCharge: number;
   selectedMethod: TMethodList | undefined;
-  isLoading: boolean
+  isLoading: boolean;
   form: UseFormReturn<TCheckoutForm>;
+};
 
-}
 const RightBar = ({ deliveryCharge, selectedMethod, form, isLoading }: Props) => {
-  const { register, formState: { errors }, } = form
-  const { carts, totalItems, subtotal, } = useAppSelector(state => state.cart)
+  const { register, formState: { errors } } = form;
+  const { carts, totalItems, subtotal } = useAppSelector((state) => state.cart);
   const discount = 0;
   const total = subtotal + deliveryCharge - discount;
+
   return (
-    <Card className="sticky py-5 top-24">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          Your Cart
-          <span className="text-sm font-normal text-muted-foreground">({totalItems} items)</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {carts.map((item, idx) => (
-            <div key={idx} className="flex gap-4 py-3 border-b last:border-0">
-              <div className="w-14 h-14 rounded-xl bg-slate-100 flex items-center justify-center text-3xl shrink-0">
-                {
-                  item?.productImage &&
-                  <Image
-                    src={`${item?.productImage}`}
-                    alt={item?.productName}
-                    className="w-full h-full object-cover rounded-md"
-                    width={60}
-                    height={60}
-                  />
-                }
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-medium leading-tight">{item.productName}</p>
-                {
-                  item?.selectedVariants &&
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {
-                      Object.keys(item?.selectedVariants || {}).map((key, index, array) => (
-                        <span key={key} className="capitalize">
-                          {key}: {item.selectedVariants && item.selectedVariants[key]}
-                          {index !== array.length - 1 && " • "}
-                        </span>
-                      ))
-                    }
+    <div className="bg-white border border-slate-200 rounded-xl p-5 sticky top-20 space-y-5">
+      {/* Title */}
+      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 className="font-bold text-base md:text-lg text-slate-800">
+          অর্ডার সারাংশ
+        </h3>
+        <span className="text-xs font-semibold bg-orange-50 text-orange-600 px-2.5 py-0.5 rounded-full border border-orange-200">
+          {totalItems} টি পণ্য
+        </span>
+      </div>
 
-                  </p>
-                }
-                <p className="text-sm mt-1">Qty: {item.quantity}</p>
-              </div>
-              <div className="text-right font-semibold">
-                {CURRENCY}{(item.salePrice * item.quantity).toLocaleString("en-IN")}
-              </div>
+      {/* Cart Items List */}
+      <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
+        {carts.map((item, idx) => (
+          <div key={idx} className="flex gap-3 py-2.5 border-b border-slate-100 last:border-0">
+            <div className="w-14 h-14 rounded-lg bg-slate-50 border border-slate-100 overflow-hidden relative shrink-0">
+              {item?.productImage && (
+                <Image
+                  src={`${item.productImage}`}
+                  alt={item.productName}
+                  className="w-full h-full object-cover"
+                  width={60}
+                  height={60}
+                />
+              )}
             </div>
-          ))}
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-xs md:text-sm text-slate-800 line-clamp-1 leading-snug">
+                {item.productName}
+              </p>
+              {item?.selectedVariants && Object.keys(item.selectedVariants).length > 0 && (
+                <p className="mt-0.5 text-[10px] text-slate-500">
+                  {Object.keys(item.selectedVariants).map((key, index, array) => (
+                    <span key={key} className="capitalize">
+                      {key}: {item.selectedVariants && item.selectedVariants[key]}
+                      {index !== array.length - 1 && " • "}
+                    </span>
+                  ))}
+                </p>
+              )}
+              <p className="text-xs text-slate-500 mt-1 font-medium">
+                পরিমাণ: {item.quantity} × {CURRENCY}{item.salePrice}
+              </p>
+            </div>
+            <div className="text-right font-bold text-xs md:text-sm text-slate-800 shrink-0">
+              {CURRENCY}{(item.salePrice * item.quantity).toLocaleString("en-IN")}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <Separator />
+
+      {/* Pricing Breakdown */}
+      <div className="space-y-2.5 text-xs md:text-sm">
+        <div className="flex justify-between text-slate-600">
+          <span>মোট পণ্যের মূল্য</span>
+          <span className="font-semibold text-slate-800">
+            {CURRENCY} {subtotal.toLocaleString("en-IN")}
+          </span>
         </div>
 
-        <Separator className="my-6" />
-
-        {/* Order Summary */}
-        <div className="space-y-3">
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Subtotal ({totalItems} items)</span>
-            <span>{CURRENCY}{subtotal.toLocaleString("en-IN")}</span>
-          </div>
-
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Delivery Charge</span>
-            {
-              deliveryCharge === 0 ? "Free" :
-                <Badge variant={'outline'}>
-                  {CURRENCY}{deliveryCharge}
-                </Badge>
-            }
-          </div>
-
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Discount</span>
-            <span className="text-green-600">-৳{discount.toFixed(2)}</span>
-          </div>
-
-          <Separator />
-
-          <div className="flex justify-between text-lg font-semibold">
-            <span>Total</span>
-            <span>{CURRENCY}{total.toLocaleString("en-IN")}</span>
-          </div>
+        <div className="flex justify-between text-slate-600">
+          <span>ডেলিভারি চার্জ</span>
+          {deliveryCharge === 0 ? (
+            <span className="font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded text-xs">
+              ফ্রি
+            </span>
+          ) : (
+            <span className="font-semibold text-slate-800">
+              {CURRENCY} {deliveryCharge}
+            </span>
+          )}
         </div>
 
-
-        {(selectedMethod?.value === "BKASH" || selectedMethod?.value === "NAGAD") && selectedMethod?.number && (
-          <div className="mt-6 p-4 bg-muted/50 rounded-xl border">
-            <p className="text-sm font-medium mb-2">
-              {selectedMethod?.label} Number: <span className="font-semibold text-primary">{selectedMethod?.number}</span>
-            </p>
-            <p className="text-xs text-muted-foreground mb-3">
-              এই নাম্বারে টাকা পাঠিয়ে Transaction ID টি নিচে দিন
-            </p>
-
-            <Label className="text-sm">
-              {selectedMethod?.label} Transaction ID *
-            </Label>
-            <Input
-              placeholder="Transaction ID লিখুন"
-              {...register("payment.transactionId")}
-              className="mt-1"
-            />
-            <p className="text-red-500 text-sm mt-1">
-              {errors.payment?.transactionId?.message}
-            </p>
+        {discount > 0 && (
+          <div className="flex justify-between text-slate-600">
+            <span>ডিসকাউন্ট</span>
+            <span className="text-rose-600 font-semibold">-৳ {discount.toFixed(2)}</span>
           </div>
         )}
 
+        <Separator />
 
-        <Button
-          disabled={isLoading}
-          size="lg"
-          className="w-full mt-8 text-base font-semibold h-14"
-        >
-          <ShieldCheck className="mr-2" />
-          {
-            isLoading ? "Order Loading..." : "Place Order"
-          }
+        <div className="flex justify-between items-baseline pt-1">
+          <span className="text-sm md:text-base font-bold text-slate-800">
+            সর্বমোট প্রদেয়
+          </span>
+          <span className="text-xl md:text-2xl font-bold text-rose-600">
+            {CURRENCY} {total.toLocaleString("en-IN")}
+          </span>
+        </div>
+      </div>
 
-        </Button>
+      {/* Manual Payment Instructions for bKash/Nagad */}
+      {(selectedMethod?.value === "BKASH" || selectedMethod?.value === "NAGAD") && selectedMethod?.number && (
+        <div className="p-4 bg-orange-50/60 rounded-xl border border-orange-200/80 space-y-2">
+          <p className="text-xs md:text-sm font-semibold text-slate-800">
+            {selectedMethod?.label} নাম্বার:{" "}
+            <span className="font-bold text-orange-600 select-all">{selectedMethod?.number}</span>
+          </p>
+          <p className="text-[11px] text-slate-600">
+            এই নাম্বারে টাকা পাঠিয়ে নিচের ঘরে Transaction ID টি লিখে দিন:
+          </p>
 
-        <p className="text-center text-xs text-muted-foreground mt-4 flex items-center justify-center gap-1.5">
-          <Lock className="w-3.5 h-3.5" />
-          Secured & Encrypted Checkout
-        </p>
-      </CardContent>
-    </Card>
-  )
-}
+          <div>
+            <Label className="text-xs font-medium text-slate-700">
+              {selectedMethod?.label} Transaction ID *
+            </Label>
+            <Input
+              placeholder="e.g. 9X29A8K9..."
+              {...register("payment.transactionId")}
+              className="mt-1 bg-white border-slate-200 text-xs"
+            />
+            {errors.payment?.transactionId?.message && (
+              <p className="text-rose-500 text-[11px] mt-1">
+                {errors.payment?.transactionId?.message}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
-export default RightBar
+      {/* Place Order CTA Button */}
+      <Button
+        type="submit"
+        disabled={isLoading}
+        className="w-full h-12 md:h-13 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-[0.99] text-white font-bold text-sm md:text-base rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2"
+      >
+        <ShieldCheck className="w-5 h-5" />
+        <span>{isLoading ? "অর্ডার প্রসেস হচ্ছে..." : "অর্ডার কনফার্ম করুন"}</span>
+      </Button>
+
+      {/* Trust Seal */}
+      <p className="text-center text-[11px] text-slate-500 flex items-center justify-center gap-1.5 pt-1">
+        <Lock className="w-3.5 h-3.5 text-emerald-600" />
+        <span>১০০% নিরাপদ ও এনক্রিপ্টেড চেকআউট</span>
+      </p>
+    </div>
+  );
+};
+
+export default RightBar;

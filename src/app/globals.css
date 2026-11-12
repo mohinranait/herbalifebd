@@ -48,7 +48,7 @@
 }
 
 :root {
-    --background: oklch(96.927% 0.01452 264.557);
+    --background: oklch(100% 0.00011 271.152);
     --foreground: oklch(0.145 0 0);
     --card: oklch(1 0 0);
     --card-foreground: oklch(0.145 0 0);
@@ -187,9 +187,59 @@
     @apply border-border outline-ring/50;
     }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
     }
   html {
     @apply font-sans;
     }
+}
+
+/* ========================================================
+   SOKHERHUT CONTAINER SPECIFICATION
+   Exact 1276px max-width container matching reference site
+   Overrides Tailwind's default 80rem (1280px) and 96rem (1536px)
+   ======================================================== */
+div.container,
+.container {
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  max-width: 1276px !important;
+}
+
+@media (min-width: 80rem) {
+  div.container,
+  .container {
+    max-width: 1276px !important;
+  }
+}
+
+@media (min-width: 96rem) {
+  div.container,
+  .container {
+    max-width: 1276px !important;
+  }
+}
+
+@media (min-width: 1276px) {
+  div.container,
+  .container {
+    max-width: 1276px !important;
+  }
+}
+
+@media (min-width: 1536px) {
+  div.container,
+  .container {
+    max-width: 1276px !important;
+  }
+}
+
+/* ========================================================
+   GLOBAL SHADOW REMOVAL
+   Clean flat UI - strictly no box-shadow or text-shadow
+   ======================================================== */
+*, ::before, ::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
 }

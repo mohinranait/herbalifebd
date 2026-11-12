@@ -1,28 +1,27 @@
 import ProductCard from '@/components/products/ProductCard';
 import { IProduct } from '@/redux/service/products/type';
-import React from 'react'
+import React from 'react';
 
 type Props = {
-  products: IProduct[] | undefined
-}
+  products: IProduct[] | undefined;
+};
+
 const ProductList = ({ products }: Props) => {
-
-
   return (
-    <React.Fragment>
-      {
-        products && products?.length > 0 ? (
-          <div className=" lg:container mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5   gap-2 xl:gap-3 2xl:gap-4">
-            {products?.map((product, i) => <ProductCard key={i} product={product} />)}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-foreground">No products available</p>
-          </div>
-        )
-      }
-    </React.Fragment>
-  )
-}
+    <div className="container mx-auto px-2 md:px-4">
+      {products && products.length > 0 ? (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
+          {products.map((product, i) => (
+            <ProductCard key={product?._id || i} product={product} />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12 bg-white rounded-xl border border-slate-200">
+          <p className="text-slate-500 text-sm">কোন পণ্য পাওয়া যায়নি</p>
+        </div>
+      )}
+    </div>
+  );
+};
 
-export default ProductList
+export default ProductList;

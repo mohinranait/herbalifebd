@@ -1,123 +1,70 @@
-
-import HeroSection from './components/hero-area'
-import Categories from './components/categories'
-import SliderCategories from './components/SliderCategories'
+import HeroSection from './components/hero-area';
+import SliderCategories from './components/SliderCategories';
+import Categories from './components/categories';
 import SectionHeader from '@/components/shared/SectionHeader';
-import NewProducts from './components/NewProducts';
 import TopSelling from './components/TopSelling';
-import FeatureProducts from './components/FeatureProducts';
-import OfferProducts from './components/OfferProducts';
-import ContactUsComponent from './contact-us/components/ContactUsComponent';
-import CompanyIntroduction from './components/CompanyIntroduction';
-import WhyChooseUs from './components/WhyChooseUs';
-import CustomerReviews from './components/CustomerReviews';
-import { FaqPageComponent } from './components/FaqComponent';
+import NewProducts from './components/NewProducts';
+import AllProducts from './components/AllProducts';
+import BrandsSection from './components/BrandsSection';
 import { getAppSetting } from '@/lib/get-app-setting';
 import { Suspense } from 'react';
 import ProductsSkeleton from './components/ProductsSkeleton';
 
 const HomePage = async () => {
-
   const appSetting = await getAppSetting();
-
   const enableCategory = appSetting?.layouts?.categorySection || 1;
 
-  // if (!appSetting) return <div>Loading...</div>
-
   return (
-    <div>
-      {
-        appSetting?.features?.bannerSlider &&
-        <HeroSection />
-      }
+    <div className="bg-[#f8fafc] min-h-screen  space-y-4 md:space-y-6">
+      {/* 1. Hero / Slider Section */}
+      <HeroSection />
 
+      {/* 2. জনপ্রিয় ক্যাটাগরি Section */}
+      {enableCategory === 1 ? <SliderCategories /> : <Categories />}
 
-      {
-        appSetting?.features?.aboutCompany &&
-        <CompanyIntroduction />
-      }
+      {/* 3. বেস্ট সেলিং প্রডাক্ট Section */}
+      <section className="py-4 md:py-6">
+        <SectionHeader
+          title="বেস্ট সেলিং প্রডাক্ট"
+          icon="🔥"
+          seeAllLink="/shop?type=bestselling"
+          seeAllText="সবগুলো দেখুন"
+        />
+        <Suspense fallback={<ProductsSkeleton />}>
+          <TopSelling />
+        </Suspense>
+      </section>
 
+      {/* 4. শপে নতুন এসেছে Section */}
+      <section className="py-4 md:py-6">
+        <SectionHeader
+          title="শপে নতুন এসেছে"
+          icon="✨"
+          seeAllLink="/shop?type=new"
+          seeAllText="সবগুলো দেখুন"
+        />
+        <Suspense fallback={<ProductsSkeleton />}>
+          <NewProducts />
+        </Suspense>
+      </section>
 
-      {
-        appSetting?.features?.whyChooseUs &&
-        <WhyChooseUs />
-      }
+      {/* 5. সকল প্রডাক্ট Section */}
+      <section className="py-4 md:py-6">
+        <SectionHeader
+          title="সকল প্রডাক্ট"
+          icon="📦"
+          seeAllLink="/shop"
+          seeAllText="সবগুলো দেখুন"
+        />
+        <Suspense fallback={<ProductsSkeleton />}>
+          <AllProducts />
+        </Suspense>
+      </section>
 
-
-
-
-      {
-        enableCategory === 1 ?
-          <SliderCategories /> :
-          <Categories />
-      }
-
-      {/* Latest product section */}
-      {
-        appSetting?.features?.latestSection &&
-        <section className=" py-4 lg:py-10 px-2">
-          <SectionHeader title='New Products' description="Explore your popular products, you can buy here." seeAllLink='/shop' seeAllText='All Products' className='pb-4' />
-          <Suspense fallback={<ProductsSkeleton />}>
-            <NewProducts />
-          </Suspense>
-        </section>
-      }
-
-
-
-      {/* top Selling product section */}
-      {
-        appSetting?.features?.bestSelling &&
-        <section className=" py-10 px-2">
-          <SectionHeader title='Best Selling Products' description="Explore your popular products, you can buy here." seeAllLink='/shop' seeAllText='All Products' className='pb-4' />
-          <Suspense fallback={<ProductsSkeleton />}>
-            <TopSelling />
-          </Suspense>
-        </section>
-      }
-
-
-      {/* Feature products */}
-      {
-        appSetting?.features?.featureSection &&
-        <section className=" py-10 px-2">
-          <SectionHeader title='Features Products' description="Explore your popular products, you can buy here." seeAllLink='/shop' seeAllText='All Products' className='pb-4' />
-          <Suspense fallback={<ProductsSkeleton />}>
-            <FeatureProducts />
-          </Suspense>
-        </section>
-      }
-
-
-      {/* Offer products */}
-      {
-        appSetting?.features?.offerSection &&
-        <section className=" py-10 px-2">
-          <SectionHeader title='Offer Products' description="Explore your popular products, you can buy here." seeAllLink='/shop' seeAllText='All Products' className='pb-4' />
-          <Suspense fallback={<ProductsSkeleton />}>
-            <OfferProducts />
-          </Suspense>
-        </section>
-      }
-
-      {
-        appSetting?.features?.faq &&
-        <FaqPageComponent />
-      }
-
-      {
-        appSetting?.features?.review &&
-        <CustomerReviews />
-      }
-
-      {
-        appSetting?.features?.contact &&
-        <ContactUsComponent />
-      }
-
-
+      {/* 6. ব্র্যান্ড সমূহ Section */}
+      <BrandsSection />
     </div>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;
