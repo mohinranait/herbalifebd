@@ -31,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
 const AdminLoadingFallback = () => (
   <div className="flex h-screen w-full items-center justify-center bg-background">
     <div className="flex flex-col items-center gap-3">
-      <div className="size-11 rounded-xl bg-linear-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/25 animate-pulse">
+      <div className="size-11 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/25 animate-pulse">
         <Leaf className="size-6" />
       </div>
       <div className="flex items-center gap-1.5 mt-1">

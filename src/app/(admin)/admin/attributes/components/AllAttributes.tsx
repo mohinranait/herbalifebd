@@ -59,7 +59,7 @@ const AllAttributes = () => {
 
         <Button
           onClick={() => setIsOpen(true)}
-          className="h-9 px-4 text-xs font-bold rounded-md bg-orange-500 hover:bg-orange-600 text-white gap-2 shadow-xs transition-all self-start sm:self-auto"
+          className="h-9 px-4 text-xs font-bold rounded-md bg-primary hover:bg-primary/90 text-primary-foreground gap-2 shadow-xs transition-all self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
           <span>Add New Attribute</span>
@@ -69,7 +69,7 @@ const AllAttributes = () => {
       {/* Metrics Row */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         <div className="p-3.5 rounded-lg bg-white border border-slate-200/90 shadow-xs flex items-center gap-3">
-          <div className="w-9 h-9 rounded-md bg-orange-50 text-orange-600 flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-md bg-brand-light text-brand flex items-center justify-center shrink-0">
             <Sliders className="w-4 h-4" />
           </div>
           <div>

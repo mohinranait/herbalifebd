@@ -82,7 +82,7 @@ const CellAction: React.FC<Props> = ({ data, type }) => {
             size="icon"
             variant="ghost"
             type="button"
-            className="h-8 w-8 rounded-md text-slate-500 hover:text-orange-600 hover:bg-orange-50"
+            className="h-8 w-8 rounded-md text-slate-500 hover:text-primary hover:bg-primary/10"
           >
             <ExternalLink className="w-3.5 h-3.5" />
           </Button>
@@ -101,7 +101,7 @@ const CellAction: React.FC<Props> = ({ data, type }) => {
         {type === "active" ? (
           <Pen className="w-3.5 h-3.5" />
         ) : (
-          <RotateCcw className="w-3.5 h-3.5 text-emerald-600" />
+          <RotateCcw className="w-3.5 h-3.5 text-primary" />
         )}
       </Button>
 

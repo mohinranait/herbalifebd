@@ -42,7 +42,7 @@ export default function ThemeTab({ settings, callBack }: Props) {
       <Card className="border border-slate-200/90 shadow-xs rounded-lg overflow-hidden bg-white">
         <CardHeader className="p-5 border-b border-slate-100 bg-slate-50/50">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-md bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0">
               <Palette className="w-4 h-4" />
             </div>
             <div>
@@ -60,7 +60,7 @@ export default function ThemeTab({ settings, callBack }: Props) {
           {/* Preset Palettes */}
           <div className="space-y-2.5">
             <Label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-orange-500" />
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
               <span>Recommended Color Palettes</span>
             </Label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -136,7 +136,7 @@ export default function ThemeTab({ settings, callBack }: Props) {
           {/* Live Storefront Mockup Preview */}
           <div className="pt-4 border-t border-slate-100 space-y-3">
             <div className="flex items-center gap-2">
-              <Eye className="w-4 h-4 text-orange-500" />
+              <Eye className="w-4 h-4 text-primary" />
               <Label className="text-xs font-bold text-slate-800">
                 Real-Time Product Card & Button Preview
               </Label>

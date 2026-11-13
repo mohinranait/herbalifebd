@@ -83,7 +83,7 @@ const CellAction: React.FC<Props> = ({ data, type }) => {
         {type === "active" ? (
           <Pen className="w-3.5 h-3.5" />
         ) : (
-          <RotateCcw className="w-3.5 h-3.5 text-emerald-600" />
+          <RotateCcw className="w-3.5 h-3.5 text-primary" />
         )}
       </Button>
 

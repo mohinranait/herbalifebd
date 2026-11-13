@@ -149,8 +149,8 @@ export default function CategoryForm({
       onOpenChange={setIsOpen}
       title={previousData ? "Edit Category Details" : "Create New Category"}
       description="Configure category name, slug, parent level, and display settings"
-      icon={<FolderTree className="w-5 h-5 text-orange-500" />}
-      className="max-w-2xl rounded-lg"
+      icon={<FolderTree className="w-5 h-5 text-primary" />}
+      className="max-w-3xl! rounded-lg"
       footer={
         <div className="flex justify-end gap-2.5 w-full">
           <Button
@@ -167,7 +167,7 @@ export default function CategoryForm({
             type="button"
             onClick={form.handleSubmit(onSubmit)}
             disabled={isSubmitting}
-            className="rounded-md h-9 text-xs bg-orange-500 hover:bg-orange-600 text-white font-semibold gap-1.5"
+            className="rounded-md h-9 text-xs bg-primary hover:bg-primary/90 text-primary-foreground font-semibold gap-1.5"
           >
             {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
             {previousData ? "Save Changes" : "Create Category"}
@@ -316,7 +316,7 @@ export default function CategoryForm({
                     setActiveField("thumbnail");
                     setMediaOpen(true);
                   }}
-                  className="w-20 h-20 rounded-md border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-orange-500 dark:hover:border-orange-500 transition-colors flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-orange-500 bg-slate-50/50 dark:bg-slate-900/50 shrink-0"
+                  className="w-20 h-20 rounded-md border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-primary dark:hover:border-primary transition-colors flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary bg-slate-50/50 dark:bg-slate-900/50 shrink-0"
                 >
                   <Plus className="w-4 h-4" />
                   <span className="text-[10px] font-medium">Thumbnail</span>
@@ -358,7 +358,7 @@ export default function CategoryForm({
                     setActiveField("banner");
                     setMediaOpen(true);
                   }}
-                  className="w-28 h-20 rounded-md border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-orange-500 dark:hover:border-orange-500 transition-colors flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-orange-500 bg-slate-50/50 dark:bg-slate-900/50 shrink-0"
+                  className="w-28 h-20 rounded-md border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-primary dark:hover:border-primary transition-colors flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary bg-slate-50/50 dark:bg-slate-900/50 shrink-0"
                 >
                   <ImageIcon className="w-4 h-4" />
                   <span className="text-[10px] font-medium">Upload Banner</span>

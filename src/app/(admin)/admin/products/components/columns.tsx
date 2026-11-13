@@ -58,7 +58,7 @@ const tableColumns = ({ type = "active" }: TableColumnsProps) => {
               <Link
                 href={`/product/${product.slug || product.id}`}
                 target="_blank"
-                className="group inline-flex items-center gap-1 font-semibold text-xs text-slate-900 hover:text-orange-600 transition-colors line-clamp-1"
+                className="group inline-flex items-center gap-1 font-semibold text-xs text-slate-900 hover:text-primary transition-colors line-clamp-1"
                 title={product.name}
               >
                 <span>{product.name}</span>
@@ -73,7 +73,7 @@ const tableColumns = ({ type = "active" }: TableColumnsProps) => {
                 )}
 
                 {product.brand?.name && (
-                  <span className="px-1.5 py-0.5 rounded bg-orange-50 text-orange-700 border border-orange-100 font-medium">
+                  <span className="px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-medium">
                     {product.brand.name}
                   </span>
                 )}
@@ -201,7 +201,7 @@ const tableColumns = ({ type = "active" }: TableColumnsProps) => {
         return (
           <div className="space-y-1 text-xs">
             <div className="flex items-center gap-1 text-slate-700 font-medium">
-              <TrendingUp className="w-3.5 h-3.5 text-orange-500" />
+              <TrendingUp className="w-3.5 h-3.5 text-primary" />
               <span>{sold} sold</span>
             </div>
 

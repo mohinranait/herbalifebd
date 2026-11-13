@@ -104,7 +104,7 @@ const CellAction = ({ data, type }: Props) => {
         target="_blank"
         rel="noopener noreferrer"
         title="View on Storefront"
-        className="w-7 h-7 rounded-md border border-slate-200/80 dark:border-slate-700 text-slate-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/30 flex items-center justify-center transition-colors"
+        className="w-7 h-7 rounded-md border border-slate-200/80 dark:border-slate-700 text-slate-500 hover:text-primary hover:bg-primary/10 flex items-center justify-center transition-colors"
       >
         <ExternalLink className="w-3.5 h-3.5" />
       </Link>

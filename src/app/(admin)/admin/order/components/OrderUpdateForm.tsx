@@ -122,7 +122,7 @@ const OrderUpdateForm: React.FC<Props> = ({ order }) => {
           type="submit"
           disabled={isLoading}
           size="sm"
-          className="h-8 px-3 text-xs font-bold rounded-md bg-orange-500 hover:bg-orange-600 text-white gap-1.5 shadow-xs"
+          className="h-8 px-3 text-xs font-bold rounded-md bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 shadow-xs"
         >
           {isLoading ? (
             <>
@@ -188,7 +188,7 @@ const OrderUpdateForm: React.FC<Props> = ({ order }) => {
         {/* Courier Section */}
         <div className="pt-2 border-t border-slate-100 space-y-2.5">
           <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-            <Truck className="w-3.5 h-3.5 text-orange-500" />
+            <Truck className="w-3.5 h-3.5 text-primary" />
             <span>Courier & Parcel Tracking</span>
           </div>
 
@@ -242,7 +242,7 @@ const OrderUpdateForm: React.FC<Props> = ({ order }) => {
         {/* Admin Note Section */}
         <div className="pt-2 border-t border-slate-100 space-y-1.5">
           <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-            <FileText className="w-3.5 h-3.5 text-orange-500" />
+            <FileText className="w-3.5 h-3.5 text-primary" />
             <span>Internal Admin Note</span>
           </div>
           <Textarea

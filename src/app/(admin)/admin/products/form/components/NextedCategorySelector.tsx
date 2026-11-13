@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { ChevronRight, Folder, FolderOpen, Check, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -34,10 +34,22 @@ export default function NestedCategorySelector({
   onChange,
   error,
 }: Props) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [hoveredLevel1, setHoveredLevel1] = useState<string | null>(null);
   const [hoveredLevel2, setHoveredLevel2] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    if (!open) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        handleClose();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
 
   // Build tree
   const internalCategories = useMemo((): InternalCategory[] => {
@@ -143,7 +155,7 @@ export default function NestedCategorySelector({
   }, [hoveredLevel2, internalCategories]);
 
   return (
-    <div className="relative">
+    <div ref={containerRef} className="relative">
       {/* Trigger Box */}
       <div
         onClick={handleOpen}
@@ -151,13 +163,13 @@ export default function NestedCategorySelector({
           error
             ? "border-rose-400"
             : open
-            ? "border-orange-500 ring-1 ring-orange-500/20"
+            ? "border-primary ring-1 ring-primary/20"
             : "border-slate-200 dark:border-slate-800 hover:border-slate-300"
         }`}
       >
         {selectedPath.length > 0 ? (
           <div className="flex items-center gap-1.5 flex-wrap text-xs">
-            <Folder className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+            <Folder className="w-3.5 h-3.5 text-primary shrink-0" />
             {selectedPath.map((cat, index) => (
               <span key={cat.id} className="flex items-center gap-1 font-semibold text-slate-800 dark:text-slate-200">
                 <span>{cat.name}</span>
@@ -173,7 +185,7 @@ export default function NestedCategorySelector({
 
         <ChevronRight
           size={16}
-          className={`text-slate-400 transition-transform ${open ? "rotate-90 text-orange-500" : ""}`}
+          className={`text-slate-400 transition-transform ${open ? "rotate-90 text-primary" : ""}`}
         />
       </div>
 
@@ -215,18 +227,18 @@ export default function NestedCategorySelector({
                     <div
                       key={cat.id}
                       onClick={() => handleSelect(cat.id)}
-                      className={`px-3 py-2 rounded-md cursor-pointer text-xs font-medium flex items-center justify-between hover:bg-orange-50 dark:hover:bg-orange-950/30 ${
+                      className={`px-3 py-2 rounded-md cursor-pointer text-xs font-medium flex items-center justify-between hover:bg-primary/10 ${
                         value === cat.id
-                          ? "bg-orange-50 dark:bg-orange-950/40 text-orange-600 font-bold"
+                          ? "bg-primary/10 text-primary font-bold"
                           : "text-slate-700 dark:text-slate-300"
                       }`}
                     >
                       <div className="flex items-center gap-2">
-                        <Folder className="w-3.5 h-3.5 text-orange-500" />
+                        <Folder className="w-3.5 h-3.5 text-primary" />
                         <span>{cat.name}</span>
                         <span className="text-[10px] text-slate-400 font-mono">/{cat.slug}</span>
                       </div>
-                      {value === cat.id && <Check size={14} className="text-orange-500" />}
+                      {value === cat.id && <Check size={14} className="text-primary" />}
                     </div>
                   ))}
                 </div>
@@ -258,7 +270,7 @@ export default function NestedCategorySelector({
                           hoveredLevel1 === cat.id
                             ? "bg-slate-100 dark:bg-slate-800 text-slate-900 font-semibold"
                             : "text-slate-700 dark:text-slate-300 hover:bg-slate-50"
-                        } ${value === cat.id ? "text-orange-600 font-bold bg-orange-50/70" : ""}`}
+                        } ${value === cat.id ? "text-primary font-bold bg-primary/10" : ""}`}
                       >
                         <span className="truncate">{cat.name}</span>
                         {cat.children?.length ? (
@@ -287,7 +299,7 @@ export default function NestedCategorySelector({
                             hoveredLevel2 === cat.id
                               ? "bg-white dark:bg-slate-800 text-slate-900 font-semibold shadow-2xs"
                               : "text-slate-700 dark:text-slate-300 hover:bg-white/60"
-                          } ${value === cat.id ? "text-orange-600 font-bold bg-orange-50/70" : ""}`}
+                          } ${value === cat.id ? "text-primary font-bold bg-primary/10" : ""}`}
                         >
                           <span className="truncate">{cat.name}</span>
                           {cat.children?.length ? (
@@ -318,7 +330,7 @@ export default function NestedCategorySelector({
                           onClick={() => handleSelect(cat.id)}
                           className={`px-3 py-2 rounded-md cursor-pointer text-xs transition-colors ${
                             value === cat.id
-                              ? "bg-orange-500 text-white font-bold"
+                              ? "bg-primary text-primary-foreground font-bold"
                               : "text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800"
                           }`}
                         >

@@ -56,7 +56,7 @@ export function CategoryTree({ data, type }: CategoryTreeProps) {
       {/* Expand/Collapse Toolbar */}
       <div className="flex items-center justify-between px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-800 rounded-md text-xs">
         <div className="flex items-center gap-1.5 text-slate-500 font-medium">
-          <Layers className="w-3.5 h-3.5 text-orange-500" />
+          <Layers className="w-3.5 h-3.5 text-primary" />
           <span>Category Hierarchy Tree ({data.length} Root Categories)</span>
         </div>
 
@@ -203,7 +203,7 @@ function CategoryNode({
                 className="w-full h-full object-cover"
               />
             ) : hasChildren && open ? (
-              <FolderOpen className="w-4 h-4 text-orange-500" />
+              <FolderOpen className="w-4 h-4 text-primary" />
             ) : (
               <Folder className="w-4 h-4 text-slate-400" />
             )}
@@ -229,7 +229,7 @@ function CategoryNode({
             )}
 
             {hasChildren && (
-              <span className="text-[10px] font-medium text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/40 border border-orange-200/50 px-1.5 py-0.5 rounded">
+              <span className="text-[10px] font-medium text-primary bg-primary/10 border border-primary/20 px-1.5 py-0.5 rounded">
                 {node.children.length} sub
               </span>
             )}
@@ -265,7 +265,7 @@ function CategoryNode({
             target="_blank"
             rel="noopener noreferrer"
             title="Preview on Storefront"
-            className="w-7 h-7 rounded-md border border-slate-200/80 dark:border-slate-700 text-slate-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/30 flex items-center justify-center transition-colors"
+            className="w-7 h-7 rounded-md border border-slate-200/80 dark:border-slate-700 text-slate-500 hover:text-primary hover:bg-primary/10 flex items-center justify-center transition-colors"
           >
             <ExternalLink className="w-3.5 h-3.5" />
           </Link>
@@ -275,7 +275,7 @@ function CategoryNode({
               type="button"
               size="icon"
               variant="outline"
-              className="h-7 w-7 rounded-md text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 border-slate-200/80 dark:border-slate-700"
+              className="h-7 w-7 rounded-md text-slate-500 hover:text-primary hover:bg-primary/10 border-slate-200/80 dark:border-slate-700"
               title="Add Subcategory"
               onClick={() => setIsOpenAddChild(true)}
             >

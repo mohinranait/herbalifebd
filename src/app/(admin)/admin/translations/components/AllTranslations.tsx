@@ -199,7 +199,7 @@ export default function AllTranslations() {
       <div className="bg-white border border-slate-200/90 rounded-lg p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-md bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
+            <div className="w-9 h-9 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0">
               <Languages className="w-5 h-5" />
             </div>
             <div>
@@ -231,7 +231,7 @@ export default function AllTranslations() {
             type="button"
             variant="outline"
             size="sm"
-            className="h-8.5 px-3 text-xs font-semibold rounded-md border-orange-200 text-orange-600 hover:bg-orange-50 hover:border-orange-300 gap-1.5"
+            className="h-8.5 px-3 text-xs font-semibold rounded-md border-primary/20 text-primary hover:bg-primary/10 hover:border-primary/30 gap-1.5"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add New Key</span>
@@ -244,7 +244,7 @@ export default function AllTranslations() {
             size="sm"
             className={`h-8.5 px-3.5 text-xs font-bold rounded-md gap-1.5 shadow-xs transition-all ${
               hasChanges
-                ? "bg-orange-500 hover:bg-orange-600 text-white animate-pulse"
+                ? "bg-primary hover:bg-primary/90 text-primary-foreground animate-pulse"
                 : "bg-slate-100 text-slate-400 border border-slate-200"
             }`}
           >
@@ -276,7 +276,7 @@ export default function AllTranslations() {
           <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">
             Customized Values
           </p>
-          <p className="text-xl font-extrabold text-orange-600 mt-0.5">{modifiedCount}</p>
+          <p className="text-xl font-extrabold text-primary mt-0.5">{modifiedCount}</p>
         </div>
 
         <div className="p-3.5 rounded-lg bg-white border border-slate-200/90 shadow-xs">
@@ -339,7 +339,7 @@ export default function AllTranslations() {
                 onClick={() => setActiveCategory(cat.id)}
                 className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all select-none ${
                   isActive
-                    ? "bg-orange-500 text-white shadow-xs"
+                    ? "bg-primary text-primary-foreground shadow-xs"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200/70"
                 }`}
               >
@@ -354,7 +354,7 @@ export default function AllTranslations() {
       <Card className="border border-slate-200/90 shadow-xs rounded-lg overflow-hidden bg-white">
         <CardHeader className="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-row items-center justify-between">
           <div className="flex items-center gap-2">
-            <FileText className="w-4 h-4 text-orange-500" />
+            <FileText className="w-4 h-4 text-primary" />
             <CardTitle className="text-sm font-bold text-slate-800">
               Translation Keys & Values
             </CardTitle>
@@ -366,7 +366,7 @@ export default function AllTranslations() {
         <CardContent className="p-0">
           {isLoading ? (
             <div className="p-12 text-center space-y-2">
-              <Loader2 className="w-6 h-6 animate-spin mx-auto text-orange-500" />
+              <Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" />
               <p className="text-xs text-slate-400 font-medium">Loading translations...</p>
             </div>
           ) : filteredEntries.length === 0 ? (
@@ -432,7 +432,7 @@ export default function AllTranslations() {
                         value={value}
                         onChange={(e) => handleValueChange(key, e.target.value)}
                         placeholder="Enter translated display text..."
-                        className="h-9 text-xs rounded-md border-slate-200 bg-white focus-visible:ring-1 focus-visible:ring-orange-500 font-medium"
+                        className="h-9 text-xs rounded-md border-slate-200 bg-white focus-visible:ring-1 focus-visible:ring-primary font-medium"
                       />
 
                       {DEFAULT_TRANSLATIONS[key] && isCustomized && (
@@ -441,7 +441,7 @@ export default function AllTranslations() {
                           variant="ghost"
                           size="icon"
                           onClick={() => handleValueChange(key, DEFAULT_TRANSLATIONS[key])}
-                          className="h-8 w-8 text-slate-400 hover:text-orange-600 hover:bg-orange-50 rounded-md shrink-0"
+                          className="h-8 w-8 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-md shrink-0"
                           title="Reset this key to default"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />
@@ -472,7 +472,7 @@ export default function AllTranslations() {
         <DialogContent className="sm:max-w-md rounded-lg">
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <Plus className="w-4 h-4 text-orange-500" />
+              <Plus className="w-4 h-4 text-primary" />
               <span>Add New Translation Key</span>
             </DialogTitle>
             <DialogDescription className="text-xs text-slate-500">
@@ -519,7 +519,7 @@ export default function AllTranslations() {
               <Button
                 type="submit"
                 size="sm"
-                className="h-8 text-xs font-bold rounded-md bg-orange-500 hover:bg-orange-600 text-white"
+                className="h-8 text-xs font-bold rounded-md bg-primary hover:bg-primary/90 text-primary-foreground"
               >
                 Add Translation
               </Button>

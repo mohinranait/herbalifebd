@@ -31,11 +31,11 @@ import {
   X,
   Package,
   Layers,
+  FolderTree,
   Settings2,
   Loader2,
   Sparkles,
   ExternalLink,
-  CheckCircle2,
   Globe,
   Tag,
   Truck,
@@ -489,7 +489,7 @@ export default function ProductForm() {
                 href={`/shop/${product.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-8 px-2.5 text-xs font-semibold rounded-md border border-slate-200 dark:border-slate-800 text-slate-600 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/30 flex items-center gap-1.5 transition-colors"
+                className="h-8 px-2.5 text-xs font-semibold rounded-md border border-slate-200 dark:border-slate-800 text-slate-600 hover:text-primary hover:bg-primary/10 flex items-center gap-1.5 transition-colors"
                 title="View on Storefront"
               >
                 <ExternalLink size={13} />
@@ -512,7 +512,7 @@ export default function ProductForm() {
               type="button"
               onClick={handleSubmit(onSubmit)}
               disabled={isSubmitting}
-              className="h-8 px-4 text-xs font-bold rounded-md bg-orange-500 hover:bg-orange-600 text-white gap-1.5 shadow-xs"
+              className="h-8 px-4 text-xs font-bold rounded-md bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 shadow-xs"
             >
               {isSubmitting ? (
                 <Loader2 size={13} className="animate-spin" />
@@ -593,7 +593,33 @@ export default function ProductForm() {
             </FormField>
           </SectionCard>
 
-          {/* 2. Product Images & Gallery */}
+          {/* 2. Product Category Selection */}
+          <SectionCard
+            icon={<FolderTree size={16} />}
+            title="Product Category"
+            description="Select the hierarchical category branch where this product belongs."
+            className="overflow-visible"
+          >
+            <FormField
+              label="Category"
+              required
+              error={errors.category?.message}
+              hint="Select root category, subcategory and branch level."
+            >
+              {categoriesLoading ? (
+                <div className="text-xs text-slate-400">Loading categories...</div>
+              ) : (
+                <NestedCategorySelector
+                  categories={categories}
+                  value={watch("category")}
+                  onChange={(id) => setValue("category", id, { shouldValidate: true })}
+                  error={errors.category?.message}
+                />
+              )}
+            </FormField>
+          </SectionCard>
+
+          {/* 3. Product Images & Gallery */}
           <SectionCard
             icon={<ImagePlus size={16} />}
             title="Media Gallery"
@@ -615,8 +641,8 @@ export default function ProductForm() {
 
                     {/* Primary badge for 1st image */}
                     {i === 0 && (
-                      <span className="absolute bottom-1 left-1 bg-orange-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5 shadow-xs">
-                        <Star size={10} className="fill-white" /> Primary
+                      <span className="absolute bottom-1 left-1 bg-primary text-primary-foreground text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5 shadow-xs">
+                        <Star size={10} className="fill-current" /> Primary
                       </span>
                     )}
 
@@ -638,7 +664,7 @@ export default function ProductForm() {
                 <button
                   type="button"
                   onClick={() => setMediaOpen(true)}
-                  className="w-24 h-24 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-orange-500 dark:hover:border-orange-500 transition-colors flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-orange-500 bg-slate-50/50 dark:bg-slate-900/50 shrink-0"
+                  className="w-24 h-24 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-primary transition-colors flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary bg-slate-50/50 dark:bg-slate-900/50 shrink-0"
                 >
                   <Plus size={20} />
                   <span className="text-[10px] font-bold">Add Image</span>
@@ -683,14 +709,14 @@ export default function ProductForm() {
                 onClick={() => setValue("productType", "single", { shouldValidate: true })}
                 className={`p-3.5 rounded-lg border text-left transition-all flex items-start gap-3 ${
                   productType === "single"
-                    ? "border-orange-500 bg-orange-50/40 dark:bg-orange-950/30 text-orange-950 dark:text-orange-100 ring-1 ring-orange-500/30"
+                    ? "border-primary bg-primary/10 text-primary ring-1 ring-primary/30"
                     : "border-slate-200 dark:border-slate-800 hover:border-slate-300 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900"
                 }`}
               >
                 <div
                   className={`w-8 h-8 rounded-md flex items-center justify-center shrink-0 ${
                     productType === "single"
-                      ? "bg-orange-500 text-white"
+                      ? "bg-primary text-primary-foreground"
                       : "bg-slate-100 dark:bg-slate-800 text-slate-500"
                   }`}
                 >
@@ -709,14 +735,14 @@ export default function ProductForm() {
                 onClick={() => setValue("productType", "variant", { shouldValidate: true })}
                 className={`p-3.5 rounded-lg border text-left transition-all flex items-start gap-3 ${
                   productType === "variant"
-                    ? "border-orange-500 bg-orange-50/40 dark:bg-orange-950/30 text-orange-950 dark:text-orange-100 ring-1 ring-orange-500/30"
+                    ? "border-primary bg-primary/10 text-primary ring-1 ring-primary/30"
                     : "border-slate-200 dark:border-slate-800 hover:border-slate-300 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900"
                 }`}
               >
                 <div
                   className={`w-8 h-8 rounded-md flex items-center justify-center shrink-0 ${
                     productType === "variant"
-                      ? "bg-orange-500 text-white"
+                      ? "bg-primary text-primary-foreground"
                       : "bg-slate-100 dark:bg-slate-800 text-slate-500"
                   }`}
                 >
@@ -805,8 +831,8 @@ export default function ProductForm() {
                                   onClick={() => toggleAttributeValue(idx, val)}
                                   className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${
                                     active
-                                      ? "bg-orange-500 text-white border-orange-500 shadow-2xs"
-                                      : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-orange-400"
+                                      ? "bg-primary text-primary-foreground border-primary shadow-2xs"
+                                      : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-primary"
                                   }`}
                                 >
                                   {val}
@@ -835,7 +861,7 @@ export default function ProductForm() {
                 <Button
                   type="button"
                   onClick={generateVariations}
-                  className="h-8 text-xs font-bold rounded-md gap-1.5 flex-1 bg-orange-500 hover:bg-orange-600 text-white shadow-2xs"
+                  className="h-8 text-xs font-bold rounded-md gap-1.5 flex-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-2xs"
                 >
                   <RefreshCw size={13} /> Generate Variations ({selectedConfigs.length})
                 </Button>
@@ -990,7 +1016,7 @@ export default function ProductForm() {
               type="button"
               onClick={handleSubmit(onSubmit)}
               disabled={isSubmitting}
-              className="w-full h-10 text-xs font-bold rounded-md bg-orange-500 hover:bg-orange-600 text-white gap-2 shadow-xs transition-all mt-2"
+              className="w-full h-10 text-xs font-bold rounded-md bg-primary hover:bg-primary/90 text-primary-foreground gap-2 shadow-xs transition-all mt-2"
             >
               {isSubmitting ? (
                 <Loader2 size={14} className="animate-spin" />
@@ -1001,28 +1027,11 @@ export default function ProductForm() {
             </Button>
           </Card>
 
-          {/* Card 2: Organization (Category & Brand) */}
+          {/* Card 2: Organization (Brand & Attributes) */}
           <Card className="rounded-lg border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-4 sm:p-5 space-y-4">
             <h3 className="text-xs font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider pb-2 border-b border-slate-100 dark:border-slate-800">
-              Taxonomy & Organization
+              Organization & Brand
             </h3>
-
-            {/* Category Selector */}
-            <div className="space-y-1.5">
-              <Label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                Category <span className="text-rose-500">*</span>
-              </Label>
-              {categoriesLoading ? (
-                <div className="text-xs text-slate-400">Loading categories...</div>
-              ) : (
-                <NestedCategorySelector
-                  categories={categories}
-                  value={watch("category")}
-                  onChange={(id) => setValue("category", id, { shouldValidate: true })}
-                  error={errors.category?.message}
-                />
-              )}
-            </div>
 
             {/* Brand Selector */}
             <div className="space-y-1.5">
@@ -1098,7 +1107,7 @@ export default function ProductForm() {
           {/* Card 3: Shipping & Package Dimensions */}
           <Card className="rounded-lg border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-4 sm:p-5 space-y-3">
             <div className="flex items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-800">
-              <Truck size={15} className="text-orange-500" />
+              <Truck size={15} className="text-primary" />
               <h3 className="text-xs font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">
                 Shipping & Weight
               </h3>
@@ -1152,7 +1161,7 @@ export default function ProductForm() {
               <span className="text-xs font-bold text-slate-900 dark:text-slate-100">
                 Form Completion
               </span>
-              <span className="text-xs font-bold text-orange-600 dark:text-orange-400">
+              <span className="text-xs font-bold text-primary">
                 {completeness.percent}%
               </span>
             </div>
@@ -1160,7 +1169,7 @@ export default function ProductForm() {
             {/* Progress bar */}
             <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
               <div
-                className="h-full bg-orange-500 rounded-full transition-all duration-300"
+                className="h-full bg-primary rounded-full transition-all duration-300"
                 style={{ width: `${completeness.percent}%` }}
               />
             </div>

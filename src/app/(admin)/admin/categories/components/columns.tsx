@@ -47,7 +47,7 @@ export const tableColumns = ({ type = "active", categoriesMap }: ColumnsProps) =
                   href={`/shop?category=${item.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-slate-400 hover:text-orange-500 transition-colors"
+                  className="text-slate-400 hover:text-primary transition-colors"
                   title="View on Storefront"
                 >
                   <ExternalLink className="w-3 h-3" />

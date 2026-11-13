@@ -23,7 +23,7 @@ const tableColumns = ({ type = "active" }: TableColumnsProps) => {
 
         return (
           <div className="flex items-center gap-3 py-1">
-            <div className="w-10 h-10 rounded-md bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-600 shrink-0">
+            <div className="w-10 h-10 rounded-md bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
               <Sliders className="w-5 h-5" />
             </div>
 
@@ -64,7 +64,7 @@ const tableColumns = ({ type = "active" }: TableColumnsProps) => {
               </span>
             ))}
             {remainingCount > 0 && (
-              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-orange-50 text-orange-700 border border-orange-200">
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
                 +{remainingCount} more
               </span>
             )}

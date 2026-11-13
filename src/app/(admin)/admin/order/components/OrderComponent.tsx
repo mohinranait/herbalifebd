@@ -114,7 +114,7 @@ const OrderComponent: React.FC<Props> = ({ orderId }) => {
         <p className="text-base font-bold text-slate-700">Order not found</p>
         <Button
           onClick={() => router.push("/admin/orders")}
-          className="mt-4 bg-orange-500 hover:bg-orange-600 text-white rounded-md text-xs font-semibold"
+          className="mt-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-md text-xs font-semibold"
         >
           Back to Orders
         </Button>
@@ -134,7 +134,7 @@ const OrderComponent: React.FC<Props> = ({ orderId }) => {
             type="button"
             size="icon"
             variant="outline"
-            className="h-9 w-9 rounded-md border-slate-200 text-slate-600 hover:text-orange-600 hover:border-orange-200 shrink-0"
+            className="h-9 w-9 rounded-md border-slate-200 text-slate-600 hover:text-primary hover:border-primary/20 shrink-0"
             title="Go Back"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -162,7 +162,7 @@ const OrderComponent: React.FC<Props> = ({ orderId }) => {
             </div>
 
             <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5 font-medium">
-              <Calendar className="w-3.5 h-3.5 text-orange-500" />
+              <Calendar className="w-3.5 h-3.5 text-primary" />
               <span>
                 Date:{" "}
                 {order.createdAt
@@ -179,7 +179,7 @@ const OrderComponent: React.FC<Props> = ({ orderId }) => {
             disabled={isDownloading}
             type="button"
             size="sm"
-            className="h-8.5 px-3 text-xs font-bold rounded-md bg-orange-500 hover:bg-orange-600 text-white gap-1.5 shadow-xs transition-all"
+            className="h-8.5 px-3 text-xs font-bold rounded-md bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 shadow-xs transition-all"
           >
             {isDownloading ? (
               <>
@@ -243,7 +243,7 @@ const OrderComponent: React.FC<Props> = ({ orderId }) => {
           <Card className="border border-slate-200/90 shadow-xs rounded-lg overflow-hidden bg-white">
             <CardHeader className="p-4 border-b border-slate-100 bg-slate-50/50">
               <CardTitle className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                <Truck className="w-4 h-4 text-orange-500" />
+                <Truck className="w-4 h-4 text-primary" />
                 <span>Order Progress Tracking</span>
               </CardTitle>
             </CardHeader>
@@ -269,7 +269,7 @@ const OrderComponent: React.FC<Props> = ({ orderId }) => {
           <Card className="border border-slate-200/90 shadow-xs rounded-lg overflow-hidden bg-white">
             <CardHeader className="p-4 border-b border-slate-100 bg-slate-50/50">
               <CardTitle className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                <User className="w-4 h-4 text-orange-500" />
+                <User className="w-4 h-4 text-primary" />
                 <span>Customer Information</span>
               </CardTitle>
             </CardHeader>
@@ -313,7 +313,7 @@ const OrderComponent: React.FC<Props> = ({ orderId }) => {
 
               <div className="pt-2.5 border-t border-slate-100 space-y-1 text-xs">
                 <div className="flex items-center gap-1.5 font-bold text-slate-700">
-                  <MapPin className="w-3.5 h-3.5 text-orange-500" />
+                  <MapPin className="w-3.5 h-3.5 text-primary" />
                   <span>Shipping Address:</span>
                 </div>
                 <p className="text-slate-600 leading-relaxed pl-5">
@@ -325,7 +325,7 @@ const OrderComponent: React.FC<Props> = ({ orderId }) => {
               {(order.courierName || order.trackingNumber) && (
                 <div className="pt-2.5 border-t border-slate-100 space-y-1 text-xs bg-slate-50 p-2.5 rounded-md">
                   <div className="flex items-center gap-1.5 font-bold text-slate-800">
-                    <Truck className="w-3.5 h-3.5 text-orange-500" />
+                    <Truck className="w-3.5 h-3.5 text-primary" />
                     <span>Courier & Tracking:</span>
                   </div>
                   {order.courierName && (

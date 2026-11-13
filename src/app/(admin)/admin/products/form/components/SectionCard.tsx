@@ -46,7 +46,7 @@ export default function SectionCard({
       >
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5 min-w-0">
-            <span className="w-8 h-8 rounded-md bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 border border-orange-200/70 dark:border-orange-800/60 flex items-center justify-center shrink-0 shadow-2xs">
+            <span className="w-8 h-8 rounded-md bg-primary/10 text-primary border border-primary/20 flex items-center justify-center shrink-0 shadow-2xs">
               {icon}
             </span>
             <div className="min-w-0">

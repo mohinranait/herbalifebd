@@ -53,7 +53,7 @@ const OrderItemTable: React.FC<Props> = ({ order }) => {
       {/* Header */}
       <div className="p-4 sm:p-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3 bg-slate-50/50">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-md bg-orange-100 text-orange-600 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-md bg-primary/10 text-primary flex items-center justify-center">
             <Package className="w-4 h-4" />
           </div>
           <div>
@@ -81,7 +81,7 @@ const OrderItemTable: React.FC<Props> = ({ order }) => {
             disabled={isDownloading}
             type="button"
             size="sm"
-            className="h-8 px-2.5 sm:px-3 text-xs font-bold rounded-md bg-orange-500 hover:bg-orange-600 text-white gap-1.5 shadow-xs"
+            className="h-8 px-2.5 sm:px-3 text-xs font-bold rounded-md bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 shadow-xs"
           >
             {isDownloading ? (
               <>
@@ -104,7 +104,7 @@ const OrderItemTable: React.FC<Props> = ({ order }) => {
           <p className="font-bold text-slate-800 uppercase tracking-wide text-[10px]">
             Seller / Merchant
           </p>
-          <p className="text-sm font-bold text-orange-600">Herbalife BD</p>
+          <p className="text-sm font-bold text-primary">Herbalife BD</p>
           <p className="text-slate-600">Dhaka, Bangladesh</p>
           <p className="text-slate-600">Hotline: +880 1728-068200</p>
         </div>
@@ -158,7 +158,7 @@ const OrderItemTable: React.FC<Props> = ({ order }) => {
                         <Link
                           href={`/product/${item.productSlug || item.productId}`}
                           target="_blank"
-                          className="group inline-flex items-center gap-1 font-semibold text-xs text-slate-800 hover:text-orange-600 transition-colors"
+                          className="group inline-flex items-center gap-1 font-semibold text-xs text-slate-800 hover:text-primary transition-colors"
                         >
                           <span className="line-clamp-1">{item.productName}</span>
                           <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -171,7 +171,7 @@ const OrderItemTable: React.FC<Props> = ({ order }) => {
                             {Object.entries(item.selectedVariants).map(([k, v]) => (
                               <span
                                 key={k}
-                                className="inline-block text-[10px] font-medium px-1.5 py-0.5 rounded-sm bg-orange-50 text-orange-700 border border-orange-100"
+                                className="inline-block text-[10px] font-medium px-1.5 py-0.5 rounded-sm bg-primary/10 text-primary border border-primary/20"
                               >
                                 {k}: {String(v)}
                               </span>
@@ -237,7 +237,7 @@ const OrderItemTable: React.FC<Props> = ({ order }) => {
               <TableCell colSpan={3} className="text-right text-sm font-extrabold text-slate-900 py-3">
                 Grand Total
               </TableCell>
-              <TableCell className="text-right text-base font-extrabold text-orange-600 py-3 pr-4">
+              <TableCell className="text-right text-base font-extrabold text-primary py-3 pr-4">
                 {CURRENCY} {(pricing?.total || 0).toLocaleString("en-IN")}
               </TableCell>
             </TableRow>

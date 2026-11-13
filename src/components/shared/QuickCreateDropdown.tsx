@@ -41,7 +41,7 @@ const catalogActions: CreateItem[] = [
     subtitle: "Add product to catalog",
     url: "/admin/products/form",
     icon: PackagePlus,
-    iconBg: "bg-emerald-50 text-emerald-600 border border-emerald-200/50",
+    iconBg: "bg-primary/10 text-primary border border-primary/20",
     badge: "New",
   },
   {
@@ -113,7 +113,7 @@ export function QuickCreateDropdown() {
       <DropdownMenuTrigger asChild>
         <Button
           size="sm"
-          className="h-9 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs shadow-xs flex items-center gap-1.5 transition-all duration-150 active:scale-95 cursor-pointer"
+          className="h-9 px-3 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-xs shadow-xs flex items-center gap-1.5 transition-all duration-150 active:scale-95 cursor-pointer"
         >
           <Plus className="size-3.5 stroke-[2.5]" />
           <span className="font-semibold tracking-wide">Create</span>
@@ -162,11 +162,11 @@ export function QuickCreateDropdown() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-1">
-                          <span className="font-medium text-xs text-zinc-900 group-hover:text-emerald-700 transition-colors truncate">
+                          <span className="font-medium text-xs text-zinc-900 group-hover:text-primary transition-colors truncate">
                             {item.title}
                           </span>
                           {item.badge && (
-                            <span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-700">
+                            <span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-primary/15 text-primary">
                               {item.badge}
                             </span>
                           )}
@@ -209,7 +209,7 @@ export function QuickCreateDropdown() {
                         <Icon className="size-3.5" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <span className="font-medium text-xs text-zinc-900 group-hover:text-emerald-700 transition-colors block truncate">
+                        <span className="font-medium text-xs text-zinc-900 group-hover:text-primary transition-colors block truncate">
                           {item.title}
                         </span>
                         <p className="text-[10px] text-zinc-400 truncate leading-tight">

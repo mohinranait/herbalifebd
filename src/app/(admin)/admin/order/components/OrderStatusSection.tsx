@@ -175,7 +175,7 @@ const OrderStatusSection: React.FC<Props> = ({
                 isCompleted
                   ? "bg-emerald-50/60 border-emerald-200 hover:bg-emerald-50"
                   : isCurrent
-                  ? "bg-orange-50 border-orange-300 ring-1 ring-orange-400/40"
+                  ? "bg-primary/10 border-primary/40 ring-1 ring-primary/20"
                   : "bg-slate-50/70 border-slate-200/80 hover:bg-slate-100/70 opacity-70"
               }`}
             >
@@ -185,7 +185,7 @@ const OrderStatusSection: React.FC<Props> = ({
                     isCompleted
                       ? "bg-emerald-600 text-white"
                       : isCurrent
-                      ? "bg-orange-500 text-white"
+                      ? "bg-primary text-primary-foreground"
                       : "bg-slate-200 text-slate-600"
                   }`}
                 >
@@ -197,7 +197,7 @@ const OrderStatusSection: React.FC<Props> = ({
                     isCompleted
                       ? "text-emerald-600"
                       : isCurrent
-                      ? "text-orange-600"
+                      ? "text-primary"
                       : "text-slate-400"
                   }`}
                 />
@@ -208,7 +208,7 @@ const OrderStatusSection: React.FC<Props> = ({
                   isCompleted
                     ? "text-emerald-900"
                     : isCurrent
-                    ? "text-orange-900"
+                    ? "text-primary"
                     : "text-slate-600"
                 }`}
               >
@@ -224,7 +224,7 @@ const OrderStatusSection: React.FC<Props> = ({
       {nextAction && onQuickStatusChange && (
         <div className="flex items-center justify-between p-3 rounded-md bg-slate-50 border border-slate-200/90">
           <div className="flex items-center gap-2 text-xs text-slate-600">
-            <ArrowRight className="w-4 h-4 text-orange-500" />
+            <ArrowRight className="w-4 h-4 text-primary" />
             <span>
               Next Step: <strong className="text-slate-800">{nextAction.nextStatus}</strong>
             </span>
@@ -235,7 +235,7 @@ const OrderStatusSection: React.FC<Props> = ({
             size="sm"
             disabled={isUpdating}
             onClick={() => onQuickStatusChange(nextAction.nextStatus)}
-            className="h-8 px-3 text-xs font-bold rounded-md bg-orange-500 hover:bg-orange-600 text-white gap-1.5 shadow-xs"
+            className="h-8 px-3 text-xs font-bold rounded-md bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 shadow-xs"
           >
             <span>{nextAction.label}</span>
             <ChevronRight className="w-3.5 h-3.5" />

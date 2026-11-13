@@ -81,7 +81,7 @@ const AppSidebar = ({ state }: PropTypes) => {
               >
                 <Link
                   href="/admin"
-                  className="flex items-center justify-center size-8 rounded-lg bg-emerald-600 text-white shadow-xs"
+                  className="flex items-center justify-center size-8 rounded-lg bg-primary text-primary-foreground shadow-xs"
                 >
                   <Leaf className="size-4" />
                 </Link>
@@ -91,7 +91,7 @@ const AppSidebar = ({ state }: PropTypes) => {
                 href="/admin"
                 className="flex items-center gap-2.5 px-2 py-1 rounded-xl hover:bg-accent/60 transition-colors group"
               >
-                <div className="flex items-center justify-center size-8 rounded-lg bg-emerald-600 text-white shadow-xs group-hover:scale-105 transition-transform shrink-0">
+                <div className="flex items-center justify-center size-8 rounded-lg bg-primary text-primary-foreground shadow-xs group-hover:scale-105 transition-transform shrink-0">
                   <Leaf className="size-4" />
                 </div>
                 <div className="flex flex-col min-w-0">

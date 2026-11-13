@@ -63,7 +63,7 @@ export const tableColumns: ColumnDef<IComment>[] = [
               <Link
                 href={`/product/${slug}`}
                 target="_blank"
-                className="group inline-flex items-center gap-1 text-xs font-semibold text-slate-900 hover:text-orange-600 transition-colors line-clamp-1"
+                className="group inline-flex items-center gap-1 text-xs font-semibold text-slate-900 hover:text-primary transition-colors line-clamp-1"
                 title={product?.name}
               >
                 <span className="truncate">{product?.name || "Product"}</span>

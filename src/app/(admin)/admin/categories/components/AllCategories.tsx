@@ -87,7 +87,7 @@ const AllCategories = () => {
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
               Categories Management
             </h1>
-            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-orange-800/60">
+            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
               {stats.total} Total
             </span>
           </div>
@@ -99,7 +99,7 @@ const AllCategories = () => {
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <Button
             onClick={() => setIsOpen(true)}
-            className="h-9 px-4 text-xs font-bold rounded-md bg-orange-500 hover:bg-orange-600 text-white gap-2 shadow-xs transition-all"
+            className="h-9 px-4 text-xs font-bold rounded-md bg-primary hover:bg-primary/90 text-primary-foreground gap-2 shadow-xs transition-all"
           >
             <Plus className="w-4 h-4" />
             Add New Category
@@ -229,7 +229,7 @@ const AllCategories = () => {
             onClick={() => setViewMode("cards")}
             className={`h-7 px-2.5 text-xs font-semibold rounded gap-1.5 ${
               viewMode === "cards"
-                ? "bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-2xs"
+                ? "bg-white dark:bg-slate-800 text-primary shadow-2xs"
                 : "text-slate-500 hover:text-slate-900 dark:hover:text-slate-200"
             }`}
             title="Nested Cards View"
@@ -244,7 +244,7 @@ const AllCategories = () => {
             onClick={() => setViewMode("table")}
             className={`h-7 px-2.5 text-xs font-semibold rounded gap-1.5 ${
               viewMode === "table"
-                ? "bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-2xs"
+                ? "bg-white dark:bg-slate-800 text-primary shadow-2xs"
                 : "text-slate-500 hover:text-slate-900 dark:hover:text-slate-200"
             }`}
             title="Table View"
