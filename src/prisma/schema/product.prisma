@@ -1,0 +1,116 @@
+// use prisma-8
+
+model Attribute {
+  id          ObjectId           @id @map("_id")
+  name        String             @unique
+  displayName String?
+  description String?
+  values      String[]
+  status      Bool?
+  priority    Int32?
+  isDelete    Bool?
+  createdAt   temporal.CreatedAt
+  updatedAt   temporal.UpdatedAt
+
+  @@index([status, isDelete])
+  @@map("attributes")
+}
+
+model Product {
+  id                 ObjectId           @id @map("_id")
+  name               String
+  slug               String             @unique
+  videoUrl           String?
+  shortDescription   String?
+  description        String?
+  thumbnail          String?
+  gallery            String[]
+  price              Double?
+  discountPrice      Double?
+  discountParcent    Double?
+  costPrice          Double?
+  productType        String?
+  selectedAttributes Json?
+  categoryId         ObjectId?
+  category           Category?          @relation(fields: [categoryId], references: [id])
+  brandId            ObjectId?
+  brand              Brand?             @relation(fields: [brandId], references: [id])
+  stock              Int32?
+  trackStock         Bool?
+  weight             Double?
+  dimensionLength    Double?
+  dimensionWidth     Double?
+  dimensionHeight    Double?
+  isFreeShipping     Bool?
+  seoTitle           String?
+  seoDescription     String?
+  seoKeywords        String[]
+  ratingsAverage     Double?
+  totalReviews       Int32?
+  tags               String[]
+  isFeatured         Bool?
+  totalSold          Int32?
+  isDelete           Bool?
+  status             Bool?
+  variations         ProductVariation[]
+  createdAt          temporal.CreatedAt
+  updatedAt          temporal.UpdatedAt
+
+  @@index([status, isDelete, createdAt])
+  @@index([status, isDelete, categoryId, createdAt])
+  @@index([status, isDelete, brandId, createdAt])
+  @@index([status, isDelete, isFeatured, createdAt])
+  @@index([status, isDelete, isFreeShipping, createdAt])
+  @@index([status, isDelete, totalSold])
+  @@index([status, isDelete, ratingsAverage])
+  @@index([status, isDelete, price])
+  @@map("products")
+}
+
+model ProductVariation {
+  id                ObjectId           @id @map("_id")
+  productId         ObjectId
+  product           Product            @relation(fields: [productId], references: [id])
+  name              String
+  price             Double?
+  offerPriceFixed   Double?
+  offerPriceParcent Double?
+  costPrice         Double?
+  sku               String?            @unique
+  barcode           String?
+  stock             Int32?
+  lowStockAlert     Int32?
+  images            String[]
+  attributeConfig   Json?
+  weight            Double?
+  dimensionLength   Double?
+  dimensionWidth    Double?
+  dimensionHeight   Double?
+  isDefault         Bool?
+  createdAt         temporal.CreatedAt
+  updatedAt         temporal.UpdatedAt
+
+  @@index([productId])
+  @@index([productId, isDefault])
+  @@map("product_variations")
+}
+
+model RequestQuote {
+  id             ObjectId           @id @map("_id")
+  productId      ObjectId?
+  product        Product?           @relation(fields: [productId], references: [id])
+  address        String?
+  zipCode        String?
+  district       String?
+  name           String?
+  whatsappNumber String?
+  phone          String?
+  quantity       Int32?
+  notes          String?
+  createdAt      temporal.CreatedAt
+  updatedAt      temporal.UpdatedAt
+
+  @@index([productId])
+  @@index([createdAt])
+  @@map("request_quotes")
+}

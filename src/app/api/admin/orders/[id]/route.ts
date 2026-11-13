@@ -38,7 +38,7 @@ export async function PATCH(
   try {
     const body = await req.json();
     const { id } = await params;
-    const { orderStatus, payment } = body;
+    const { orderStatus, payment, courierName, trackingNumber, adminNote } = body;
 
     const order = await db.orm.public.Order
       .where({ id })
@@ -78,6 +78,9 @@ export async function PATCH(
       ...(orderStatus === "CANCELLED" && previousStatus !== "CANCELLED" ? { cancelledAt: new Date() } : {}),
       paymentStatus: payment?.status || order.paymentStatus,
       paymentMethod: payment?.method || order.paymentMethod,
+      ...(courierName !== undefined ? { courierName } : {}),
+      ...(trackingNumber !== undefined ? { trackingNumber } : {}),
+      ...(adminNote !== undefined ? { adminNote } : {}),
     });
 
     const updated = await db.orm.public.Order

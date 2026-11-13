@@ -22,7 +22,7 @@ import type {
 } from '@prisma/orm-mongo/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'f39f1fe8e2f3d2cec70bd6157c09f23bc82851b8db0c41eb3c3b90d77fea069f'>;
+  StorageHashBase<'0953e0dc46b9ee9e02e316f38d301b10f380e245073735ad77a30513cc33e91f'>;
 export type ExecutionHash =
   ExecutionHashBase<'934e0cf7069d775533d99fda6afaece27282b0517b9613f26df335d196131318'>;
 export type ProfileHash =
@@ -32,7 +32,40 @@ export type CodecTypes = MongoCodecTypes;
 
 type ParameterizedOutputTypeFunctions = MongoParameterizedOutputTypes;
 
-type FieldTypeOverrides = {};
+type FieldTypeOverrides = {
+  readonly __unbound__: {
+    readonly models: {
+      readonly Order: {
+        readonly orderStatus: {
+          readonly output:
+            | 'PENDING'
+            | 'CONFIRMED'
+            | 'PROCESSING'
+            | 'SHIPPED'
+            | 'DELIVERED'
+            | 'CANCELLED'
+            | 'RETURNED';
+          readonly input:
+            | 'PENDING'
+            | 'CONFIRMED'
+            | 'PROCESSING'
+            | 'SHIPPED'
+            | 'DELIVERED'
+            | 'CANCELLED'
+            | 'RETURNED';
+        };
+        readonly paymentMethod: {
+          readonly output: 'COD' | 'BKASH' | 'NAGAD';
+          readonly input: 'COD' | 'BKASH' | 'NAGAD';
+        };
+        readonly paymentStatus: {
+          readonly output: 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED';
+          readonly input: 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED';
+        };
+      };
+    };
+  };
+};
 export type FieldOutputTypes = FieldTypesFromDomain<
   ContractBase['domain']['namespaces'],
   CodecTypes,
@@ -1042,10 +1075,28 @@ type ContractBase = Omit<
                     readonly fullName: { readonly bsonType: 'string' };
                     readonly invoiceNumber: { readonly bsonType: 'string' };
                     readonly isDeleted: { readonly bsonType: readonly ['null', 'bool'] };
-                    readonly orderStatus: { readonly bsonType: readonly ['null', 'string'] };
+                    readonly orderStatus: {
+                      readonly bsonType: readonly ['null', 'string'];
+                      readonly enum: readonly [
+                        'PENDING',
+                        'CONFIRMED',
+                        'PROCESSING',
+                        'SHIPPED',
+                        'DELIVERED',
+                        'CANCELLED',
+                        'RETURNED',
+                        null,
+                      ];
+                    };
                     readonly paidAt: { readonly bsonType: readonly ['null', 'date'] };
-                    readonly paymentMethod: { readonly bsonType: readonly ['null', 'string'] };
-                    readonly paymentStatus: { readonly bsonType: readonly ['null', 'string'] };
+                    readonly paymentMethod: {
+                      readonly bsonType: readonly ['null', 'string'];
+                      readonly enum: readonly ['COD', 'BKASH', 'NAGAD', null];
+                    };
+                    readonly paymentStatus: {
+                      readonly bsonType: readonly ['null', 'string'];
+                      readonly enum: readonly ['PENDING', 'PAID', 'FAILED', 'REFUNDED', null];
+                    };
                     readonly phone: { readonly bsonType: 'string' };
                     readonly postalCode: { readonly bsonType: readonly ['null', 'string'] };
                     readonly shippingCharge: { readonly bsonType: readonly ['null', 'double'] };
@@ -3129,6 +3180,59 @@ type ContractBase = Omit<
               };
             };
           };
+        };
+        readonly enum: {
+          readonly OrderStatus: {
+            readonly codecId: 'mongo/string@1';
+            readonly members: readonly [
+              { readonly name: 'PENDING'; readonly value: 'PENDING' },
+              { readonly name: 'CONFIRMED'; readonly value: 'CONFIRMED' },
+              { readonly name: 'PROCESSING'; readonly value: 'PROCESSING' },
+              { readonly name: 'SHIPPED'; readonly value: 'SHIPPED' },
+              { readonly name: 'DELIVERED'; readonly value: 'DELIVERED' },
+              { readonly name: 'CANCELLED'; readonly value: 'CANCELLED' },
+              { readonly name: 'RETURNED'; readonly value: 'RETURNED' },
+            ];
+          };
+          readonly PaymentMethod: {
+            readonly codecId: 'mongo/string@1';
+            readonly members: readonly [
+              { readonly name: 'COD'; readonly value: 'COD' },
+              { readonly name: 'BKASH'; readonly value: 'BKASH' },
+              { readonly name: 'NAGAD'; readonly value: 'NAGAD' },
+            ];
+          };
+          readonly PaymentStatus: {
+            readonly codecId: 'mongo/string@1';
+            readonly members: readonly [
+              { readonly name: 'PENDING'; readonly value: 'PENDING' },
+              { readonly name: 'PAID'; readonly value: 'PAID' },
+              { readonly name: 'FAILED'; readonly value: 'FAILED' },
+              { readonly name: 'REFUNDED'; readonly value: 'REFUNDED' },
+            ];
+          };
+        };
+        readonly enumMemberTypes?: {
+          readonly OrderStatus: readonly [
+            { readonly name: 'PENDING'; readonly value: 'PENDING' },
+            { readonly name: 'CONFIRMED'; readonly value: 'CONFIRMED' },
+            { readonly name: 'PROCESSING'; readonly value: 'PROCESSING' },
+            { readonly name: 'SHIPPED'; readonly value: 'SHIPPED' },
+            { readonly name: 'DELIVERED'; readonly value: 'DELIVERED' },
+            { readonly name: 'CANCELLED'; readonly value: 'CANCELLED' },
+            { readonly name: 'RETURNED'; readonly value: 'RETURNED' },
+          ];
+          readonly PaymentMethod: readonly [
+            { readonly name: 'COD'; readonly value: 'COD' },
+            { readonly name: 'BKASH'; readonly value: 'BKASH' },
+            { readonly name: 'NAGAD'; readonly value: 'NAGAD' },
+          ];
+          readonly PaymentStatus: readonly [
+            { readonly name: 'PENDING'; readonly value: 'PENDING' },
+            { readonly name: 'PAID'; readonly value: 'PAID' },
+            { readonly name: 'FAILED'; readonly value: 'FAILED' },
+            { readonly name: 'REFUNDED'; readonly value: 'REFUNDED' },
+          ];
         };
       };
     };

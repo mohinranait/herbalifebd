@@ -1,109 +1,128 @@
 "use client";
 
-import { Button } from '@/components/ui/button';
-import { Pen, RotateCcw, Trash2, } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Pen, RotateCcw, Trash2, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { IProduct } from "@/redux/service/products/type";
+import DeleteAlert from "@/components/shared/DeleteAlert";
+import {
+  useDeleteProductMutation,
+  useSoftDeleteProductMutation,
+} from "@/redux/service/products";
+import handleErrors, { ErrorResponse } from "@/lib/handle-error";
 
-import { toast } from 'sonner';
-
-import { IProduct } from '@/redux/service/products/type';
-import DeleteAlert from '@/components/shared/DeleteAlert';
-import { useDeleteProductMutation, useSoftDeleteProductMutation } from '@/redux/service/products';
-import { useRouter } from 'next/navigation';
-import handleErrors, { ErrorResponse } from '@/lib/handle-error';
-
-type Props = {
+interface Props {
   data: IProduct;
   type: "active" | "deleted";
-};
+}
 
-const CellAction = ({ data, type }: Props) => {
-  const router = useRouter()
- 
+const CellAction: React.FC<Props> = ({ data, type }) => {
+  const router = useRouter();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const [softDeleteProduct, { isLoading }] = useSoftDeleteProductMutation();
   const [deleteProduct] = useDeleteProductMutation();
 
-
-  // Soft delete
-  const softDelete = async (action: "restore"|"soft"='restore') => {
+  // Soft delete / Restore
+  const softDelete = async (action: "restore" | "soft" = "restore") => {
     try {
-      await softDeleteProduct({ id: data.id, payload: { isDelete: true } }).unwrap();
-       toast.success( action === 'restore' ? "Restore" :"Delete" + ` successfully`);
+      await softDeleteProduct({
+        id: data.id,
+        payload: { isDelete: action === "soft" },
+      }).unwrap();
+      toast.success(
+        action === "restore"
+          ? "Product restored successfully!"
+          : "Product moved to trash!"
+      );
       setIsDeleteOpen(false);
     } catch (error) {
       console.error(error);
-      handleErrors( error as ErrorResponse)
+      handleErrors(error as ErrorResponse);
     }
   };
 
-  // hard delete
+  // Permanent hard delete
   const hardDelete = async () => {
     try {
-      await deleteProduct(data?.id).unwrap();
-      toast.success("Deleted successfully");
+      await deleteProduct(data.id).unwrap();
+      toast.success("Product permanently deleted!");
       setIsDeleteOpen(false);
     } catch (error) {
       console.error(error);
-        handleErrors( error as ErrorResponse)
+      handleErrors(error as ErrorResponse);
     }
   };
 
-
   const handleEditAndRestore = () => {
-    if (type === 'active') {
-      // setIsOpen(true)
-      router.push(`/admin/products/form?pid=${data?.id}`)
+    if (type === "active") {
+      router.push(`/admin/products/form?pid=${data.id}`);
     } else {
-      softDelete("restore")
+      softDelete("restore");
     }
-  }
-
+  };
 
   const handleDelete = () => {
-    if (type === 'active') {
-      softDelete()
+    if (type === "active") {
+      softDelete("soft");
     } else {
-      hardDelete()
+      hardDelete();
     }
-  }
+  };
 
   return (
-    <div className="flex justify-end items-center gap-2">
-      {/* <Switch checked={data.status} /> */}
+    <div className="flex justify-end items-center gap-1.5">
+      {/* PREVIEW ON STORE (only if active) */}
+      {type === "active" && data.slug && (
+        <Link href={`/product/${data.slug}`} target="_blank" title="View on storefront">
+          <Button
+            size="icon"
+            variant="ghost"
+            type="button"
+            className="h-8 w-8 rounded-md text-slate-500 hover:text-orange-600 hover:bg-orange-50"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+          </Button>
+        </Link>
+      )}
 
-      {/* EDIT */}
+      {/* EDIT / RESTORE */}
       <Button
         size="icon"
         variant="outline"
         type="button"
-        onClick={() => handleEditAndRestore()}
-
+        onClick={handleEditAndRestore}
+        className="h-8 w-8 rounded-md border-slate-200 text-slate-700 hover:bg-slate-100"
+        title={type === "active" ? "Edit Product" : "Restore Product"}
       >
-        {
-          type === 'active' ? <Pen /> :
-            <RotateCcw />
-        }
+        {type === "active" ? (
+          <Pen className="w-3.5 h-3.5" />
+        ) : (
+          <RotateCcw className="w-3.5 h-3.5 text-emerald-600" />
+        )}
       </Button>
 
       {/* DELETE BUTTON */}
       <Button
         size="icon"
-        variant="destructive"
+        variant="outline"
         onClick={() => setIsDeleteOpen(true)}
+        className="h-8 w-8 rounded-md border-slate-200 text-red-600 hover:bg-red-50 hover:border-red-200"
+        title={type === "active" ? "Move to Trash" : "Permanently Delete"}
       >
-        <Trash2 />
+        <Trash2 className="w-3.5 h-3.5" />
       </Button>
 
-      {/* DELETE CONFIRM MODAL (STATE CONTROLLED) */}
-      <DeleteAlert isDeleteOpen={isDeleteOpen} setIsDeleteOpen={setIsDeleteOpen} callBack={handleDelete} isLoading={isLoading}
-        text={"This product will be moved to trash. You can restore it later or undo this action anytime."}
-        deleteType={data?.name}
+      {/* DELETE CONFIRM MODAL */}
+      <DeleteAlert
+        isDeleteOpen={isDeleteOpen}
+        setIsDeleteOpen={setIsDeleteOpen}
+        callBack={handleDelete}
+        isLoading={isLoading}
       />
-     
-
-     
     </div>
   );
 };

@@ -1,0 +1,14 @@
+// use prisma-8
+
+model User {
+  id        ObjectId           @id @map("_id")
+  name      String
+  phone     String             @unique
+  password  String
+  role      String?
+  status    String?
+  createdAt temporal.CreatedAt
+  updatedAt temporal.UpdatedAt
+
+  @@map("users")
+}

@@ -1,97 +1,136 @@
 "use client";
 
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Search, RotateCcw } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { useDebounce } from "@/hooks/useDebounce";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 
-import { Calendar } from "@/components/ui/calendar"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { Button } from "@/components/ui/button";
-
-type Props = {
+interface Props {
   setParams: Dispatch<SetStateAction<string>>;
-};
+}
 
-const Filters = ({ setParams }: Props) => {
-  const [status, setStatus] = useState<"all" | "true" | "false">("all");
+const Filters: React.FC<Props> = ({ setParams }) => {
+  const [isApproved, setIsApproved] = useState<string>("all");
+  const [rating, setRating] = useState<string>("all");
+  const [isFeature, setIsFeature] = useState<string>("all");
   const [search, setSearch] = useState("");
- const [date, setDate] = React.useState<Date>()
 
-  const debouncedSearch = useDebounce(search, 500);
+  const debouncedSearch = useDebounce(search, 300);
 
   useEffect(() => {
     const params = new URLSearchParams();
 
-    //  search (debounced)
-    if (debouncedSearch) {
-      params.append("search", debouncedSearch);
+    if (debouncedSearch.trim()) {
+      params.append("search", debouncedSearch.trim());
     }
 
-  
-    if (status !== "all") {
-      params.append("isApproved", status);
+    if (isApproved !== "all") {
+      params.append("isApproved", isApproved);
     }
 
-    
-    if (date) {
-      params.append("date", format(date, "yyyy-MM-dd"));
+    if (rating !== "all") {
+      params.append("rating", rating);
+    }
+
+    if (isFeature !== "all") {
+      params.append("isFeature", isFeature);
     }
 
     setParams(params.toString());
-  }, [status, debouncedSearch, setParams,date]);
+  }, [isApproved, rating, isFeature, debouncedSearch, setParams]);
+
+  const handleReset = () => {
+    setIsApproved("all");
+    setRating("all");
+    setIsFeature("all");
+    setSearch("");
+  };
+
+  const hasFilters =
+    search.trim() !== "" ||
+    isApproved !== "all" ||
+    rating !== "all" ||
+    isFeature !== "all";
 
   return (
-    <div className="flex flex-wrap gap-4">
-      <Input
-        type="search"
-        placeholder="Search..."
-        value={search}
-        className="max-w-sm"
-        onChange={(e) => setSearch(e.target.value)}
-      />
+    <div className="p-3 sm:p-4 bg-white border border-slate-200/90 rounded-lg shadow-xs flex flex-wrap items-center gap-3">
+      {/* Search Input */}
+      <div className="relative flex-1 min-w-[200px] max-w-sm">
+        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+        <Input
+          type="search"
+          placeholder="Search by review text..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="h-9 pl-9 text-xs rounded-md border-slate-200 bg-slate-50/50 focus:bg-white"
+        />
+      </div>
 
-      <Select value={status} onValueChange={(value) => setStatus(value as 'all' | 'true'|'false')}>
-        <SelectTrigger className="w-60">
-          <SelectValue placeholder="Status" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
+      {/* Approval Filter */}
+      <div className="w-36">
+        <Select value={isApproved} onValueChange={setIsApproved}>
+          <SelectTrigger className="h-9 text-xs rounded-md border-slate-200 bg-slate-50/50">
+            <SelectValue placeholder="Approval" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Reviews</SelectItem>
+            <SelectItem value="true">Approved</SelectItem>
+            <SelectItem value="false">Pending</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Rating Filter */}
+      <div className="w-36">
+        <Select value={rating} onValueChange={setRating}>
+          <SelectTrigger className="h-9 text-xs rounded-md border-slate-200 bg-slate-50/50">
+            <SelectValue placeholder="Rating" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Ratings</SelectItem>
+            <SelectItem value="5">5 Stars (★★★★★)</SelectItem>
+            <SelectItem value="4">4 Stars (★★★★)</SelectItem>
+            <SelectItem value="3">3 Stars (★★★)</SelectItem>
+            <SelectItem value="2">2 Stars (★★)</SelectItem>
+            <SelectItem value="1">1 Star (★)</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Featured Filter */}
+      <div className="w-32">
+        <Select value={isFeature} onValueChange={setIsFeature}>
+          <SelectTrigger className="h-9 text-xs rounded-md border-slate-200 bg-slate-50/50">
+            <SelectValue placeholder="Featured" />
+          </SelectTrigger>
+          <SelectContent>
             <SelectItem value="all">All</SelectItem>
-            <SelectItem value="true">Active</SelectItem>
-            <SelectItem value="false">Inactive</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+            <SelectItem value="true">Featured</SelectItem>
+            <SelectItem value="false">Standard</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-      <Popover>
-      <PopoverTrigger asChild>
+      {hasFilters && (
         <Button
+          onClick={handleReset}
+          type="button"
           variant="outline"
-          data-empty={!date}
-          className="w-60 justify-start text-left font-normal data-[empty=true]:text-muted-foreground"
+          size="sm"
+          className="h-9 text-xs font-medium text-slate-600 hover:text-red-600 rounded-md border-slate-200 gap-1.5 ml-auto"
         >
-          <CalendarIcon />
-          {date ? format(date, "dd MMM, yyyy") : <span>Pick Created Date</span>}
+          <RotateCcw className="w-3.5 h-3.5" />
+          <span>Reset Filters</span>
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
-        <Calendar mode="single" selected={date} onSelect={setDate} />
-      </PopoverContent>
-    </Popover>
+      )}
     </div>
   );
 };

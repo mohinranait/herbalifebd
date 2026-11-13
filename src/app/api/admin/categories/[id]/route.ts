@@ -10,7 +10,7 @@ export async function PATCH(
     const body = await req.json();
     const { id } = await params;
 
-    const parsed = categorySchema.safeParse(body);
+    const parsed = categorySchema.partial().safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
         {

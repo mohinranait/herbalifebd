@@ -1,0 +1,19 @@
+// use prisma-8
+
+model Brand {
+  id          ObjectId           @id @map("_id")
+  name        String
+  slug        String             @unique
+  description String?
+  logo        String?
+  banner      String?
+  status      Bool?
+  priority    Int32?
+  isDelete    Bool?
+  createdAt   temporal.CreatedAt
+  updatedAt   temporal.UpdatedAt
+
+  @@index([status, isDelete, priority])
+  @@index([status, isDelete, createdAt])
+  @@map("brands")
+}

@@ -36,8 +36,8 @@ export async function GET(req: NextRequest) {
     const total = await collection.count();
 
     const comments = await collection
-      .include("product", (p: any) => p.select("id", "name"))
-      .include("user", (u: any) => u.select("id", "name"))
+      .include("product", (p: any) => p.select("id", "name", "slug", "thumbnail"))
+      .include("user", (u: any) => u.select("id", "name", "phone"))
       .orderBy((c: any) => c.createdAt.desc())
       .offset((page - 1) * limit)
       .limit(limit)

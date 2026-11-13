@@ -1,48 +1,36 @@
 "use client";
 
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Search, RotateCcw, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { useDebounce } from "@/hooks/useDebounce";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 
-import { Calendar } from "@/components/ui/calendar"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { Button } from "@/components/ui/button";
-import { TOrderStatus } from "@/redux/service/orders/type";
-
-type Props = {
+interface Props {
   setParams: Dispatch<SetStateAction<string>>;
-};
+}
 
-const Filters = ({ setParams }: Props) => {
-  const [status, setStatus] = useState<"all" | "true" | "false">("all");
-  const [isFeatured, setIsFeatured] = useState<"all" | "true" | "false">("all");
+const Filters: React.FC<Props> = ({ setParams }) => {
+  const [status, setStatus] = useState<string>("all");
+  const [isFeatured, setIsFeatured] = useState<string>("all");
+  const [productType, setProductType] = useState<string>("all");
   const [search, setSearch] = useState("");
-  const [date, setDate] = React.useState<Date>()
 
   const debouncedSearch = useDebounce(search, 300);
 
   useEffect(() => {
     const params = new URLSearchParams();
 
-    //  search (debounced)
-    if (debouncedSearch) {
-      params.append("search", debouncedSearch);
+    if (debouncedSearch.trim()) {
+      params.append("search", debouncedSearch.trim());
     }
-
 
     if (status !== "all") {
       params.append("status", status);
@@ -52,64 +40,95 @@ const Filters = ({ setParams }: Props) => {
       params.append("isFeatured", isFeatured);
     }
 
-    if (date) {
-      params.append("date", format(date, "yyyy-MM-dd"));
+    if (productType !== "all") {
+      params.append("productType", productType);
     }
 
     setParams(params.toString());
-  }, [status, isFeatured, debouncedSearch, setParams, date]);
+  }, [status, isFeatured, productType, debouncedSearch, setParams]);
+
+  const handleReset = () => {
+    setStatus("all");
+    setIsFeatured("all");
+    setProductType("all");
+    setSearch("");
+  };
+
+  const hasFilters =
+    search.trim() !== "" ||
+    status !== "all" ||
+    isFeatured !== "all" ||
+    productType !== "all";
 
   return (
-    <div className="flex flex-wrap gap-4">
-      <Input
-        type="search"
-        placeholder="Search..."
-        value={search}
-        className="min-w-40 max-w-sm"
-        onChange={(e) => setSearch(e.target.value)}
-      />
+    <div className="p-3 sm:p-4 bg-white border border-slate-200/90 rounded-lg shadow-xs flex flex-wrap items-center gap-3">
+      {/* Search Input */}
+      <div className="relative flex-1 min-w-[200px] max-w-sm">
+        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+        <Input
+          type="search"
+          placeholder="Search products by title..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="h-9 pl-9 text-xs rounded-md border-slate-200 bg-slate-50/50 focus:bg-white"
+        />
+      </div>
 
-      <Select value={status} onValueChange={(value) => setStatus(value as 'all' | 'true' | 'false')}>
-        <SelectTrigger className="w-36">
-          <SelectValue placeholder="Status" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectItem value="all">All</SelectItem>
+      {/* Status Filter */}
+      <div className="w-36">
+        <Select value={status} onValueChange={setStatus}>
+          <SelectTrigger className="h-9 text-xs rounded-md border-slate-200 bg-slate-50/50">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
             <SelectItem value="true">Active</SelectItem>
-            <SelectItem value="false">Inactive</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+            <SelectItem value="false">Draft / Inactive</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-      <Select value={isFeatured} onValueChange={(value) => setIsFeatured(value as 'all' | 'true' | 'false')}>
-        <SelectTrigger className="w-32">
-          <SelectValue placeholder="Featured" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectItem value="all">All</SelectItem>
-            <SelectItem value="true">Featured</SelectItem>
-            <SelectItem value="false">Not Featured</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+      {/* Featured Filter */}
+      <div className="w-36">
+        <Select value={isFeatured} onValueChange={setIsFeatured}>
+          <SelectTrigger className="h-9 text-xs rounded-md border-slate-200 bg-slate-50/50">
+            <SelectValue placeholder="Featured" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Items</SelectItem>
+            <SelectItem value="true">Featured Only</SelectItem>
+            <SelectItem value="false">Standard Items</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            data-empty={!date}
-            className="w-60 justify-start text-left font-normal data-[empty=true]:text-muted-foreground"
-          >
-            <CalendarIcon />
-            {date ? format(date, "dd MMM, yyyy") : <span>Pick Created Date</span>}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0">
-          <Calendar mode="single" selected={date} onSelect={setDate} />
-        </PopoverContent>
-      </Popover>
+      {/* Product Type Filter */}
+      <div className="w-36">
+        <Select value={productType} onValueChange={setProductType}>
+          <SelectTrigger className="h-9 text-xs rounded-md border-slate-200 bg-slate-50/50">
+            <SelectValue placeholder="Product Type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Types</SelectItem>
+            <SelectItem value="single">Single Item</SelectItem>
+            <SelectItem value="variant">Variant Item</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Reset Button */}
+      {hasFilters && (
+        <Button
+          onClick={handleReset}
+          type="button"
+          variant="outline"
+          size="sm"
+          className="h-9 text-xs font-medium text-slate-600 hover:text-red-600 rounded-md border-slate-200 gap-1.5 ml-auto"
+        >
+          <RotateCcw className="w-3.5 h-3.5" />
+          <span>Reset Filters</span>
+        </Button>
+      )}
     </div>
   );
 };

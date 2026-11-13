@@ -54,7 +54,7 @@ const ImageCard = ({ media }: Props) => {
 
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-700">
-            <span className="text-xs text-gray-500">ছবি লোড হয়নি</span>
+            <span className="text-xs text-gray-500">Failed to load</span>
           </div>
         )}
 

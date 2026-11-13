@@ -235,76 +235,66 @@ const VariantTable = ({
 
   return (
     <div>
-      <div className="border rounded-lg overflow-hidden ">
-        <div className="grid grid-cols-10 gap-2 p-3 border-b bg-muted/30">
-
-          <div className="col-span-1 flex items-center text-xs font-medium text-muted-foreground">
-            Apply All
+      <div className="border border-slate-200/90 dark:border-slate-800 rounded-lg overflow-hidden bg-white dark:bg-slate-900 shadow-2xs">
+        {/* Bulk Apply Bar */}
+        <div className="flex flex-wrap items-center gap-2.5 p-3 border-b border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 shrink-0">
+            <span>Apply to All Variants:</span>
           </div>
 
-          <Input
-            className="col-span-2 h-9"
-            placeholder="Price"
-            type="number"
-            min={0}
-            value={bulk.price}
-            onChange={(e) =>
-              setBulk({ ...bulk, price: e.target.value })
-            }
-          />
+          <div className="flex flex-wrap items-center gap-2 flex-1">
+            <Input
+              className="h-8 text-xs w-24 rounded-md"
+              placeholder="Price (৳)"
+              type="number"
+              min={0}
+              value={bulk.price}
+              onChange={(e) =>
+                setBulk({ ...bulk, price: e.target.value })
+              }
+            />
 
-          <Input
-            className="col-span-2 h-9"
-            placeholder="Fixed"
-            type="number"
-            min={0}
-            value={bulk.fixed}
-            onChange={(e) =>
-              setBulk({ ...bulk, fixed: e.target.value })
-            }
-          />
+            <Input
+              className="h-8 text-xs w-24 rounded-md"
+              placeholder="Discount (৳)"
+              type="number"
+              min={0}
+              value={bulk.fixed}
+              onChange={(e) =>
+                setBulk({ ...bulk, fixed: e.target.value })
+              }
+            />
 
-          <Input
-            className="col-span-2 h-9"
-            placeholder="%"
-            type="number"
-            min={0}
-            max={100}
-            value={bulk.percent}
-            onChange={(e) =>
-              setBulk({ ...bulk, percent: e.target.value })
-            }
-          />
+            <Input
+              className="h-8 text-xs w-20 rounded-md"
+              placeholder="Discount (%)"
+              type="number"
+              min={0}
+              max={100}
+              value={bulk.percent}
+              onChange={(e) =>
+                setBulk({ ...bulk, percent: e.target.value })
+              }
+            />
 
-          <Input
-            className="col-span-2 h-9"
-            placeholder="Stock"
-            type="number"
-            min={0}
-            value={bulk.stock}
-            onChange={(e) =>
-              setBulk({ ...bulk, stock: e.target.value })
-            }
-          />
+            <Input
+              className="h-8 text-xs w-24 rounded-md"
+              placeholder="Stock Quantity"
+              type="number"
+              min={0}
+              value={bulk.stock}
+              onChange={(e) =>
+                setBulk({ ...bulk, stock: e.target.value })
+              }
+            />
 
-          {/* <Input
-            className="col-span-2 h-9"
-            placeholder="Alert"
-            type="number"
-            min={0}
-            value={bulk.alert}
-            onChange={(e) =>
-              setBulk({ ...bulk, alert: e.target.value })
-            }
-          /> */}
-
-          <div className="col-span-1 flex justify-end">
             <Button
               type="button"
               onClick={handleApplyAll}
-              className="h-9 w-full"
+              size="sm"
+              className="h-8 px-3 text-xs font-semibold rounded-md bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:bg-slate-800"
             >
-              Apply
+              Apply to All
             </Button>
           </div>
         </div>

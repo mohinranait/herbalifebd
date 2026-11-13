@@ -1,97 +1,89 @@
 "use client";
 
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Search, RotateCcw } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { useDebounce } from "@/hooks/useDebounce";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 
-import { Calendar } from "@/components/ui/calendar"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { Button } from "@/components/ui/button";
-
-type Props = {
+interface Props {
   setParams: Dispatch<SetStateAction<string>>;
-};
+}
 
-const Filters = ({ setParams }: Props) => {
-  const [status, setStatus] = useState<"all" | "true" | "false">("all");
+const Filters: React.FC<Props> = ({ setParams }) => {
+  const [status, setStatus] = useState<string>("all");
   const [search, setSearch] = useState("");
- const [date, setDate] = React.useState<Date>()
 
-  const debouncedSearch = useDebounce(search, 500);
+  const debouncedSearch = useDebounce(search, 300);
 
   useEffect(() => {
     const params = new URLSearchParams();
 
-    //  search (debounced)
-    if (debouncedSearch) {
-      params.append("search", debouncedSearch);
+    if (debouncedSearch.trim()) {
+      params.append("search", debouncedSearch.trim());
     }
 
-  
     if (status !== "all") {
       params.append("status", status);
     }
 
-    
-    if (date) {
-      params.append("date", format(date, "yyyy-MM-dd"));
-    }
-
     setParams(params.toString());
-  }, [status, debouncedSearch, setParams,date]);
+  }, [status, debouncedSearch, setParams]);
+
+  const handleReset = () => {
+    setStatus("all");
+    setSearch("");
+  };
+
+  const hasFilters = search.trim() !== "" || status !== "all";
 
   return (
-    <div className="flex flex-wrap gap-4">
-      <Input
-        type="search"
-        placeholder="Search..."
-        value={search}
-        className="max-w-sm"
-        onChange={(e) => setSearch(e.target.value)}
-      />
+    <div className="p-3 sm:p-4 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-lg shadow-xs flex flex-wrap items-center gap-3">
+      {/* Search Input */}
+      <div className="relative flex-1 min-w-[200px] max-w-sm">
+        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+        <Input
+          type="search"
+          placeholder="Search categories by name or slug..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="h-9 pl-9 text-xs rounded-md border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 focus:bg-white dark:focus:bg-slate-900"
+        />
+      </div>
 
-      <Select value={status} onValueChange={(value) => setStatus(value as 'all' | 'true'|'false')}>
-        <SelectTrigger className="w-60">
-          <SelectValue placeholder="Status" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectItem value="all">All</SelectItem>
+      {/* Status Filter */}
+      <div className="w-36">
+        <Select value={status} onValueChange={setStatus}>
+          <SelectTrigger className="h-9 text-xs rounded-md border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
             <SelectItem value="true">Active</SelectItem>
             <SelectItem value="false">Inactive</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+          </SelectContent>
+        </Select>
+      </div>
 
-      <Popover>
-      <PopoverTrigger asChild>
+      {hasFilters && (
         <Button
+          onClick={handleReset}
+          type="button"
           variant="outline"
-          data-empty={!date}
-          className="w-60 justify-start text-left font-normal data-[empty=true]:text-muted-foreground"
+          size="sm"
+          className="h-9 text-xs font-medium text-slate-600 hover:text-rose-600 rounded-md border-slate-200 dark:border-slate-800 gap-1.5 ml-auto"
         >
-          <CalendarIcon />
-          {date ? format(date, "dd MMM, yyyy") : <span>Pick Created Date</span>}
+          <RotateCcw className="w-3.5 h-3.5" />
+          Reset
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
-        <Calendar mode="single" selected={date} onSelect={setDate} />
-      </PopoverContent>
-    </Popover>
+      )}
     </div>
   );
 };

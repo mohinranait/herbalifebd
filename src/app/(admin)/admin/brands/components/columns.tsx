@@ -1,62 +1,130 @@
-import GetDateFormate from "@/components/shared/GetDateFormate";
+"use client";
+
+import React from "react";
+import Image from "next/image";
+import { ColumnDef } from "@tanstack/react-table";
+import { Award, Hash } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import GetDateFormate from "@/components/shared/GetDateFormate";
 import CellAction from "./CellAction";
 import { IBrand } from "@/redux/service/brand/type";
-import { ColumnDef } from "@tanstack/react-table";
-import { Image as LucidImage } from "lucide-react";
-import Image from "next/image";
 
+interface TableColumnsProps {
+  type?: "active" | "deleted";
+}
 
-const tableColumns = ({ type = 'active' }: { type: "active" | "deleted" }) => {
+const tableColumns = ({ type = "active" }: TableColumnsProps) => {
   const columns: ColumnDef<IBrand>[] = [
     {
       accessorKey: "name",
-      header: "Name",
+      header: "Brand Details",
       cell: ({ row }) => {
-        const brandData = row.original;
-        return <div className="flex items-center gap-1">
-          <div>
-            {
-              brandData?.logo ?
-                <Image width={64} height={64} alt="Brand" src={brandData?.logo} className="rounded-md w-10 h-10 " /> :
-                <div className="bg-accent w-10 h-10 rounded-md flex items-center justify-center text-foreground"><LucidImage size={16} /></div>
-            }
+        const brand = row.original;
+        const logo = brand.logo;
+
+        return (
+          <div className="flex items-center gap-3 py-1">
+            <div className="relative w-10 h-10 rounded-md overflow-hidden border border-slate-200 bg-slate-50 shrink-0 flex items-center justify-center">
+              {logo ? (
+                <Image
+                  src={logo}
+                  alt={brand.name || "Brand Logo"}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <Award className="w-5 h-5 text-slate-400" />
+              )}
+            </div>
+
+            <div className="space-y-0.5 min-w-0 max-w-[240px]">
+              <span className="font-bold text-xs sm:text-sm text-slate-900 line-clamp-1">
+                {brand.name}
+              </span>
+              <p className="text-[11px] font-mono text-slate-400 truncate">
+                @{brand.slug}
+              </p>
+            </div>
           </div>
-          <p>{brandData?.name}</p>
-        </div>
-      }
+        );
+      },
     },
+
+    {
+      accessorKey: "description",
+      header: "Description",
+      cell: ({ row }) => {
+        const desc = row.original.description;
+        return (
+          <div className="max-w-[280px]">
+            {desc ? (
+              <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                {desc}
+              </p>
+            ) : (
+              <span className="text-[11px] text-slate-400 italic">No description</span>
+            )}
+          </div>
+        );
+      },
+    },
+
+    {
+      accessorKey: "priority",
+      header: "Priority",
+      cell: ({ row }) => {
+        const priority = row.original.priority ?? 0;
+        return (
+          <div className="flex items-center gap-1 text-xs font-semibold text-slate-700">
+            <Hash className="w-3.5 h-3.5 text-slate-400" />
+            <span>{priority}</span>
+          </div>
+        );
+      },
+    },
+
     {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
-        return <Badge
-          className={
-            row.original.status
-              ? "bg-green-500/10 text-green-600"
-              : "bg-red-500/10 text-red-600"
-          }
-        >
-          {row.original.status ? "Active" : "Inactive"}
-        </Badge>
-      }
+        const isActive = Boolean(row.original.status);
+
+        return (
+          <Badge
+            variant="outline"
+            className={`rounded text-[11px] font-semibold ${
+              isActive
+                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                : "bg-slate-100 text-slate-600 border-slate-200"
+            }`}
+          >
+            {isActive ? "Active" : "Draft (Inactive)"}
+          </Badge>
+        );
+      },
     },
 
     {
-      header: "Date",
       accessorKey: "createdAt",
+      header: "Created Date",
       cell: ({ row }) => {
-        return <GetDateFormate date={row.original.createdAt} />
-      }
+        return (
+          <div className="text-xs text-slate-500">
+            <GetDateFormate date={row.original.createdAt} />
+          </div>
+        );
+      },
     },
+
     {
       id: "actions",
-      header: () => <div className="text-right">Actions</div>,
+      header: () => <div className="text-right pr-2">Actions</div>,
       enableSorting: false,
       cell: ({ row }) => <CellAction data={row.original} type={type} />,
     },
   ];
+
   return columns;
-}
+};
 
 export default tableColumns;

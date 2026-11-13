@@ -3,15 +3,15 @@ import { Main } from '@/components/ui/main'
 import React from 'react'
 import AllCategories from './components/AllCategories'
 
-const Brands = () => {
+const CategoriesPage = () => {
   return (
-      <>
-          <Navbar fixed></Navbar>
-          <Main>
-            <AllCategories />
-          </Main>
-        </>
+    <>
+      <Navbar fixed />
+      <Main>
+        <AllCategories />
+      </Main>
+    </>
   )
 }
 
-export default Brands
+export default CategoriesPage

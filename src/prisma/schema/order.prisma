@@ -1,0 +1,73 @@
+// use prisma-8
+
+model Order {
+  id                    ObjectId           @id @map("_id")
+  invoiceNumber         String             @unique
+  userId                ObjectId?
+  user                  User?              @relation(fields: [userId], references: [id])
+  totalItems            Int32
+  totalQuantity         Int32
+  subtotal              Double
+  discount              Double?
+  shippingCharge        Double?
+  tax                   Double?
+  total                 Double
+  couponCode            String?
+  couponDiscount        Double?
+
+  // Shipping Address
+  fullName              String
+  phone                 String
+  address               String
+  postalCode            String?
+
+  // Payment
+  paymentMethod         PaymentMethod?
+  paymentStatus         PaymentStatus?
+  transactionId         String?
+  paidAt                Date?
+
+  // Order Status
+  orderStatus           OrderStatus?
+
+  trackingNumber        String?
+  courierName           String?
+  estimatedDeliveryDate Date?
+  customerNote          String?
+  adminNote             String?
+  deliveredAt           Date?
+  cancelledAt           Date?
+  isDeleted             Bool?
+  items                 OrderItem[]
+  createdAt             temporal.CreatedAt
+  updatedAt             temporal.UpdatedAt
+
+  @@index([userId, createdAt])
+  @@index([orderStatus, isDeleted, createdAt])
+  @@index([isDeleted, createdAt])
+  @@map("orders")
+}
+
+model OrderItem {
+  id               ObjectId  @id @map("_id")
+  orderId          ObjectId
+  order            Order     @relation(fields: [orderId], references: [id])
+  productId        ObjectId
+  variationId      ObjectId?
+  productName      String
+  productImage     String?
+  productSlug      String
+  sku              String?
+  quantity         Int32
+  price            Double
+  salePrice        Double
+  costPrice        Double?
+  subtotal         Double
+  selectedVariants Json?
+  categoryName     String?
+  brandName        String?
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
+}

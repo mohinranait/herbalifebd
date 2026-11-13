@@ -80,6 +80,79 @@
   "domain": {
     "namespaces": {
       "__unbound__": {
+        "enum": {
+          "OrderStatus": {
+            "codecId": "mongo/string@1",
+            "members": [
+              {
+                "name": "PENDING",
+                "value": "PENDING"
+              },
+              {
+                "name": "CONFIRMED",
+                "value": "CONFIRMED"
+              },
+              {
+                "name": "PROCESSING",
+                "value": "PROCESSING"
+              },
+              {
+                "name": "SHIPPED",
+                "value": "SHIPPED"
+              },
+              {
+                "name": "DELIVERED",
+                "value": "DELIVERED"
+              },
+              {
+                "name": "CANCELLED",
+                "value": "CANCELLED"
+              },
+              {
+                "name": "RETURNED",
+                "value": "RETURNED"
+              }
+            ]
+          },
+          "PaymentMethod": {
+            "codecId": "mongo/string@1",
+            "members": [
+              {
+                "name": "COD",
+                "value": "COD"
+              },
+              {
+                "name": "BKASH",
+                "value": "BKASH"
+              },
+              {
+                "name": "NAGAD",
+                "value": "NAGAD"
+              }
+            ]
+          },
+          "PaymentStatus": {
+            "codecId": "mongo/string@1",
+            "members": [
+              {
+                "name": "PENDING",
+                "value": "PENDING"
+              },
+              {
+                "name": "PAID",
+                "value": "PAID"
+              },
+              {
+                "name": "FAILED",
+                "value": "FAILED"
+              },
+              {
+                "name": "REFUNDED",
+                "value": "REFUNDED"
+              }
+            ]
+          }
+        },
         "models": {
           "AppConfig": {
             "fields": {
@@ -1482,6 +1555,12 @@
                 "type": {
                   "codecId": "mongo/string@1",
                   "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "OrderStatus",
+                  "namespaceId": "__unbound__",
+                  "plane": "domain"
                 }
               },
               "paidAt": {
@@ -1496,6 +1575,12 @@
                 "type": {
                   "codecId": "mongo/string@1",
                   "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "PaymentMethod",
+                  "namespaceId": "__unbound__",
+                  "plane": "domain"
                 }
               },
               "paymentStatus": {
@@ -1503,6 +1588,12 @@
                 "type": {
                   "codecId": "mongo/string@1",
                   "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "PaymentStatus",
+                  "namespaceId": "__unbound__",
+                  "plane": "domain"
                 }
               },
               "phone": {
@@ -4269,6 +4360,16 @@
                       "bsonType": [
                         "null",
                         "string"
+                      ],
+                      "enum": [
+                        "PENDING",
+                        "CONFIRMED",
+                        "PROCESSING",
+                        "SHIPPED",
+                        "DELIVERED",
+                        "CANCELLED",
+                        "RETURNED",
+                        null
                       ]
                     },
                     "paidAt": {
@@ -4281,12 +4382,25 @@
                       "bsonType": [
                         "null",
                         "string"
+                      ],
+                      "enum": [
+                        "COD",
+                        "BKASH",
+                        "NAGAD",
+                        null
                       ]
                     },
                     "paymentStatus": {
                       "bsonType": [
                         "null",
                         "string"
+                      ],
+                      "enum": [
+                        "PENDING",
+                        "PAID",
+                        "FAILED",
+                        "REFUNDED",
+                        null
                       ]
                     },
                     "phone": {
@@ -5252,13 +5366,44 @@
                 "validationLevel": "strict"
               }
             }
+          },
+          "valueSet": {
+            "OrderStatus": {
+              "kind": "valueSet",
+              "values": [
+                "PENDING",
+                "CONFIRMED",
+                "PROCESSING",
+                "SHIPPED",
+                "DELIVERED",
+                "CANCELLED",
+                "RETURNED"
+              ]
+            },
+            "PaymentMethod": {
+              "kind": "valueSet",
+              "values": [
+                "COD",
+                "BKASH",
+                "NAGAD"
+              ]
+            },
+            "PaymentStatus": {
+              "kind": "valueSet",
+              "values": [
+                "PENDING",
+                "PAID",
+                "FAILED",
+                "REFUNDED"
+              ]
+            }
           }
         },
         "id": "__unbound__",
         "kind": "mongo-database"
       }
     },
-    "storageHash": "f39f1fe8e2f3d2cec70bd6157c09f23bc82851b8db0c41eb3c3b90d77fea069f"
+    "storageHash": "0953e0dc46b9ee9e02e316f38d301b10f380e245073735ad77a30513cc33e91f"
   },
   "execution": {
     "executionHash": "934e0cf7069d775533d99fda6afaece27282b0517b9613f26df335d196131318",

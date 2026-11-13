@@ -1,310 +1,358 @@
 import { CURRENCY } from "@/lib/envSecret";
 import { IOrder } from "@/redux/service/orders/type";
 import { format } from "date-fns";
-const formatCurrency = (amount: number) => `${CURRENCY}${amount.toFixed(2)}`;
+
+const formatCurrency = (amount: number = 0) => `${CURRENCY} ${amount.toFixed(2)}`;
 
 export const formateDownloadInvoice = async (order: IOrder) => {
   const jsPDF = (await import("jspdf")).default;
   const html2canvas = (await import("html2canvas")).default;
 
   const invoiceElement = document.createElement("div");
+  const shipping = order?.shippingAddress;
+  const items = order?.items || [];
+  const pricing = order?.pricing;
+
+  const orderDate = order?.createdAt
+    ? format(new Date(order.createdAt), "dd MMM yyyy, hh:mm a")
+    : format(new Date(), "dd MMM yyyy");
+
   invoiceElement.innerHTML = `
-        <div style="
-          font-family: 'Helvetica', 'Arial', sans-serif;
-          max-width: 850px;
-          margin: 0 auto;
-          padding: 50px;
-          background: #ffffff;
-          color: #1a1a1a;
-          line-height: 1.7;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        ">
-          <!-- Header -->
-          <div style="
-            text-align: center;
-            margin-bottom: 40px;
-            border-bottom: 4px solid #4a90e2;
-            padding-bottom: 20px;
-          ">
-            <img src="https://via.placeholder.com/150x50?text=Your+Company+Logo" alt="Company Logo" style="margin-bottom: 10px;">
+    <div style="
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px;
+      background: #ffffff;
+      color: #1e293b;
+      line-height: 1.5;
+      box-sizing: border-box;
+    ">
+      <!-- Header -->
+      <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 24px;
+        margin-bottom: 28px;
+      ">
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="
+              width: 38px;
+              height: 38px;
+              background: #f97316;
+              border-radius: 8px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: #ffffff;
+              font-weight: 800;
+              font-size: 20px;
+            ">H</div>
             <h1 style="
-              font-size: 28px;
-              font-weight: 700;
-              color: #2c3e50;
+              font-size: 24px;
+              font-weight: 800;
+              color: #0f172a;
               margin: 0;
-            ">INVOICE</h1>
-            <p style="color: #7f8c8d; font-size: 14px;">Invoice #INV-0000</p>
+              letter-spacing: -0.5px;
+            ">Herbalife BD</h1>
+          </div>
+          <p style="color: #64748b; font-size: 13px; margin: 6px 0 0 0;">
+            Premium Health, Nutrition & Wellness Products
+          </p>
+          <p style="color: #94a3b8; font-size: 12px; margin: 2px 0 0 0;">
+            Dhaka, Bangladesh • Hotline: +880 1728-068200
+          </p>
+        </div>
+
+        <div style="text-align: right;">
+          <span style="
+            display: inline-block;
+            background: #fff7ed;
+            color: #ea580c;
+            border: 1px solid #ffedd5;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+          ">INVOICE</span>
+          <h2 style="
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+            text-transform: uppercase;
+          ">#${order?.invoiceNumber || "N/A"}</h2>
+          <p style="color: #64748b; font-size: 12px; margin: 4px 0 0 0;">
+            Date: <strong>${orderDate}</strong>
+          </p>
+        </div>
+      </div>
+
+      <!-- Info Columns -->
+      <div style="
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+      ">
+        <div style="flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;">
+          <h3 style="
+            color: #475569;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0 0 8px 0;
+          ">Customer / Ship To</h3>
+          <p style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">
+            ${shipping?.fullName || "Valued Customer"}
+          </p>
+          <p style="margin: 4px 0 0 0; font-size: 13px; color: #334155;">
+            <strong>Phone:</strong> ${shipping?.phone || "N/A"}
+          </p>
+          <p style="margin: 4px 0 0 0; font-size: 13px; color: #334155; line-height: 1.4;">
+            <strong>Address:</strong> ${shipping?.address || "N/A"}
+            ${shipping?.postalCode ? ` (${shipping.postalCode})` : ""}
+          </p>
+        </div>
+
+        <div style="flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;">
+          <h3 style="
+            color: #475569;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0 0 8px 0;
+          ">Order Summary</h3>
+          <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+            <span style="color: #64748b;">Order Status:</span>
+            <span style="font-weight: 700; color: #0f172a; text-transform: uppercase;">
+              ${order?.orderStatus || "PENDING"}
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+            <span style="color: #64748b;">Payment Method:</span>
+            <span style="font-weight: 700; color: #0f172a; text-transform: uppercase;">
+              ${order?.payment?.method || "COD"}
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 13px;">
+            <span style="color: #64748b;">Payment Status:</span>
+            <span style="
+              font-weight: 700;
+              color: ${order?.payment?.status === "PAID" ? "#16a34a" : "#ea580c"};
+              text-transform: uppercase;
+            ">
+              ${order?.payment?.status || "PENDING"}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Items Table -->
+      <div style="margin-bottom: 28px;">
+        <table style="
+          width: 100%;
+          border-collapse: collapse;
+          border: 1px solid #e2e8f0;
+          border-radius: 10px;
+          overflow: hidden;
+        ">
+          <thead>
+            <tr style="background: #f1f5f9; color: #334155; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
+              <th style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #e2e8f0;">Item</th>
+              <th style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #e2e8f0;">Unit Price</th>
+              <th style="padding: 12px 16px; text-align: center; border-bottom: 1px solid #e2e8f0;">Qty</th>
+              <th style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #e2e8f0;">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${items
+              .map(
+                (item, index) => `
+              <tr style="border-bottom: 1px solid #e2e8f0; font-size: 13px; background: ${index % 2 === 0 ? "#ffffff" : "#f8fafc"};">
+                <td style="padding: 12px 16px;">
+                  <div style="font-weight: 600; color: #0f172a;">${item.productName}</div>
+                  ${
+                    item.sku
+                      ? `<div style="font-size: 11px; color: #64748b; margin-top: 2px;">SKU: ${item.sku}</div>`
+                      : ""
+                  }
+                  ${
+                    item.selectedVariants && Object.keys(item.selectedVariants).length > 0
+                      ? `<div style="font-size: 11px; color: #64748b; margin-top: 2px;">${Object.entries(
+                          item.selectedVariants
+                        )
+                          .map(([k, v]) => `${k}: ${v}`)
+                          .join(" • ")}</div>`
+                      : ""
+                  }
+                </td>
+                <td style="padding: 12px 16px; text-align: right; color: #334155;">
+                  ${formatCurrency(item.salePrice || item.price)}
+                </td>
+                <td style="padding: 12px 16px; text-align: center; font-weight: 600; color: #0f172a;">
+                  ${item.quantity}
+                </td>
+                <td style="padding: 12px 16px; text-align: right; font-weight: 700; color: #0f172a;">
+                  ${formatCurrency((item.salePrice || item.price) * item.quantity)}
+                </td>
+              </tr>
+            `
+              )
+              .join("")}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Financial Totals -->
+      <div style="display: flex; justify-content: flex-end; margin-bottom: 28px;">
+        <div style="
+          width: 320px;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          padding: 16px;
+        ">
+          <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; color: #475569;">
+            <span>Subtotal:</span>
+            <span style="font-weight: 600; color: #0f172a;">${formatCurrency(pricing?.subtotal || 0)}</span>
           </div>
 
-          <!-- Invoice Info -->
+          ${
+            pricing?.shippingCharge
+              ? `
+          <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; color: #475569;">
+            <span>Shipping:</span>
+            <span style="font-weight: 600; color: #0f172a;">${formatCurrency(pricing.shippingCharge)}</span>
+          </div>
+          `
+              : ""
+          }
+
+          ${
+            pricing?.tax && pricing.tax > 0
+              ? `
+          <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; color: #475569;">
+            <span>Tax:</span>
+            <span style="font-weight: 600; color: #0f172a;">${formatCurrency(pricing.tax)}</span>
+          </div>
+          `
+              : ""
+          }
+
+          ${
+            pricing?.discount && pricing.discount > 0
+              ? `
+          <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; color: #16a34a;">
+            <span>Discount (${order?.coupon?.code || "Coupon"}):</span>
+            <span style="font-weight: 600;">-${formatCurrency(pricing.discount)}</span>
+          </div>
+          `
+              : ""
+          }
+
           <div style="
             display: flex;
             justify-content: space-between;
-            margin-bottom: 40px;
-            gap: 30px;
+            align-items: center;
+            border-top: 2px solid #e2e8f0;
+            padding-top: 10px;
+            margin-top: 8px;
+            font-size: 16px;
+            font-weight: 800;
+            color: #0f172a;
           ">
-            <div style="flex: 1;">
-              <h3 style="
-                color: #2c3e50;
-                font-size: 18px;
-                margin-bottom: 15px;
-                border-bottom: 2px solid #ecf0f1;
-                padding-bottom: 5px;
-              ">Bill To:</h3>
-              <div style="color: #7f8c8d;">
-                <p style="margin: 5px 0; font-weight: 500;">Mohin Rana</p>
-                <p style="margin: 5px 0;">mohin@gmail.com</p>
-                <p style="margin: 5px 0;">01728068200</p>
-               <p style="margin: 5px 0;">Uttara, Dhaka, Bangladesh</p>
-              </div>
-            </div>
-            <div style="flex: 1;">
-              <h3 style="
-                color: #2c3e50;
-                font-size: 18px;
-                margin-bottom: 15px;
-                border-bottom: 2px solid #ecf0f1;
-                padding-bottom: 5px;
-              ">Invoice Details:</h3>
-              <div style="color: #7f8c8d;">
-                <p style="margin: 8px 0;"><strong>Order #:</strong> ${order?.invoiceNumber || "ORD-0000"
-    }</p>
-                <p style="margin: 8px 0;"><strong>Date:</strong> ${format(
-      new Date(Date.now()),
-      "dd MMM yyyy"
-    )}</p>
-                <p style="margin: 8px 0;"><strong>Status:</strong> <span style="
-                  background: #e8f4f8;
-                  color: #3498db;
-                  padding: 5px 10px;
-                  border-radius: 5px;
-                  font-size: 12px;
-                  text-transform: capitalize;
-                ">${order?.orderStatus || "N/A"}</span></p>
-                <p style="margin: 8px 0;"><strong>Tracking #:</strong> ${order?.invoiceNumber || "N/A"
-    }</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Items Table -->
-          <div style="margin-bottom: 40px;">
-            <h3 style="color: #2c3e50; font-size: 18px; margin-bottom: 20px;">Order Items</h3>
-            <table style="
-              width: 100%;
-              border-collapse: collapse;
-              background: #ffffff;
-              border: 1px solid #ecf0f1;
-              border-radius: 8px;
-              overflow: hidden;
-            ">
-              <thead>
-                <tr style="background: #f5f6fa;">
-                  <th style="
-                    padding: 12px 15px;
-                    text-align: left;
-                    font-weight: 600;
-                    color: #2c3e50;
-                    border-bottom: 2px solid #ecf0f1;
-                  ">Description</th>
-                  <th style="
-                    padding: 12px 15px;
-                    text-align: right;
-                    font-weight: 600;
-                    color: #2c3e50;
-                    border-bottom: 2px solid #ecf0f1;
-                  ">Unit Price</th>
-                  <th style="
-                    padding: 12px 15px;
-                    text-align: center;
-                    font-weight: 600;
-                    color: #2c3e50;
-                    border-bottom: 2px solid #ecf0f1;
-                  ">Qty</th>
-                  <th style="
-                    padding: 12px 15px;
-                    text-align: right;
-                    font-weight: 600;
-                    color: #2c3e50;
-                    border-bottom: 2px solid #ecf0f1;
-                  ">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${(order?.items || [])
-      .map(
-        (item, index) => `
-                  <tr style="${index % 2 === 0
-            ? "background: #fafafa;"
-            : "background: #ffffff;"
-          }">
-                    <td style="
-                      padding: 12px 15px;
-                      border-bottom: 1px solid #ecf0f1;
-                      color: #7f8c8d;
-                    ">${item.productName}</td>
-                    <td style="
-                      padding: 12px 15px;
-                      text-align: right;
-                      border-bottom: 1px solid #ecf0f1;
-                      color: #7f8c8d;
-                    ">${formatCurrency(item.price)}</td>
-                    <td style="
-                      padding: 12px 15px;
-                      text-align: center;
-                      border-bottom: 1px solid #ecf0f1;
-                      color: #7f8c8d;
-                    ">${item.quantity}</td>
-                    <td style="
-                      padding: 12px 15px;
-                      text-align: right;
-                      border-bottom: 1px solid #ecf0f1;
-                      color: #7f8c8d;
-                      font-weight: 500;
-                    ">${formatCurrency(item.price * item.quantity)}</td>
-                  </tr>
-                `
-      )
-      .join("")}
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Totals -->
-          <div style="display: flex; justify-content: flex-end; margin-bottom: 40px;">
-            <div style="
-              min-width: 300px;
-              border: 1px solid #ecf0f1;
-              border-radius: 8px;
-              overflow: hidden;
-              background: #ffffff;
-            ">
-              <div style="
-                display: flex;
-                justify-content: space-between;
-                padding: 10px 15px;
-                background: #f5f6fa;
-                border-bottom: 1px solid #ecf0f1;
-              ">
-                <span style="color: #2c3e50;">Subtotal:</span>
-                <span style="color: #2c3e50;">${formatCurrency(order?.pricing?.subtotal)}</span>
-              </div>
-              <div style="
-                display: flex;
-                justify-content: space-between;
-                padding: 10px 15px;
-                background: #ffffff;
-                border-bottom: 1px solid #ecf0f1;
-              ">
-                <span style="color: #2c3e50;">Shipping:</span>
-                <span style="color: #2c3e50;">${formatCurrency(
-        order?.pricing?.shippingCharge
-      )}</span>
-              </div>
-              <div style="
-                display: flex;
-                justify-content: space-between;
-                padding: 10px 15px;
-                background: #f5f6fa;
-                border-bottom: 1px solid #ecf0f1;
-              ">
-                <span style="color: #2c3e50;">Tax:</span>
-                <span style="color: #2c3e50;">${formatCurrency(order?.pricing?.tax)}</span>
-              </div>
-              <div style="
-                display: flex;
-                justify-content: space-between;
-                padding: 10px 15px;
-                background: #ffffff;
-                border-bottom: 1px solid #ecf0f1;
-              ">
-                <span style="color: #2c3e50;">Discount:</span>
-                <span style="color: #2c3e50;">-${formatCurrency(0)}</span>
-              </div>
-              <div style="
-                display: flex;
-                justify-content: space-between;
-                padding: 12px 15px;
-                background: #4a90e2;
-                color: #ffffff;
-                font-weight: 600;
-                font-size: 16px;
-              ">
-                <span>Total:</span>
-                <span>${formatCurrency(order?.pricing?.total || 0)}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Payment Method -->
-          <div style="
-            background: #f9fbfd;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid #4a90e2;
-            margin-bottom: 40px;
-          ">
-            <h3 style="color: #2c3e50; font-size: 16px; margin-bottom: 10px;">Payment Method</h3>
-            <p style="color: #7f8c8d; margin: 0;">${order?.payment?.method || "N/A"
-    } </p>
-          </div>
-
-          <!-- Footer -->
-          <div style="
-            text-align: center;
-            padding-top: 30px;
-            border-top: 2px solid #ecf0f1;
-            color: #7f8c8d;
-          ">
-            <p style="margin: 10px 0; font-size: 16px; font-weight: 600; color: #4a90e2;">
-              Thank You for Your Business!
-            </p>
-            <p style="margin: 5px 0; font-size: 12px;">
-              For inquiries, contact us at <a href="mailto:support@yourcompany.com" style="color: #3498db; text-decoration: none;">support@yourcompany.com</a>
-            </p>
-            <p style="margin: 5px 0; font-size: 12px;">
-              Phone: ${"+1 (555) 123-4567"} | Website: <a href="https://www.yourcompany.com" style="color: #3498db; text-decoration: none;">www.yourcompany.com</a>
-            </p>
+            <span>Total Payable:</span>
+            <span style="color: #ea580c;">${formatCurrency(pricing?.total || 0)}</span>
           </div>
         </div>
-      `;
+      </div>
+
+      <!-- Customer Note if present -->
+      ${
+        order?.customerNote
+          ? `
+      <div style="
+        background: #f1f5f9;
+        border-left: 4px solid #f97316;
+        padding: 12px 16px;
+        border-radius: 4px;
+        font-size: 12px;
+        color: #334155;
+        margin-bottom: 24px;
+      ">
+        <strong>Customer Note:</strong> ${order.customerNote}
+      </div>
+      `
+          : ""
+      }
+
+      <!-- Footer -->
+      <div style="
+        border-top: 1px solid #e2e8f0;
+        padding-top: 20px;
+        text-align: center;
+        color: #94a3b8;
+        font-size: 12px;
+      ">
+        <p style="margin: 0; font-weight: 600; color: #475569;">
+          Thank you for ordering with Herbalife BD!
+        </p>
+        <p style="margin: 4px 0 0 0;">
+          For support or order inquiries, WhatsApp us at <strong>+880 1728-068200</strong> or visit <strong>herbalifebd.com</strong>
+        </p>
+      </div>
+    </div>
+  `;
 
   invoiceElement.style.position = "absolute";
   invoiceElement.style.left = "-9999px";
   invoiceElement.style.top = "0";
   document.body.appendChild(invoiceElement);
 
-  const canvas = await html2canvas(invoiceElement, {
-    scale: 2,
-    useCORS: true,
-    allowTaint: true,
-    backgroundColor: "#ffffff",
-    width: 850,
-    height: invoiceElement.scrollHeight,
-  });
+  try {
+    const canvas = await html2canvas(invoiceElement, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: "#ffffff",
+      width: 800,
+      height: invoiceElement.scrollHeight,
+    });
 
-  document.body.removeChild(invoiceElement);
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
 
-  const imgData = canvas.toDataURL("image/png");
-  const pdf = new jsPDF("p", "mm", "a4");
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const imgWidth = pdfWidth;
+    const imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
-  const pdfWidth = pdf.internal.pageSize.getWidth();
-  const pdfHeight = pdf.internal.pageSize.getHeight();
-  const imgWidth = pdfWidth;
-  const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+    let heightLeft = imgHeight;
+    let position = 0;
 
-  let heightLeft = imgHeight;
-  let position = 0;
-
-  pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-  heightLeft -= pdfHeight;
-
-  while (heightLeft >= 0) {
-    position = heightLeft - imgHeight;
-    pdf.addPage();
     pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
     heightLeft -= pdfHeight;
-  }
 
-  pdf.save(`Invoice-${order?.invoiceNumber || "INV-0000"}.pdf`);
-}
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pdfHeight;
+    }
+
+    pdf.save(`HerbalifeBD-Invoice-${order?.invoiceNumber || "order"}.pdf`);
+  } finally {
+    if (document.body.contains(invoiceElement)) {
+      document.body.removeChild(invoiceElement);
+    }
+  }
+};

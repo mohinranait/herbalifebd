@@ -159,7 +159,7 @@ const GeneralTab = ({ callBack, settings }: Props) => {
               <Select value={settings.language} onValueChange={v => callBack('language', v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="bn">বাংলা</SelectItem>
+                  <SelectItem value="bn">Bengali</SelectItem>
                   <SelectItem value="en">English</SelectItem>
                 </SelectContent>
               </Select>

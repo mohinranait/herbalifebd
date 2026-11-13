@@ -114,6 +114,7 @@ export async function GET(req: NextRequest) {
     const status = searchParams.get("status");
     const isFeatured = searchParams.get("isFeatured");
     const isDelete = searchParams.get("isDelete");
+    const productType = searchParams.get("productType");
 
     const skip = (page - 1) * limit;
 
@@ -127,6 +128,10 @@ export async function GET(req: NextRequest) {
 
     if (isFeatured === "true") collection = collection.where({ isFeatured: true });
     if (isFeatured === "false") collection = collection.where({ isFeatured: false });
+
+    if (productType && productType !== "all") {
+      collection = collection.where({ productType });
+    }
 
     if (search) {
       collection = collection.where((p: any) => p.name.ilike(`%${search}%`));
