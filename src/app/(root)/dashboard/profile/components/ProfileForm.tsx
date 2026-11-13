@@ -75,7 +75,7 @@ const ProfileForm = ({ findUser }: Props) => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
-              <User className="w-4 h-4 text-orange-500" />
+              <User className="w-4 h-4 text-brand" />
               <span>ব্যক্তিগত তথ্য</span>
             </h2>
             <p className="text-xs text-slate-400 mt-0.5">
@@ -87,7 +87,7 @@ const ProfileForm = ({ findUser }: Props) => {
             <button
               type="button"
               onClick={() => setIsEditing(true)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 hover:border-orange-400 hover:bg-orange-50 text-slate-700 hover:text-orange-600 font-semibold text-xs transition-colors cursor-pointer self-start sm:self-auto"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 hover:border-brand hover:bg-brand-light text-slate-700 hover:text-brand font-semibold text-xs transition-colors cursor-pointer self-start sm:self-auto"
             >
               <Pen className="w-3.5 h-3.5" />
               <span>তথ্য এডিট করুন</span>
@@ -97,7 +97,7 @@ const ProfileForm = ({ findUser }: Props) => {
               <button
                 type="submit"
                 disabled={updateLoading}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-semibold text-xs transition-all cursor-pointer disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand hover:bg-brand-hover active:scale-95 text-brand-foreground font-semibold text-xs transition-all cursor-pointer disabled:opacity-50"
               >
                 {updateLoading ? (
                   <LoaderCircle className="w-3.5 h-3.5 animate-spin" />
@@ -131,7 +131,7 @@ const ProfileForm = ({ findUser }: Props) => {
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               disabled={!isEditing}
               placeholder="আপনার নাম লিখুন"
-              className="h-10 text-xs sm:text-sm border-slate-200 focus-visible:ring-orange-500 disabled:bg-slate-50 disabled:text-slate-700"
+              className="h-10 text-xs sm:text-sm border-slate-200 focus-visible:ring-brand disabled:bg-slate-50 disabled:text-slate-700"
             />
             {isEditing && (
               <p className="text-[11px] text-slate-400">
@@ -172,7 +172,7 @@ const ProfileForm = ({ findUser }: Props) => {
         {/* Account Details Box */}
         <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-3">
           <div className="flex items-center gap-2 pb-2.5 border-b border-slate-100">
-            <div className="w-7 h-7 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-brand-light text-brand flex items-center justify-center">
               <ShieldCheck className="w-4 h-4" />
             </div>
             <h3 className="font-bold text-xs sm:text-sm text-slate-800">

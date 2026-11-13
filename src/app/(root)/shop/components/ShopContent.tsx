@@ -126,7 +126,7 @@ export function ShopContent() {
         <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-1">
-              <Store className="w-3.5 h-3.5 text-orange-500" />
+              <Store className="w-3.5 h-3.5 text-brand" />
               <span>হোম / শপ{activeCatName ? ` / ${activeCatName}` : ""}</span>
             </div>
             <h1 className="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">
@@ -144,12 +144,12 @@ export function ShopContent() {
               <SheetTrigger asChild>
                 <button
                   type="button"
-                  className="lg:hidden inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold text-xs transition-colors hover:border-orange-400 cursor-pointer"
+                  className="lg:hidden inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold text-xs transition-colors hover:border-brand cursor-pointer"
                 >
-                  <SlidersHorizontal className="w-3.5 h-3.5 text-orange-500" />
+                  <SlidersHorizontal className="w-3.5 h-3.5 text-brand" />
                   <span>ফিল্টার</span>
                   {activeTags.length > 0 && (
-                    <span className="w-4 h-4 rounded-full bg-orange-500 text-white text-[10px] flex items-center justify-center">
+                    <span className="w-4 h-4 rounded-full bg-brand text-brand-foreground text-[10px] flex items-center justify-center">
                       {activeTags.length}
                     </span>
                   )}
@@ -167,7 +167,7 @@ export function ShopContent() {
                 setSort(e.target.value);
                 setPage(1);
               }}
-              className="text-xs sm:text-sm px-3.5 py-2 border border-slate-200 rounded-xl bg-white text-slate-700 font-medium focus:outline-hidden focus:border-orange-500 cursor-pointer"
+              className="text-xs sm:text-sm px-3.5 py-2 border border-slate-200 rounded-xl bg-white text-slate-700 font-medium focus:outline-hidden focus:border-brand cursor-pointer"
             >
               {SORT_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -197,10 +197,10 @@ export function ShopContent() {
                   <span
                     key={i}
                     onClick={tag.clear}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-orange-50 text-orange-700 border border-orange-200 cursor-pointer hover:bg-orange-100 transition-colors"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-brand-light text-brand border border-brand-border cursor-pointer hover:opacity-90 transition-colors"
                   >
                     <span>{tag.label}</span>
-                    <X className="w-3 h-3 text-orange-500 hover:text-orange-700" />
+                    <X className="w-3 h-3 text-brand hover:opacity-75" />
                   </span>
                 ))}
                 <button
@@ -237,7 +237,7 @@ export function ShopContent() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="mt-4 border-slate-200 hover:border-orange-400 hover:text-orange-600 rounded-xl text-xs h-9 px-4"
+                  className="mt-4 border-slate-200 hover:border-brand hover:text-brand rounded-xl text-xs h-9 px-4"
                   onClick={clearAll}
                 >
                   সকল ফিল্টার রিসেট করুন

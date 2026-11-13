@@ -86,7 +86,7 @@ export default function OrderDetailsComponent({ orderId }: Props) {
   if (!order) {
     return (
       <div className="min-h-[50vh] flex flex-col items-center justify-center text-center px-4">
-        <div className="w-14 h-14 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center mb-3">
+        <div className="w-14 h-14 rounded-lg bg-brand-light text-brand flex items-center justify-center mb-3">
           <Package className="w-7 h-7" />
         </div>
         <h2 className="text-lg font-bold text-slate-800">অর্ডারটি পাওয়া যায়নি</h2>
@@ -95,7 +95,7 @@ export default function OrderDetailsComponent({ orderId }: Props) {
         </p>
         <Button
           onClick={() => router.push("/dashboard/orders")}
-          className="mt-4 bg-orange-500 hover:bg-orange-600 text-white rounded-md text-xs font-semibold"
+          className="mt-4 bg-brand hover:bg-brand-hover text-brand-foreground rounded-md text-xs font-semibold"
         >
           অর্ডার তালিকায় ফিরে যান
         </Button>
@@ -117,7 +117,7 @@ export default function OrderDetailsComponent({ orderId }: Props) {
               type="button"
               size="icon"
               variant="outline"
-              className="h-9 w-9 rounded-md border-slate-200 text-slate-600 hover:text-orange-600 hover:border-orange-200 shrink-0"
+              className="h-9 w-9 rounded-md border-slate-200 text-slate-600 hover:text-brand hover:border-brand-border shrink-0"
               title="পিছনে যান"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -127,7 +127,7 @@ export default function OrderDetailsComponent({ orderId }: Props) {
                 <h1 className="text-base sm:text-lg font-bold text-slate-800">
                   অর্ডার বিস্তারিত
                 </h1>
-                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-orange-50 text-orange-700 border border-orange-100 uppercase">
+                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-brand-light text-brand border border-brand-border uppercase">
                   #{order.invoiceNumber}
                 </span>
                 <button
@@ -158,7 +158,7 @@ export default function OrderDetailsComponent({ orderId }: Props) {
               disabled={isDownloading}
               type="button"
               size="sm"
-              className="h-9 px-3.5 text-xs font-bold rounded-md bg-orange-500 hover:bg-orange-600 text-white gap-2 shadow-xs transition-all"
+              className="h-9 px-3.5 text-xs font-bold rounded-md bg-brand hover:bg-brand-hover text-brand-foreground gap-2 shadow-xs transition-all"
             >
               {isDownloading ? (
                 <>
@@ -180,7 +180,7 @@ export default function OrderDetailsComponent({ orderId }: Props) {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="bg-white border border-slate-200/90 rounded-lg p-3.5 shadow-xs">
           <div className="flex items-center gap-1.5 text-slate-400 text-[11px] font-semibold uppercase">
-            <Calendar className="w-3.5 h-3.5 text-orange-500" />
+            <Calendar className="w-3.5 h-3.5 text-brand" />
             <span>তারিখ</span>
           </div>
           <p className="text-xs sm:text-sm font-bold text-slate-800 mt-1">
@@ -190,7 +190,7 @@ export default function OrderDetailsComponent({ orderId }: Props) {
 
         <div className="bg-white border border-slate-200/90 rounded-lg p-3.5 shadow-xs">
           <div className="flex items-center gap-1.5 text-slate-400 text-[11px] font-semibold uppercase">
-            <Hash className="w-3.5 h-3.5 text-orange-500" />
+            <Hash className="w-3.5 h-3.5 text-brand" />
             <span>ইনভয়েস #</span>
           </div>
           <p className="text-xs sm:text-sm font-mono font-bold text-slate-800 mt-1 uppercase truncate">
@@ -200,7 +200,7 @@ export default function OrderDetailsComponent({ orderId }: Props) {
 
         <div className="bg-white border border-slate-200/90 rounded-lg p-3.5 shadow-xs">
           <div className="flex items-center gap-1.5 text-slate-400 text-[11px] font-semibold uppercase">
-            <Truck className="w-3.5 h-3.5 text-orange-500" />
+            <Truck className="w-3.5 h-3.5 text-brand" />
             <span>কুরিয়ার / ট্র্যাকিং</span>
           </div>
           <p className="text-xs sm:text-sm font-bold text-slate-800 mt-1 truncate">
@@ -234,7 +234,7 @@ export default function OrderDetailsComponent({ orderId }: Props) {
           <Card className="border border-slate-200/90 shadow-xs rounded-lg overflow-hidden bg-white">
             <CardHeader className="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-row items-center justify-between">
               <CardTitle className="text-sm sm:text-base font-bold text-slate-800 flex items-center gap-2">
-                <Package className="w-4 h-4 text-orange-500" />
+                <Package className="w-4 h-4 text-brand" />
                 <span>অর্ডারকৃত পণ্যসমূহ</span>
               </CardTitle>
               <span className="text-xs font-semibold text-slate-500 bg-white px-2.5 py-0.5 rounded border border-slate-200">
@@ -255,7 +255,7 @@ export default function OrderDetailsComponent({ orderId }: Props) {
           <Card className="border border-slate-200/90 shadow-xs rounded-lg overflow-hidden bg-white">
             <CardHeader className="p-4 border-b border-slate-100 bg-slate-50/50">
               <CardTitle className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                <Receipt className="w-4 h-4 text-orange-500" />
+                <Receipt className="w-4 h-4 text-brand" />
                 <span>হিসাব বিবরণী (Summary)</span>
               </CardTitle>
             </CardHeader>
@@ -296,7 +296,7 @@ export default function OrderDetailsComponent({ orderId }: Props) {
 
               <div className="flex justify-between items-center text-xs font-bold text-slate-900 pt-0.5">
                 <span>সর্বমোট:</span>
-                <span className="text-base font-extrabold text-orange-600">
+                <span className="text-base font-extrabold text-brand">
                   {CURRENCY} {(pricing?.total || 0).toLocaleString("en-IN")}
                 </span>
               </div>
@@ -307,7 +307,7 @@ export default function OrderDetailsComponent({ orderId }: Props) {
           <Card className="border border-slate-200/90 shadow-xs rounded-lg overflow-hidden bg-white">
             <CardHeader className="p-4 border-b border-slate-100 bg-slate-50/50">
               <CardTitle className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-orange-500" />
+                <MapPin className="w-4 h-4 text-brand" />
                 <span>ডেলিভারি ঠিকানা</span>
               </CardTitle>
             </CardHeader>
@@ -319,7 +319,7 @@ export default function OrderDetailsComponent({ orderId }: Props) {
                 <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                 <a
                   href={`tel:${address?.phone}`}
-                  className="font-semibold text-slate-800 hover:text-orange-600 transition-colors"
+                  className="font-semibold text-slate-800 hover:text-brand transition-colors"
                 >
                   {address?.phone}
                 </a>

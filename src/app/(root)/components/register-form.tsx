@@ -87,7 +87,7 @@ const RegisterForm = ({ onSwitchToLogin, hideHeader = false }: RegisterFormProps
                 "absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center pointer-events-none transition-colors",
                 nameError
                   ? "text-rose-500"
-                  : "text-slate-400 group-focus-within:text-orange-500"
+                  : "text-slate-400 group-focus-within:text-brand"
               )}
             >
               <User className="w-4 h-4" />
@@ -98,7 +98,7 @@ const RegisterForm = ({ onSwitchToLogin, hideHeader = false }: RegisterFormProps
               {...form.register("name")}
               placeholder="আপনার পুরো নাম লিখুন"
               className={cn(
-                "pl-10.5 h-11 text-xs sm:text-sm bg-slate-50/50 rounded-xl transition-all border-slate-200 focus:bg-white focus:border-orange-500 focus-visible:ring-2 focus-visible:ring-orange-500/20",
+                "pl-10.5 h-11 text-xs sm:text-sm bg-slate-50/50 rounded-xl transition-all border-slate-200 focus:bg-white focus:border-brand focus-visible:ring-2 focus-visible:ring-brand/20",
                 nameError &&
                   "border-rose-400 focus:border-rose-500 focus-visible:ring-rose-500/20"
               )}
@@ -124,7 +124,7 @@ const RegisterForm = ({ onSwitchToLogin, hideHeader = false }: RegisterFormProps
                 "absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center pointer-events-none transition-colors",
                 phoneError
                   ? "text-rose-500"
-                  : "text-slate-400 group-focus-within:text-orange-500"
+                  : "text-slate-400 group-focus-within:text-brand"
               )}
             >
               <Phone className="w-4 h-4" />
@@ -135,7 +135,7 @@ const RegisterForm = ({ onSwitchToLogin, hideHeader = false }: RegisterFormProps
               {...form.register("phone")}
               placeholder="01xxxxxxxxx"
               className={cn(
-                "pl-10.5 h-11 text-xs sm:text-sm bg-slate-50/50 rounded-xl transition-all border-slate-200 focus:bg-white focus:border-orange-500 focus-visible:ring-2 focus-visible:ring-orange-500/20",
+                "pl-10.5 h-11 text-xs sm:text-sm bg-slate-50/50 rounded-xl transition-all border-slate-200 focus:bg-white focus:border-brand focus-visible:ring-2 focus-visible:ring-brand/20",
                 phoneError &&
                   "border-rose-400 focus:border-rose-500 focus-visible:ring-rose-500/20"
               )}
@@ -160,7 +160,7 @@ const RegisterForm = ({ onSwitchToLogin, hideHeader = false }: RegisterFormProps
                 "absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center pointer-events-none transition-colors",
                 passwordError
                   ? "text-rose-500"
-                  : "text-slate-400 group-focus-within:text-orange-500"
+                  : "text-slate-400 group-focus-within:text-brand"
               )}
             >
               <Lock className="w-4 h-4" />
@@ -171,7 +171,7 @@ const RegisterForm = ({ onSwitchToLogin, hideHeader = false }: RegisterFormProps
               {...form.register("password")}
               placeholder="••••••••"
               className={cn(
-                "pl-10.5 pr-10.5 h-11 text-xs sm:text-sm bg-slate-50/50 rounded-xl transition-all border-slate-200 focus:bg-white focus:border-orange-500 focus-visible:ring-2 focus-visible:ring-orange-500/20",
+                "pl-10.5 pr-10.5 h-11 text-xs sm:text-sm bg-slate-50/50 rounded-xl transition-all border-slate-200 focus:bg-white focus:border-brand focus-visible:ring-2 focus-visible:ring-brand/20",
                 passwordError &&
                   "border-rose-400 focus:border-rose-500 focus-visible:ring-rose-500/20"
               )}
@@ -203,7 +203,7 @@ const RegisterForm = ({ onSwitchToLogin, hideHeader = false }: RegisterFormProps
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full h-11.5 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold text-sm rounded-xl shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+          className="w-full h-11.5 bg-brand hover:bg-brand-hover text-brand-foreground font-semibold text-sm rounded-xl shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed mt-2"
         >
           {isLoading ? (
             <span className="flex items-center gap-2">
@@ -244,7 +244,7 @@ const RegisterForm = ({ onSwitchToLogin, hideHeader = false }: RegisterFormProps
             <button
               type="button"
               onClick={onSwitchToLogin}
-              className="text-orange-600 hover:text-orange-700 font-semibold hover:underline cursor-pointer transition-colors"
+              className="text-brand hover:opacity-80 font-semibold hover:underline cursor-pointer transition-colors"
             >
               সাইন ইন করুন
             </button>

@@ -54,7 +54,7 @@ export default function SectionHeader({
         {seeAllLink && (
           <Link
             href={seeAllLink}
-            className="text-xs md:text-sm font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-1 transition-colors"
+            className="text-xs md:text-sm font-semibold text-brand hover:opacity-80 flex items-center gap-1 transition-colors"
           >
             <span>{displaySeeAllText}</span>
             <ArrowRight className="w-3.5 h-3.5" />

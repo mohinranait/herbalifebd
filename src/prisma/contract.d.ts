@@ -22,7 +22,7 @@ import type {
 } from '@prisma/orm-mongo/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'c3ad9d0bb12f7bd2254269288a0e06a167dbaff9f5701447ee3cf6e247abd63d'>;
+  StorageHashBase<'bd9448d3484d4272b8b1046166e1c5f193fa4f0a1700ea544439f910785cc509'>;
 export type ExecutionHash =
   ExecutionHashBase<'1c0dfe3a6c1d3bb5477e1a8299b10be2909cb255a024b7bea56b2702c745892c'>;
 export type ProfileHash =
@@ -121,6 +121,7 @@ export namespace Models {
     siteName: FieldOutputTypes['__unbound__']['AppSetting']['siteName'];
     socialLinks: FieldOutputTypes['__unbound__']['AppSetting']['socialLinks'];
     tax: FieldOutputTypes['__unbound__']['AppSetting']['tax'];
+    themeColor: FieldOutputTypes['__unbound__']['AppSetting']['themeColor'];
     timezone: FieldOutputTypes['__unbound__']['AppSetting']['timezone'];
     updatedAt: FieldOutputTypes['__unbound__']['AppSetting']['updatedAt'];
     readonly [RelationKeys]?: never;
@@ -620,6 +621,7 @@ type ContractBase = Omit<
                         'null',
                       ];
                     };
+                    readonly themeColor: { readonly bsonType: readonly ['null', 'string'] };
                     readonly timezone: { readonly bsonType: readonly ['null', 'string'] };
                     readonly updatedAt: { readonly bsonType: 'date' };
                   };
@@ -1787,6 +1789,10 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/json@1' };
               };
+              readonly themeColor: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
               readonly timezone: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
@@ -1828,6 +1834,7 @@ type ContractBase = Omit<
                 readonly siteName: { readonly field: 'siteName' };
                 readonly socialLinks: { readonly field: 'socialLinks' };
                 readonly tax: { readonly field: 'tax' };
+                readonly themeColor: { readonly field: 'themeColor' };
                 readonly timezone: { readonly field: 'timezone' };
                 readonly updatedAt: { readonly field: 'updatedAt' };
               };

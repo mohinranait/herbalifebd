@@ -167,7 +167,7 @@ function CheckoutPageContent() {
     return (
       <div className="min-h-[70vh] flex items-center justify-center px-4 py-16 bg-[#f8fafc]">
         <div className="text-center max-w-md bg-white border border-slate-200 rounded-2xl p-8 sm:p-12">
-          <div className="w-20 h-20 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center mx-auto mb-5 border border-orange-100">
+          <div className="w-20 h-20 rounded-full bg-brand-light text-brand flex items-center justify-center mx-auto mb-5 border border-brand-border">
             <ShoppingBag className="w-10 h-10" />
           </div>
           <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-2">
@@ -177,7 +177,7 @@ function CheckoutPageContent() {
             আপনার কার্ট খালি। পছন্দের পণ্য নির্বাচন করে কার্টে যোগ করুন।
           </p>
           <Link href="/shop">
-            <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl h-11 px-8">
+            <Button size="lg" className="bg-brand hover:bg-brand-hover text-brand-foreground font-semibold rounded-xl h-11 px-8">
               কেনাকাটা করুন
             </Button>
           </Link>
@@ -192,7 +192,7 @@ function CheckoutPageContent() {
         {/* Page Title */}
         <div className="mb-6 pb-4 border-b border-slate-200">
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-800 tracking-tight flex items-center gap-2.5">
-            <ShoppingBag className="w-6 h-6 md:w-7 md:h-7 text-orange-500" />
+            <ShoppingBag className="w-6 h-6 md:w-7 md:h-7 text-brand" />
             <span>চেকআউট ও অর্ডার কনফার্মেশন</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -207,7 +207,7 @@ function CheckoutPageContent() {
               {/* Delivery Information Card */}
               <div className="bg-white border border-slate-200 rounded-xl p-5 md:p-6 space-y-5">
                 <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-                  <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-brand-light text-brand flex items-center justify-center">
                     <MapPin className="w-4 h-4" />
                   </div>
                   <h2 className="text-base md:text-lg font-bold text-slate-800">
@@ -224,7 +224,7 @@ function CheckoutPageContent() {
                     <Input
                       {...register("shippingAddress.fullName")}
                       placeholder="e.g. মোঃ রহিম"
-                      className="mt-1.5 h-10 border-slate-200 text-sm focus-visible:ring-orange-500"
+                      className="mt-1.5 h-10 border-slate-200 text-sm focus-visible:ring-brand"
                     />
                     {errors.shippingAddress?.fullName?.message && (
                       <p className="text-rose-500 text-xs mt-1">
@@ -241,7 +241,7 @@ function CheckoutPageContent() {
                       {...register("shippingAddress.phone")}
                       type="tel"
                       placeholder="e.g. 017XXXXXXXX"
-                      className="mt-1.5 h-10 border-slate-200 text-sm focus-visible:ring-orange-500"
+                      className="mt-1.5 h-10 border-slate-200 text-sm focus-visible:ring-brand"
                     />
                     {errors.shippingAddress?.phone?.message && (
                       <p className="text-rose-500 text-xs mt-1">
@@ -275,7 +275,7 @@ function CheckoutPageContent() {
                             onClick={() => setZone(zon)}
                             className={`border rounded-xl p-3.5 cursor-pointer transition-all ${
                               isSelected
-                                ? "border-2 border-orange-500 bg-orange-50/40 text-slate-900"
+                                ? "border-2 border-brand bg-brand-light text-slate-900 shadow-xs"
                                 : "border-slate-200 hover:border-slate-300 bg-white text-slate-700"
                             }`}
                           >
@@ -291,7 +291,7 @@ function CheckoutPageContent() {
                                 <span className="font-semibold text-xs md:text-sm text-left">
                                   {zon.areaName}
                                 </span>
-                                <span className="text-xs font-bold text-orange-600 mt-0.5">
+                                <span className="text-xs font-bold text-brand mt-0.5">
                                   ডেলিভারি চার্জ: {CURRENCY}{zon.fee}
                                 </span>
                               </Label>
@@ -316,7 +316,7 @@ function CheckoutPageContent() {
                   <Textarea
                     {...register("shippingAddress.address")}
                     placeholder="বাড়ি নম্বর, রোড নম্বর, এলাকা, থানা, জেলা..."
-                    className="mt-1.5 min-h-20 border-slate-200 text-sm focus-visible:ring-orange-500"
+                    className="mt-1.5 min-h-20 border-slate-200 text-sm focus-visible:ring-brand"
                   />
                   {errors.shippingAddress?.address?.message && (
                     <p className="text-rose-500 text-xs mt-1">
@@ -333,7 +333,7 @@ function CheckoutPageContent() {
                   <Textarea
                     {...register("customerNote")}
                     placeholder="ডেলিভারি সংক্রান্ত কোনো নির্দেশনা থাকলে লিখতে পারেন..."
-                    className="mt-1.5 min-h-16 border-slate-200 text-sm focus-visible:ring-orange-500"
+                    className="mt-1.5 min-h-16 border-slate-200 text-sm focus-visible:ring-brand"
                   />
                 </div>
               </div>

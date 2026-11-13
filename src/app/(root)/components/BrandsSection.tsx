@@ -62,7 +62,7 @@ const BrandsSection = () => {
                   >
                     <Link
                       href={`/shop?brand=${brand.id}`}
-                      className="group/brand bg-white border border-slate-200 hover:border-orange-400 rounded-xl p-4 flex flex-col items-center justify-center h-28 transition-all duration-300"
+                      className="group/brand bg-white border border-slate-200 hover:border-brand rounded-xl p-4 flex flex-col items-center justify-center h-28 transition-all duration-300"
                     >
                       {brand.logo ? (
                         <div className="relative w-full h-14 flex items-center justify-center overflow-hidden">
@@ -76,14 +76,14 @@ const BrandsSection = () => {
                         </div>
                       ) : (
                         <div className="flex flex-col items-center justify-center text-center">
-                          <Building2 className="w-6 h-6 text-orange-500 mb-1" />
-                          <span className="text-xs md:text-sm font-bold text-slate-800 line-clamp-1 group-hover/brand:text-orange-600 transition-colors">
+                          <Building2 className="w-6 h-6 text-brand mb-1" />
+                          <span className="text-xs md:text-sm font-bold text-slate-800 line-clamp-1 group-hover/brand:text-brand transition-colors">
                             {brand.name}
                           </span>
                         </div>
                       )}
                       {brand.logo && (
-                        <span className="text-xs font-semibold text-slate-700 mt-1 line-clamp-1 group-hover/brand:text-orange-600 transition-colors">
+                        <span className="text-xs font-semibold text-slate-700 mt-1 line-clamp-1 group-hover/brand:text-brand transition-colors">
                           {brand.name}
                         </span>
                       )}

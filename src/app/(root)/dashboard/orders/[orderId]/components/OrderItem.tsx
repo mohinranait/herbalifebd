@@ -45,7 +45,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ item }) => {
         <div className="flex-1 min-w-0 space-y-1">
           <Link
             href={`/product/${item.productSlug || item.productId}`}
-            className="group inline-flex items-center gap-1.5 font-bold text-xs sm:text-sm text-slate-800 hover:text-orange-600 transition-colors line-clamp-1"
+            className="group inline-flex items-center gap-1.5 font-bold text-xs sm:text-sm text-slate-800 hover:text-brand transition-colors line-clamp-1"
           >
             <span>{item.productName}</span>
             <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
@@ -72,7 +72,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ item }) => {
               {Object.entries(item.selectedVariants).map(([k, v]) => (
                 <span
                   key={k}
-                  className="inline-block text-[10px] font-medium px-1.5 py-0.5 rounded bg-orange-50 text-orange-700 border border-orange-100"
+                  className="inline-block text-[10px] font-medium px-1.5 py-0.5 rounded bg-brand-light text-brand border border-brand-border"
                 >
                   {k}: {String(v)}
                 </span>
@@ -85,7 +85,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ item }) => {
       <div className="flex items-center justify-between sm:justify-end gap-3.5 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
         <div className="text-left sm:text-right">
           <p className="text-[10px] text-slate-400 uppercase font-semibold">মোট মূল্য</p>
-          <p className="text-sm sm:text-base font-extrabold text-orange-600">
+          <p className="text-sm sm:text-base font-extrabold text-brand">
             {CURRENCY} {itemTotal.toLocaleString("en-IN")}
           </p>
         </div>
@@ -95,9 +95,9 @@ const OrderItem: React.FC<OrderItemProps> = ({ item }) => {
           type="button"
           size="sm"
           variant="outline"
-          className="h-8 px-2.5 text-xs font-semibold rounded-md border-slate-200 text-slate-700 hover:bg-white hover:text-orange-600 hover:border-orange-300 gap-1.5 transition-all shadow-xs"
+          className="h-8 px-2.5 text-xs font-semibold rounded-md border-slate-200 text-slate-700 hover:bg-white hover:text-brand hover:border-brand-border gap-1.5 transition-all shadow-xs"
         >
-          <MessageSquarePlus className="w-3.5 h-3.5 text-orange-500" />
+          <MessageSquarePlus className="w-3.5 h-3.5 text-brand" />
           <span>মতামত</span>
         </Button>
       </div>

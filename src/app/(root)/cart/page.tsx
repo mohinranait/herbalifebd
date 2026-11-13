@@ -32,7 +32,7 @@ function CartPageContent() {
     return (
       <div className="min-h-[70vh] flex items-center justify-center px-4 py-16 bg-[#f8fafc]">
         <div className="text-center max-w-md bg-white border border-slate-200 rounded-2xl p-8 sm:p-12">
-          <div className="w-20 h-20 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center mx-auto mb-5 border border-orange-100">
+          <div className="w-20 h-20 rounded-full bg-brand-light text-brand flex items-center justify-center mx-auto mb-5 border border-brand-border">
             <ShoppingCart className="w-10 h-10" />
           </div>
           <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-2">
@@ -42,7 +42,7 @@ function CartPageContent() {
             {t["cart-empty-desc"] || "আপনার কার্টে এখনও কোনো পণ্য যোগ করা হয়নি। পছন্দের পণ্য খুঁজে এখনই শপিং শুরু করুন।"}
           </p>
           <Link href="/shop">
-            <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl h-11 px-8">
+            <Button size="lg" className="bg-brand hover:bg-brand-hover text-brand-foreground font-semibold rounded-xl h-11 px-8">
               {t["start-shopping"] || "কেনাকাটা শুরু করুন"}
             </Button>
           </Link>
@@ -59,7 +59,7 @@ function CartPageContent() {
           <div>
             <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-800 tracking-tight flex items-center gap-2.5">
               <span>{t["cart-title"] || "শপিং কার্ট"}</span>
-              <span className="text-xs font-semibold bg-orange-100 text-orange-600 px-2.5 py-0.5 rounded-full border border-orange-200">
+              <span className="text-xs font-semibold bg-brand-light text-brand px-2.5 py-0.5 rounded-full border border-brand-border">
                 {totalItems} {t["cart-item-count"] || "টি পণ্য"}
               </span>
             </h1>
@@ -69,7 +69,7 @@ function CartPageContent() {
           </div>
 
           <Link href="/checkout">
-            <Button className="bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold text-xs sm:text-sm rounded-xl h-10 sm:h-11 px-6 flex items-center gap-2">
+            <Button className="bg-brand hover:bg-brand-hover text-white font-semibold text-xs sm:text-sm rounded-xl h-10 sm:h-11 px-6 flex items-center gap-2 shadow-xs">
               <span>{t["checkout-now-btn"] || "চেকআউট করুন"}</span>
               <ArrowRight className="w-4 h-4" />
             </Button>
@@ -101,7 +101,7 @@ function CartPageContent() {
                 <div className="flex-1 min-w-0 w-full">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <h3 className="font-semibold text-sm sm:text-base text-slate-800 line-clamp-2 hover:text-orange-600 transition-colors">
+                      <h3 className="font-semibold text-sm sm:text-base text-slate-800 line-clamp-2 hover:text-brand transition-colors">
                         {item.productName}
                       </h3>
 
@@ -157,7 +157,7 @@ function CartPageContent() {
                             })
                           )
                         }
-                        className="h-8 w-8 flex items-center justify-center text-slate-600 hover:bg-slate-100 hover:text-orange-600 transition-colors cursor-pointer"
+                        className="h-8 w-8 flex items-center justify-center text-slate-600 hover:bg-slate-100 hover:text-brand transition-colors cursor-pointer"
                       >
                         <Minus className="h-3.5 w-3.5" />
                       </button>
@@ -178,7 +178,7 @@ function CartPageContent() {
                             })
                           )
                         }
-                        className="h-8 w-8 flex items-center justify-center text-slate-600 hover:bg-slate-100 hover:text-orange-600 transition-colors cursor-pointer"
+                        className="h-8 w-8 flex items-center justify-center text-slate-600 hover:bg-slate-100 hover:text-brand transition-colors cursor-pointer"
                       >
                         <Plus className="h-3.5 w-3.5" />
                       </button>
@@ -198,7 +198,7 @@ function CartPageContent() {
             <div className="flex items-center justify-between pt-2">
               <Link
                 href="/shop"
-                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-700 hover:text-orange-600 transition-colors"
+                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-700 hover:text-brand transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>{t["continue-shopping"] || "আরও কেনাকাটা করুন"}</span>
@@ -249,7 +249,7 @@ function CartPageContent() {
               </div>
 
               <Link href="/checkout" className="block pt-2">
-                <Button className="w-full h-12 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-sm sm:text-base rounded-xl transition-all cursor-pointer">
+                <Button className="w-full h-12 bg-brand hover:bg-brand-hover text-white font-bold text-sm sm:text-base rounded-xl transition-all cursor-pointer shadow-xs">
                   <span>{t["proceed-to-checkout"] || "চেকআউট পেজে এগিয়ে যান"}</span>
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
@@ -262,7 +262,7 @@ function CartPageContent() {
                   <span>{t["secure-payment"] || "১০০% নিরাপদ ও সুরক্ষিত পেমেন্ট"}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Truck className="w-4 h-4 text-orange-500 shrink-0" />
+                  <Truck className="w-4 h-4 text-brand shrink-0" />
                   <span>{t["delivery-guarantee"] || "সারাদেশে ক্যাশ অন ডেলিভারি সুবিধা"}</span>
                 </div>
               </div>

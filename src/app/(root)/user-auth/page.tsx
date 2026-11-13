@@ -32,9 +32,9 @@ function UserAuthContent() {
   // If user is already authenticated
   if (user?.id) {
     return (
-      <div className="min-h-[calc(100vh-140px)] py-12 px-4 flex items-center justify-center bg-linear-to-b from-orange-50/40 via-slate-50 to-orange-50/20">
+      <div className="min-h-[calc(100vh-140px)] py-12 px-4 flex items-center justify-center bg-linear-to-b from-brand-light/40 via-slate-50 to-brand-light/20">
         <div className="w-full max-w-md bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xl text-center">
-          <div className="w-16 h-16 rounded-full bg-linear-to-br from-orange-500 to-amber-500 text-white font-bold text-2xl flex items-center justify-center mx-auto shadow-md mb-4 uppercase">
+          <div className="w-16 h-16 rounded-full bg-brand text-brand-foreground font-bold text-2xl flex items-center justify-center mx-auto shadow-md mb-4 uppercase">
             {user?.name?.[0] || "U"}
           </div>
 
@@ -48,7 +48,7 @@ function UserAuthContent() {
           <div className="mt-6 flex flex-col gap-2.5">
             <Link
               href={user?.role === "Admin" ? "/admin" : "/dashboard"}
-              className="h-11 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 shadow-md transition-all active:scale-[0.99]"
+              className="h-11 bg-brand hover:bg-brand-hover text-brand-foreground font-semibold text-sm rounded-xl flex items-center justify-center gap-2 shadow-md transition-all active:scale-[0.99]"
             >
               <LayoutDashboard className="w-4 h-4" />
               <span>ড্যাশবোর্ড এ যান</span>
@@ -77,16 +77,16 @@ function UserAuthContent() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-140px)] py-8 sm:py-12 md:py-16 px-4 flex items-center justify-center bg-linear-to-b from-orange-50/50 via-slate-50 to-orange-50/30 relative overflow-hidden">
+    <div className="min-h-[calc(100vh-140px)] py-8 sm:py-12 md:py-16 px-4 flex items-center justify-center bg-linear-to-b from-brand-light/50 via-slate-50 to-brand-light/30 relative overflow-hidden">
       {/* Decorative ambient background glows */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-orange-200/30 rounded-full blur-3xl pointer-events-none -translate-y-1/2" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-200/25 rounded-full blur-3xl pointer-events-none translate-y-1/2" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand/15 rounded-full blur-3xl pointer-events-none -translate-y-1/2" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-brand/10 rounded-full blur-3xl pointer-events-none translate-y-1/2" />
 
       <div className="w-full max-w-4xl relative z-10">
         {/* Main Combined Card */}
         <div className="grid grid-cols-1 lg:grid-cols-12 bg-white border border-slate-200/90 rounded-3xl shadow-xl overflow-hidden">
           {/* Left Hero / Brand Banner (Desktop only) */}
-          <div className="hidden lg:flex lg:col-span-5 bg-linear-to-br from-orange-500 via-amber-500 to-orange-600 p-8 sm:p-10 text-white flex-col justify-between relative overflow-hidden">
+          <div className="hidden lg:flex lg:col-span-5 bg-brand text-brand-foreground p-8 sm:p-10 flex-col justify-between relative overflow-hidden">
             {/* Background pattern circles */}
             <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/10 rounded-full blur-xl pointer-events-none" />
             <div className="absolute -bottom-16 -left-16 w-56 h-56 bg-black/10 rounded-full blur-xl pointer-events-none" />
@@ -99,7 +99,7 @@ function UserAuthContent() {
               <h2 className="text-2xl font-bold leading-tight">
                 আপনার পছন্দের পণ্যের সেরা কেনাকাটা
               </h2>
-              <p className="text-xs text-orange-100 mt-2 leading-relaxed">
+              <p className="text-xs text-brand-foreground/90 mt-2 leading-relaxed">
                 লগইন করে উপভোগ করুন আকর্ষণীয় অফার, দ্রুত চেকআউট এবং সহজ ডেলিভারি ট্র্যাকিং।
               </p>
             </div>
@@ -112,7 +112,7 @@ function UserAuthContent() {
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-white">এক্সক্লুসিভ অফার ও ডিসকাউন্ট</h4>
-                  <p className="text-[11px] text-orange-100/90 leading-snug mt-0.5">
+                  <p className="text-[11px] text-brand-foreground/80 leading-snug mt-0.5">
                     লগইন করা গ্রাহকদের জন্য বিশেষ ছাড়
                   </p>
                 </div>
@@ -124,7 +124,7 @@ function UserAuthContent() {
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-white">সহজ অর্ডার ট্র্যাকিং</h4>
-                  <p className="text-[11px] text-orange-100/90 leading-snug mt-0.5">
+                  <p className="text-[11px] text-brand-foreground/80 leading-snug mt-0.5">
                     রিয়েল-টাইম ডেলিভারি আপডেট পান
                   </p>
                 </div>
@@ -136,7 +136,7 @@ function UserAuthContent() {
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-white">১০০% নিরাপদ শপিং</h4>
-                  <p className="text-[11px] text-orange-100/90 leading-snug mt-0.5">
+                  <p className="text-[11px] text-brand-foreground/80 leading-snug mt-0.5">
                     আপনার তথ্যের সুরক্ষা আমাদের অগ্রাধিকার
                   </p>
                 </div>
@@ -155,7 +155,7 @@ function UserAuthContent() {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-orange-100 font-medium">
+              <p className="text-xs text-brand-foreground/90 font-medium">
                 ১০,০০০+ সন্তুষ্ট গ্রাহকের বিশ্বস্ত প্রতিষ্ঠান
               </p>
             </div>
@@ -167,7 +167,7 @@ function UserAuthContent() {
             <div className="flex items-center justify-between mb-5">
               <Link
                 href="/"
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-orange-600 transition-colors group"
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-brand transition-colors group"
               >
                 <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
                 <span>হোম পেজে ফিরুন</span>
@@ -186,7 +186,7 @@ function UserAuthContent() {
                 className={cn(
                   "h-11 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer select-none",
                   activeTab === "login"
-                    ? "bg-linear-to-r from-orange-500 to-amber-500 text-white shadow-md shadow-orange-500/25"
+                    ? "bg-brand text-brand-foreground shadow-md shadow-brand/25"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
                 )}
               >
@@ -200,7 +200,7 @@ function UserAuthContent() {
                 className={cn(
                   "h-11 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer select-none",
                   activeTab === "register"
-                    ? "bg-linear-to-r from-orange-500 to-amber-500 text-white shadow-md shadow-orange-500/25"
+                    ? "bg-brand text-brand-foreground shadow-md shadow-brand/25"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
                 )}
               >
@@ -242,7 +242,7 @@ export default function UserAuthPage() {
     <Suspense
       fallback={
         <div className="min-h-[calc(100vh-140px)] flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand" />
         </div>
       }
     >

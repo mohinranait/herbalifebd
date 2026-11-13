@@ -29,7 +29,7 @@ const Orders = () => {
         {orders && orders.length > 0 && (
           <Link
             href="/dashboard/orders"
-            className="text-xs font-semibold text-orange-600 hover:text-orange-700 hover:underline flex items-center gap-1 transition-colors"
+            className="text-xs font-semibold text-brand hover:opacity-80 hover:underline flex items-center gap-1 transition-colors"
           >
             <span>সবগুলো দেখুন</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -56,7 +56,7 @@ const Orders = () => {
             আপনার পছন্দের পণ্যটি বেছে নিয়ে এখনই প্রথম অর্ডারটি সম্পন্ন করুন।
           </p>
           <Link href="/shop" className="inline-block mt-4">
-            <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs rounded-lg h-9 px-4">
+            <Button size="sm" className="bg-brand hover:bg-brand-hover text-brand-foreground font-semibold text-xs rounded-lg h-9 px-4">
               শপে কেনাকাটা করুন
             </Button>
           </Link>
@@ -97,7 +97,7 @@ const Orders = () => {
                 <Link href={`/dashboard/orders/${order.id}`}>
                   <button
                     type="button"
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 hover:border-orange-400 hover:bg-orange-50 hover:text-orange-600 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 hover:border-brand hover:bg-brand-light hover:text-brand text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
                   >
                     <Eye className="w-3.5 h-3.5 text-slate-500" />
                     <span>বিস্তারিত</span>
@@ -115,7 +115,7 @@ const Orders = () => {
           <Link href="/dashboard/orders" className="block">
             <Button
               variant="outline"
-              className="w-full border-slate-200 hover:bg-slate-50 hover:text-orange-600 text-slate-700 text-xs sm:text-sm font-medium h-10 rounded-xl"
+              className="w-full border-slate-200 hover:bg-slate-50 hover:text-brand text-slate-700 text-xs sm:text-sm font-medium h-10 rounded-xl"
             >
               <ShoppingCart className="w-4 h-4 mr-2 text-slate-500" />
               <span>আমার সকল অর্ডার দেখুন</span>

@@ -12,8 +12,9 @@ import {
   Mail,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React from "react";
+import { toast } from "sonner";
 import { useLogoutMutation } from "@/redux/service/auth";
 import { userLogout } from "@/redux/features/authSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
@@ -23,6 +24,7 @@ import PersistReady from "@/providers/PersistReady";
 
 const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
   const path = usePathname();
+  const router = useRouter();
   const [logout] = useLogoutMutation();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
@@ -30,10 +32,12 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
   const handleLogout = async () => {
     try {
       await logout().unwrap();
-      dispatch(userLogout());
     } catch (error) {
       console.log({ error });
-      handleErrors(error as ErrorResponse);
+    } finally {
+      dispatch(userLogout());
+      toast.success("সফলভাবে লগআউট হয়েছে");
+      router.push("/user-auth");
     }
   };
 
@@ -63,8 +67,8 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             {/* Left: Avatar & User Info */}
             <div className="flex items-center gap-3.5 sm:gap-4">
-              <Avatar className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-orange-200 bg-orange-50 text-orange-600 shrink-0">
-                <AvatarFallback className="text-xl sm:text-2xl font-bold uppercase bg-linear-to-tr from-orange-500 to-amber-500 text-white rounded-2xl">
+              <Avatar className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-brand-border bg-brand-light text-brand shrink-0">
+                <AvatarFallback className="text-xl sm:text-2xl font-bold uppercase bg-brand text-brand-foreground rounded-2xl">
                   {user?.name ? user.name.charAt(0) : "U"}
                 </AvatarFallback>
               </Avatar>
@@ -83,13 +87,13 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs text-slate-500">
                   {user?.phone && (
                     <div className="flex items-center gap-1.5">
-                      <Phone className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+                      <Phone className="w-3.5 h-3.5 text-brand shrink-0" />
                       <span>{user.phone}</span>
                     </div>
                   )}
                   {/* {user?.email && (
                     <div className="flex items-center gap-1.5">
-                      <Mail className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+                      <Mail className="w-3.5 h-3.5 text-brand shrink-0" />
                       <span className="line-clamp-1">{user.email}</span>
                     </div>
                   )} */}
@@ -101,7 +105,7 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
             <div className="flex items-center gap-2.5 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 self-end sm:self-center">
               <Link
                 href="/shop"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 hover:border-orange-300 hover:bg-orange-50/50 text-slate-700 hover:text-orange-600 text-xs sm:text-sm font-medium transition-colors"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 hover:border-brand hover:bg-brand-light text-slate-700 hover:text-brand text-xs sm:text-sm font-medium transition-colors"
               >
                 <Store className="w-4 h-4 text-slate-400" />
                 <span>শপে যান</span>
@@ -131,7 +135,7 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
                 className={cn(
                   "flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer",
                   isActive
-                    ? "bg-orange-500 text-white"
+                    ? "bg-brand text-brand-foreground shadow-xs"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 )}
               >

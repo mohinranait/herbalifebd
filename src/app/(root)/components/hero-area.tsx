@@ -135,7 +135,7 @@ const HeroSection = () => {
                             <Link href={slide.link || '/'}>
                               <Button
                                 size="lg"
-                                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-2 rounded-xl"
+                                className="bg-brand hover:bg-brand-hover text-brand-foreground font-semibold px-6 py-2 rounded-xl"
                               >
                                 {slide.buttonName}
                               </Button>
@@ -150,8 +150,8 @@ const HeroSection = () => {
 
               {validSliders.length > 1 && (
                 <>
-                  <CarouselPrevious className="left-3 md:left-6 bg-white/90 hover:bg-white text-slate-800 border border-slate-200 h-9 w-9 md:h-11 md:w-11 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <CarouselNext className="right-3 md:right-6 bg-white/90 hover:bg-white text-slate-800 border border-slate-200 h-9 w-9 md:h-11 md:w-11 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <CarouselPrevious className="left-3 md:left-6 bg-white/90 hover:bg-brand hover:text-brand-foreground hover:border-brand text-slate-800 border border-slate-200 h-9 w-9 md:h-11 md:w-11 opacity-0 group-hover:opacity-100 transition-all" />
+                  <CarouselNext className="right-3 md:right-6 bg-white/90 hover:bg-brand hover:text-brand-foreground hover:border-brand text-slate-800 border border-slate-200 h-9 w-9 md:h-11 md:w-11 opacity-0 group-hover:opacity-100 transition-all" />
                 </>
               )}
             </Carousel>
@@ -168,7 +168,7 @@ const HeroSection = () => {
                   key={idx}
                   className={`flex items-center gap-3 ${idx > 0 ? "pt-3 md:pt-0 md:pl-4" : ""}`}
                 >
-                  <div className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center shrink-0">
+                  <div className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-brand-light text-brand flex items-center justify-center shrink-0">
                     <Icon className="w-5 h-5 md:w-6 md:h-6" />
                   </div>
                   <div className="min-w-0">

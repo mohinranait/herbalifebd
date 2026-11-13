@@ -74,7 +74,7 @@ export function MobileMenu() {
       label: "ফ্ল্যাশ সেল ও অফার",
       icon: Zap,
       badge: "হট ডিল 🔥",
-      badgeColor: "bg-orange-500 text-white",
+      badgeColor: "bg-brand text-brand-foreground",
     },
     {
       href: "/brands",
@@ -122,12 +122,12 @@ export function MobileMenu() {
         <SheetTrigger asChild>
           <button
             type="button"
-            className="h-10 w-10 sm:h-11 sm:w-11 rounded-full border border-slate-200 hover:border-orange-400 hover:bg-orange-50/50 hover:text-orange-600 text-slate-700 flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs active:scale-95 group shrink-0"
+            className="h-10 w-10 sm:h-11 sm:w-11 rounded-full border border-slate-200 hover:border-brand hover:bg-brand-light hover:text-brand text-slate-700 flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs active:scale-95 group shrink-0"
             aria-label="মেনু খুলুন"
           >
-            <span className="w-5 h-[2px] bg-slate-700 rounded-full group-hover:bg-orange-600 transition-colors" />
-            <span className="w-3.5 h-[2px] bg-slate-700 rounded-full group-hover:bg-orange-600 group-hover:w-5 transition-all self-start ml-2.5" />
-            <span className="w-5 h-[2px] bg-slate-700 rounded-full group-hover:bg-orange-600 transition-colors" />
+            <span className="w-5 h-[2px] bg-slate-700 rounded-full group-hover:bg-brand transition-colors" />
+            <span className="w-3.5 h-[2px] bg-slate-700 rounded-full group-hover:bg-brand group-hover:w-5 transition-all self-start ml-2.5" />
+            <span className="w-5 h-[2px] bg-slate-700 rounded-full group-hover:bg-brand transition-colors" />
           </button>
         </SheetTrigger>
 
@@ -138,14 +138,14 @@ export function MobileMenu() {
           className="w-[85vw] max-w-[340px] p-0 flex flex-col h-full bg-white border-r border-slate-200 shadow-2xl overflow-hidden"
         >
           {/* Drawer Header */}
-          <SheetHeader className="px-4 py-3 border-b border-slate-100 bg-linear-to-r from-orange-50/70 via-white to-amber-50/40 flex-row items-center justify-between shrink-0">
+          <SheetHeader className="px-4 py-3 border-b border-slate-100 bg-brand-light flex-row items-center justify-between shrink-0">
             <SheetTitle className="text-left">
               <HeaderLogo />
             </SheetTitle>
             <button
               type="button"
               onClick={close}
-              className="w-8 h-8 rounded-full border border-slate-200 bg-white hover:bg-orange-50 hover:border-orange-300 hover:text-orange-600 flex items-center justify-center text-slate-500 transition-colors cursor-pointer"
+              className="w-8 h-8 rounded-full border border-slate-200 bg-white hover:bg-brand-light hover:border-brand hover:text-brand flex items-center justify-center text-slate-500 transition-colors cursor-pointer"
               aria-label="মেনু বন্ধ করুন"
             >
               <X className="w-4 h-4" />
@@ -155,9 +155,9 @@ export function MobileMenu() {
           {/* User Account / Welcome Banner */}
           <div className="px-3 pt-3 shrink-0">
             {user?.id ? (
-              <div className="bg-linear-to-r from-orange-50/90 to-amber-50/70 border border-orange-200/80 rounded-xl p-3 flex items-center justify-between">
+              <div className="bg-brand-light border border-brand-border rounded-xl p-3 flex items-center justify-between">
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-10 h-10 rounded-full bg-linear-to-br from-orange-500 to-amber-500 text-white font-bold text-sm flex items-center justify-center shadow-xs shrink-0 uppercase">
+                  <div className="w-10 h-10 rounded-full bg-brand text-brand-foreground font-bold text-sm flex items-center justify-center shadow-xs shrink-0 uppercase">
                     {user?.name?.[0] || "U"}
                   </div>
                   <div className="min-w-0">
@@ -170,20 +170,20 @@ export function MobileMenu() {
                 <Link
                   href={user?.role === "Admin" ? "/admin" : "/dashboard"}
                   onClick={close}
-                  className="text-[11px] font-semibold text-orange-600 bg-white hover:bg-orange-50 px-2.5 py-1 rounded-lg border border-orange-200 transition-colors shrink-0"
+                  className="text-[11px] font-semibold text-brand bg-white hover:bg-brand-light px-2.5 py-1 rounded-lg border border-brand-border transition-colors shrink-0"
                 >
                   প্রোফাইল
                 </Link>
               </div>
             ) : (
-              <div className="bg-linear-to-r from-orange-50/90 to-amber-50/60 border border-orange-200/70 rounded-xl p-3">
+              <div className="bg-brand-light border border-brand-border rounded-xl p-3">
                 <p className="text-xs text-slate-700 font-medium">
                   স্বাগতম! দ্রুত কেনাকাটা করতে সাইন ইন করুন
                 </p>
                 <button
                   type="button"
                   onClick={handleOpenLogin}
-                  className="mt-2 w-full h-8.5 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold text-xs rounded-lg flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                  className="mt-2 w-full h-8.5 bg-brand hover:bg-brand-hover text-brand-foreground font-semibold text-xs rounded-lg flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
                 >
                   <LogIn className="w-3.5 h-3.5" />
                   <span>লগইন / রেজিস্টার করুন</span>
@@ -201,7 +201,7 @@ export function MobileMenu() {
                 className={cn(
                   "py-1.5 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer",
                   activeTab === "menu"
-                    ? "bg-white text-orange-600 shadow-xs"
+                    ? "bg-white text-brand shadow-xs font-bold"
                     : "text-slate-600 hover:text-slate-900"
                 )}
               >
@@ -214,7 +214,7 @@ export function MobileMenu() {
                 className={cn(
                   "py-1.5 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer",
                   activeTab === "categories"
-                    ? "bg-white text-orange-600 shadow-xs"
+                    ? "bg-white text-brand shadow-xs font-bold"
                     : "text-slate-600 hover:text-slate-900"
                 )}
               >
@@ -240,10 +240,10 @@ export function MobileMenu() {
                           key={item.href}
                           href={item.href}
                           onClick={close}
-                          className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-orange-50/60 active:bg-orange-100/50 text-slate-700 hover:text-orange-600 transition-colors group"
+                          className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-brand-light active:bg-brand-light text-slate-700 hover:text-brand transition-colors group"
                         >
                           <div className="flex items-center gap-3">
-                            <span className="w-8 h-8 rounded-lg bg-slate-100 group-hover:bg-orange-100 text-slate-600 group-hover:text-orange-600 flex items-center justify-center transition-colors">
+                            <span className="w-8 h-8 rounded-lg bg-slate-100 group-hover:bg-brand-light text-slate-600 group-hover:text-brand flex items-center justify-center transition-colors">
                               <Icon className="w-4 h-4" />
                             </span>
                             <span className="text-xs sm:text-sm font-medium">
@@ -261,7 +261,7 @@ export function MobileMenu() {
                                 {item.badge}
                               </span>
                             )}
-                            <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-orange-400 group-hover:translate-x-0.5 transition-all" />
+                            <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-brand group-hover:translate-x-0.5 transition-all" />
                           </div>
                         </Link>
                       );
@@ -310,7 +310,7 @@ export function MobileMenu() {
                       key={cat.id}
                       href={`/shop?category=${cat.id}`}
                       onClick={close}
-                      className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-orange-50/60 text-slate-700 hover:text-orange-600 transition-colors group"
+                      className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-brand-light text-slate-700 hover:text-brand transition-colors group"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-8 h-8 rounded-lg overflow-hidden bg-slate-100 border border-slate-200/80 flex items-center justify-center shrink-0">
@@ -332,7 +332,7 @@ export function MobileMenu() {
                             {cat.totalProducts}
                           </span>
                         )}
-                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-orange-400 transition-colors" />
+                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-brand transition-colors" />
                       </div>
                     </Link>
                   ))}
@@ -342,7 +342,7 @@ export function MobileMenu() {
                   <Link
                     href="/categories"
                     onClick={close}
-                    className="block text-center text-xs font-semibold text-orange-600 hover:text-orange-700 py-1.5 bg-orange-50/70 hover:bg-orange-100/70 rounded-lg transition-colors"
+                    className="block text-center text-xs font-semibold text-brand hover:opacity-80 py-1.5 bg-brand-light rounded-lg transition-colors border border-brand-border"
                   >
                     সকল ক্যাটাগরি পেজ দেখুন →
                   </Link>
@@ -360,9 +360,9 @@ export function MobileMenu() {
               {appSetting?.contactPhone && (
                 <a
                   href={`tel:${appSetting.contactPhone}`}
-                  className="flex items-center justify-center gap-1.5 h-8.5 rounded-lg border border-slate-200 bg-white hover:border-orange-300 hover:text-orange-600 text-slate-700 text-xs font-semibold transition-colors"
+                  className="flex items-center justify-center gap-1.5 h-8.5 rounded-lg border border-slate-200 bg-white hover:border-brand hover:text-brand text-slate-700 text-xs font-semibold transition-colors"
                 >
-                  <PhoneCall className="w-3.5 h-3.5 text-orange-500" />
+                  <PhoneCall className="w-3.5 h-3.5 text-brand" />
                   <span>কল করুন</span>
                 </a>
               )}

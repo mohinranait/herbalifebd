@@ -50,13 +50,13 @@ function CategoryNode({ node, all, activeCat, handleCatChange }: CategoryNodePro
           className={cn(
             "flex-1 flex items-center justify-between text-left px-2.5 py-1.5 rounded-lg text-xs sm:text-sm transition-colors cursor-pointer",
             isActive
-              ? "bg-orange-50 text-orange-600 font-semibold border border-orange-200"
+              ? "bg-brand-light text-brand font-semibold border border-brand-border"
               : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
           )}
         >
           <span className="line-clamp-1">{node.name}</span>
           {node?.totalProducts !== undefined && (
-            <span className={cn("text-[11px] ml-1 shrink-0", isActive ? "text-orange-500 font-bold" : "text-slate-400")}>
+            <span className={cn("text-[11px] ml-1 shrink-0", isActive ? "text-brand font-bold" : "text-slate-400")}>
               ({node.totalProducts})
             </span>
           )}
@@ -95,7 +95,7 @@ export function CategoryTree({
   return (
     <div>
       <div className="flex items-center gap-1.5 pb-2 mb-2 border-b border-slate-100">
-        <Folder className="w-3.5 h-3.5 text-orange-500" />
+        <Folder className="w-3.5 h-3.5 text-brand" />
         <span className="text-xs font-bold text-slate-800 uppercase tracking-wide">
           ক্যাটাগরি
         </span>
@@ -111,7 +111,7 @@ export function CategoryTree({
             className={cn(
               "flex-1 text-left px-2.5 py-1.5 rounded-lg text-xs sm:text-sm transition-colors cursor-pointer",
               !activeCat
-                ? "bg-orange-50 text-orange-600 font-semibold border border-orange-200"
+                ? "bg-brand-light text-brand font-semibold border border-brand-border"
                 : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
             )}
           >

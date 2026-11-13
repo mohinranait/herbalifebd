@@ -73,7 +73,7 @@ export default function DeliveryTracker({ order }: Props) {
     <div className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-5 shadow-xs">
       <div className="flex items-center justify-between pb-3.5 mb-5 border-b border-slate-100">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-brand-light text-brand flex items-center justify-center">
             <Truck className="w-4 h-4" />
           </div>
           <div>
@@ -89,7 +89,7 @@ export default function DeliveryTracker({ order }: Props) {
         {order?.createdAt && (
           <div className="text-right hidden sm:block">
             <span className="text-[11px] text-slate-400 block">সম্ভাব্য ডেলিভারি</span>
-            <span className="text-xs font-bold text-orange-600">
+            <span className="text-xs font-bold text-brand">
               {estimatedStart} – {estimatedEnd}
             </span>
           </div>
@@ -124,7 +124,7 @@ export default function DeliveryTracker({ order }: Props) {
                   "relative z-10 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all shadow-xs",
                   isDone && "bg-emerald-500 text-white shadow-emerald-500/20",
                   isActive &&
-                    "bg-orange-500 text-white ring-4 ring-orange-100 shadow-orange-500/30 animate-pulse",
+                    "bg-brand text-brand-foreground ring-4 ring-brand/20 shadow-brand/30 animate-pulse",
                   step.state === "pending" && "bg-slate-100 text-slate-400 border border-slate-200"
                 )}
               >
@@ -136,7 +136,7 @@ export default function DeliveryTracker({ order }: Props) {
                 <p
                   className={cn(
                     "text-xs sm:text-sm leading-tight",
-                    isActive && "font-bold text-orange-600",
+                    isActive && "font-bold text-brand",
                     isDone && "font-semibold text-slate-800",
                     step.state === "pending" && "text-slate-400 font-medium"
                   )}
@@ -156,7 +156,7 @@ export default function DeliveryTracker({ order }: Props) {
       {order?.createdAt && (
         <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs sm:hidden">
           <span className="text-slate-500">সম্ভাব্য ডেলিভারি:</span>
-          <span className="font-bold text-orange-600">
+          <span className="font-bold text-brand">
             {estimatedStart} – {estimatedEnd}
           </span>
         </div>

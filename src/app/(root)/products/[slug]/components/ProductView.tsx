@@ -485,7 +485,7 @@ const ProductView = ({ product }: Props) => {
           <button
             type="button"
             onClick={handleShare}
-            className="inline-flex items-center gap-1 text-slate-600 hover:text-[#ff7a00] cursor-pointer transition-colors"
+            className="inline-flex items-center gap-1 text-slate-600 hover:text-brand cursor-pointer transition-colors"
           >
             <Share2 className="w-3.5 h-3.5" />
             <span>শেয়ার করুন</span>
@@ -530,7 +530,7 @@ const ProductView = ({ product }: Props) => {
                       {group.name}:
                     </span>
                     {currentValue && (
-                      <span className="text-xs font-bold text-[#ff7a00]">
+                      <span className="text-xs font-bold text-brand">
                         {currentValue}
                       </span>
                     )}
@@ -547,7 +547,7 @@ const ProductView = ({ product }: Props) => {
                           onClick={() => handleSelectAttribute(group.name, val)}
                           className={`px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all border cursor-pointer flex items-center gap-1.5 ${
                             isSelected
-                              ? 'border-[#ff7a00] text-[#ff7a00] bg-orange-50/70 ring-2 ring-[#ff7a00]/30 font-bold'
+                              ? 'border-brand text-brand bg-brand-light ring-2 ring-brand/30 font-bold'
                               : 'border-slate-200 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50'
                           }`}
                         >
@@ -570,7 +570,7 @@ const ProductView = ({ product }: Props) => {
                 ভ্যারিয়েন্ট নির্বাচন করুন:
               </span>
               {currentVariation && (
-                <span className="text-xs font-bold text-[#ff7a00]">
+                <span className="text-xs font-bold text-brand">
                   {currentVariation.name}
                 </span>
               )}
@@ -588,13 +588,13 @@ const ProductView = ({ product }: Props) => {
                     onClick={() => setSelectedVariation(v)}
                     className={`px-4 py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all border cursor-pointer flex items-center gap-2 ${
                       isSelected
-                        ? 'border-[#ff7a00] text-[#ff7a00] bg-orange-50/60 ring-2 ring-[#ff7a00]/30 font-bold'
+                        ? 'border-brand text-brand bg-brand-light ring-2 ring-brand/30 font-bold'
                         : 'border-slate-200 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50'
                     }`}
                   >
                     <span>{v.name}</span>
                     {vOffer > 0 && (
-                      <span className={`text-[11px] font-bold ${isSelected ? 'text-[#ff7a00]' : 'text-slate-500'}`}>
+                      <span className={`text-[11px] font-bold ${isSelected ? 'text-brand' : 'text-slate-500'}`}>
                         ({CURRENCY}{vOffer.toLocaleString()})
                       </span>
                     )}
@@ -660,12 +660,12 @@ const ProductView = ({ product }: Props) => {
               <span>{t["add-to-cart"] || "কার্টে রাখুন"}</span>
             </button>
 
-            {/* Buy Now Button (Vibrant Orange) */}
+            {/* Buy Now Button (Theme Brand Color) */}
             <button
               type="button"
               onClick={() => handleAddToCart('order')}
               disabled={stock === 0 || !areAllAttributesSelected()}
-              className="w-full h-11 sm:h-12 rounded-lg font-bold text-xs sm:text-sm md:text-base text-white bg-[#ff7a00] hover:bg-[#e66e00] transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full h-11 sm:h-12 rounded-lg font-bold text-xs sm:text-sm md:text-base text-white bg-brand hover:bg-brand-hover transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-xs"
             >
               <Zap className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
               <span>{t["buy-now"] || "এখনই কিনুন"}</span>
@@ -677,7 +677,7 @@ const ProductView = ({ product }: Props) => {
             <span className="font-semibold text-slate-800">{t["call-now-label"] || "কল করুন"}</span>
             <a
               href="tel:01602094399"
-              className="inline-flex items-center gap-1 text-[#ff7a00] font-bold hover:underline"
+              className="inline-flex items-center gap-1 text-brand font-bold hover:underline"
             >
               <Phone className="w-3.5 h-3.5 fill-current" />
               <span>01602094399</span>
@@ -685,7 +685,7 @@ const ProductView = ({ product }: Props) => {
             <span className="text-slate-400">{t["or-text"] || "অথবা"}</span>
             <a
               href="tel:01315118595"
-              className="inline-flex items-center gap-1 text-[#ff7a00] font-bold hover:underline"
+              className="inline-flex items-center gap-1 text-brand font-bold hover:underline"
             >
               <Phone className="w-3.5 h-3.5 fill-current" />
               <span>01315118595</span>
@@ -711,7 +711,7 @@ const ProductView = ({ product }: Props) => {
           {/* Header */}
           <div className="px-4 py-2.5 bg-slate-50/70 border-b border-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Truck className="w-4 h-4 text-[#ff7a00]" />
+              <Truck className="w-4 h-4 text-brand" />
               <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
                 ডেলিভারি চার্জ ও এরিয়া
               </span>

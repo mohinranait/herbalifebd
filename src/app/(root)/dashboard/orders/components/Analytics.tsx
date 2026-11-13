@@ -30,8 +30,8 @@ const Analytics = () => {
       label: "Pending Orders",
       count: analaytics?.ordersByStatus?.PENDING || 0,
       icon: <Clock className="h-5 w-5" />,
-      color: "text-orange-600",
-      bgColor: "bg-orange-50",
+      color: "text-brand",
+      bgColor: "bg-brand-light",
       status: "Pending",
     },
     {

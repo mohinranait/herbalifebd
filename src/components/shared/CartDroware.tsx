@@ -54,11 +54,11 @@ const EcommerceCartDrawer = () => {
         <DrawerHeader className="border-b border-slate-100 px-5 py-4 bg-white shrink-0">
           <div className="flex items-center justify-between">
             <DrawerTitle className="flex items-center gap-2.5 text-base md:text-lg font-bold text-slate-800">
-              <div className="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-brand-light text-brand flex items-center justify-center">
                 <ShoppingBag className="h-4 w-4" />
               </div>
               <span>{t["cart-title"] || "শপিং কার্ট"}</span>
-              <span className="text-xs font-semibold bg-orange-50 text-orange-600 px-2 py-0.5 rounded-full border border-orange-200">
+              <span className="text-xs font-semibold bg-brand-light text-brand px-2 py-0.5 rounded-full border border-brand-border">
                 {totalItems} {t["cart-item-count"] || "টি পণ্য"}
               </span>
             </DrawerTitle>
@@ -76,8 +76,8 @@ const EcommerceCartDrawer = () => {
 
         {/* Free Shipping / Cash on delivery Banner */}
         {carts.length > 0 && (
-          <div className="bg-orange-50/70 border-b border-orange-100/80 px-5 py-2.5 flex items-center gap-2 text-xs font-medium text-orange-800 shrink-0">
-            <Truck className="w-4 h-4 text-orange-600 shrink-0" />
+          <div className="bg-brand-light border-b border-brand-border px-5 py-2.5 flex items-center gap-2 text-xs font-medium text-brand shrink-0">
+            <Truck className="w-4 h-4 text-brand shrink-0" />
             <span>{t["delivery-guarantee"] || "সারাদেশে দ্রুত ক্যাশ অন হোম ডেলিভারি সুবিধা রয়েছে"}</span>
           </div>
         )}
@@ -86,7 +86,7 @@ const EcommerceCartDrawer = () => {
         <div className="flex-1 overflow-y-auto p-4 md:p-5 space-y-3 bg-slate-50/50">
           {carts.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center py-12 px-4 text-center">
-              <div className="w-20 h-20 rounded-full bg-orange-100/70 text-orange-500 flex items-center justify-center mb-4 border border-orange-200">
+              <div className="w-20 h-20 rounded-full bg-brand-light text-brand flex items-center justify-center mb-4 border border-brand-border">
                 <ShoppingBag className="w-9 h-9" />
               </div>
 
@@ -99,7 +99,7 @@ const EcommerceCartDrawer = () => {
               </p>
 
               <Link href="/shop" onClick={handleToggleCart} className="mt-6">
-                <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs md:text-sm h-10 px-6 rounded-xl">
+                <Button className="bg-brand hover:bg-brand-hover text-brand-foreground font-semibold text-xs md:text-sm h-10 px-6 rounded-xl">
                   {t["start-shopping"] || "কেনাকাটা শুরু করুন"}
                 </Button>
               </Link>
@@ -108,7 +108,7 @@ const EcommerceCartDrawer = () => {
             carts.map((item, idx) => (
               <div
                 key={idx}
-                className="flex gap-3 bg-white p-3 rounded-xl border border-slate-200 hover:border-orange-300 transition-all"
+                className="flex gap-3 bg-white p-3 rounded-xl border border-slate-200 hover:border-brand transition-all"
               >
                 {/* Product Image */}
                 <div className="relative h-20 w-20 rounded-lg overflow-hidden border border-slate-100 bg-slate-50 shrink-0">
@@ -125,7 +125,7 @@ const EcommerceCartDrawer = () => {
                   {/* Top: Name & Remove */}
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <h4 className="line-clamp-2 text-xs md:text-sm font-semibold text-slate-800 leading-snug hover:text-orange-600 transition-colors">
+                      <h4 className="line-clamp-2 text-xs md:text-sm font-semibold text-slate-800 leading-snug hover:text-brand transition-colors">
                         {item.productName}
                       </h4>
 
@@ -189,7 +189,7 @@ const EcommerceCartDrawer = () => {
                             })
                           )
                         }
-                        className="h-7 w-7 flex items-center justify-center text-slate-600 hover:bg-orange-50 hover:text-orange-600 transition-colors cursor-pointer"
+                        className="h-7 w-7 flex items-center justify-center text-slate-600 hover:bg-brand-light hover:text-brand transition-colors cursor-pointer"
                       >
                         <Minus className="h-3 w-3" />
                       </button>
@@ -210,7 +210,7 @@ const EcommerceCartDrawer = () => {
                             })
                           )
                         }
-                        className="h-7 w-7 flex items-center justify-center text-slate-600 hover:bg-orange-50 hover:text-orange-600 transition-colors cursor-pointer"
+                        className="h-7 w-7 flex items-center justify-center text-slate-600 hover:bg-brand-light hover:text-brand transition-colors cursor-pointer"
                       >
                         <Plus className="h-3 w-3" />
                       </button>
@@ -260,7 +260,7 @@ const EcommerceCartDrawer = () => {
                 <Link
                   href="/checkout"
                   onClick={handleToggleCart}
-                  className="w-full bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-[0.99] text-white font-bold h-11 md:h-12 rounded-xl flex items-center justify-center gap-2 text-xs md:text-sm cursor-pointer"
+                  className="w-full bg-brand hover:bg-brand-hover active:scale-[0.99] text-white font-bold h-11 md:h-12 rounded-xl flex items-center justify-center gap-2 text-xs md:text-sm cursor-pointer shadow-xs"
                 >
                   <span>{t["proceed-to-checkout"] || "অর্ডার কনফার্ম করতে এগিয়ে যান"}</span>
                   <ArrowRight className="w-4 h-4" />
@@ -270,7 +270,7 @@ const EcommerceCartDrawer = () => {
                 <Link
                   href="/cart"
                   onClick={handleToggleCart}
-                  className="w-full border border-slate-200 hover:border-orange-300 hover:bg-orange-50/40 text-slate-700 font-medium h-9 md:h-10 rounded-xl flex items-center justify-center text-xs md:text-sm transition-colors"
+                  className="w-full border border-slate-200 hover:border-brand hover:bg-brand-light hover:text-brand text-slate-700 font-medium h-9 md:h-10 rounded-xl flex items-center justify-center text-xs md:text-sm transition-colors"
                 >
                   {t["view-cart-btn"] || "কার্ট পেজ দেখুন"}
                 </Link>

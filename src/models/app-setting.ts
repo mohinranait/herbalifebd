@@ -8,6 +8,7 @@ export interface IAppSettings extends Document {
   logo: string;
   footerLogo: string;
   favicon: string;
+  themeColor?: string;
 
   contactEmail: string;
   contactPhone: string;
@@ -122,6 +123,7 @@ const appSettingsSchema = new Schema<IAppSettings>(
     logo: { type: String, default: "" },
     footerLogo: { type: String, default: "" },
     favicon: { type: String, default: "" },
+    themeColor: { type: String, default: "#ff7a00" },
 
     contactEmail: { type: String, required: true },
     contactPhone: { type: String, default: "" },

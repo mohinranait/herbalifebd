@@ -23,6 +23,7 @@ import {
   Save,
   Globe,
   LayoutTemplate,
+  Palette,
   Plus,
   X
 } from 'lucide-react';
@@ -32,11 +33,13 @@ import ShippingTab from './ShippingTab';
 import FeaturesTab from './FeaturesTab';
 import LayoutTab from './LayoutTab';
 import GeneralTab from './GeneralTab';
+import ThemeTab from './ThemeTab';
 import MediaModal from '../../media/components/MediaModal';
 import Image from 'next/image';
 
 export const tabs = [
   { id: 'general', label: 'General', icon: Settings },
+  { id: 'theme', label: 'Theme', icon: Palette },
   { id: 'contact', label: 'Contact', icon: Phone },
   { id: 'payment', label: 'Payment', icon: CreditCard },
   { id: 'shipping', label: 'Shipping', icon: Truck },
@@ -101,15 +104,18 @@ export default function SettingsComponent() {
 
   const handleSave = async () => {
     try {
-      // console.log({ settings });
-
       await updateSettings({ ...settings }).unwrap();
       toast.success('Settings saved successfully');
       setIsDirty(false);
-    } catch (err) {
-      console.log(err);
-
-      toast.error('Failed to save settings');
+    } catch (err: any) {
+      console.error('Save settings error:', err);
+      const errorMsg =
+        err?.data?.error?.[0]?.message
+          ? `${err.data.error[0].path?.join('.') || 'Error'}: ${err.data.error[0].message}`
+          : typeof err?.data?.error === 'string'
+          ? err.data.error
+          : err?.data?.message || 'Failed to save settings';
+      toast.error(errorMsg);
     }
   };
 
@@ -150,6 +156,11 @@ export default function SettingsComponent() {
             {/* ==================== GENERAL ==================== */}
             {activeTab === 'general' && (
               <GeneralTab settings={settings} callBack={(key: string, value: string | boolean) => setValue(key, value)} />
+            )}
+
+            {/* ==================== THEME ==================== */}
+            {activeTab === 'theme' && (
+              <ThemeTab settings={settings} callBack={(key: string, value: string) => setValue(key, value)} />
             )}
 
             {/* ==================== CONTACT ==================== */}

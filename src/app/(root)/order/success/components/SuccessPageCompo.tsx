@@ -81,7 +81,7 @@ const SuccessPageCompo = () => {
           <div className="mt-6 flex flex-col sm:flex-row gap-2.5">
             <Link
               href="/shop"
-              className="flex-1 h-11 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold text-xs sm:text-sm rounded-xl flex items-center justify-center gap-2 shadow-md transition-all"
+              className="flex-1 h-11 bg-brand hover:bg-brand-hover text-brand-foreground font-semibold text-xs sm:text-sm rounded-xl flex items-center justify-center gap-2 shadow-md transition-all"
             >
               <ShoppingBag className="w-4 h-4" />
               <span>শপে ফিরে যান</span>
@@ -117,7 +117,7 @@ const SuccessPageCompo = () => {
         {/* 1. Header Celebratory Confirmation Card */}
         <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 md:p-10 text-center shadow-xs relative overflow-hidden print:border-none print:shadow-none">
           {/* Subtle decorative background tints */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-32 bg-linear-to-b from-orange-100/50 to-transparent blur-2xl pointer-events-none" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-32 bg-linear-to-b from-brand/10 to-transparent blur-2xl pointer-events-none" />
 
           {/* Success Checkmark with Pulse Ring */}
           <div className="relative inline-flex mb-4">
@@ -137,12 +137,12 @@ const SuccessPageCompo = () => {
           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mt-5">
             {/* Tracking ID Badge with 1-click Copy */}
             <div className="inline-flex items-center gap-2 bg-slate-50 hover:bg-slate-100 border border-slate-200/90 px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-700 transition-colors">
-              <Receipt className="w-3.5 h-3.5 text-orange-500" />
+              <Receipt className="w-3.5 h-3.5 text-brand" />
               <span>ট্র্যাকিং নম্বর: #{trackingNumber}</span>
               <button
                 type="button"
                 onClick={handleCopy}
-                className="text-slate-400 hover:text-orange-600 cursor-pointer p-0.5 transition-colors"
+                className="text-slate-400 hover:text-brand cursor-pointer p-0.5 transition-colors"
                 title="ট্র্যাকিং নম্বর কপি করুন"
               >
                 {copied ? (
@@ -181,7 +181,7 @@ const SuccessPageCompo = () => {
             <div className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-6 shadow-xs">
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
-                  <Package className="w-4 h-4 text-orange-500" />
+                  <Package className="w-4 h-4 text-brand" />
                   <h3 className="text-sm sm:text-base font-bold text-slate-800">
                     অর্ডারকৃত পণ্যসমূহ
                   </h3>
@@ -219,7 +219,7 @@ const SuccessPageCompo = () => {
                         {productHref ? (
                           <Link
                             href={productHref}
-                            className="text-xs sm:text-sm font-bold text-slate-800 hover:text-orange-600 transition-colors line-clamp-1"
+                            className="text-xs sm:text-sm font-bold text-slate-800 hover:text-brand transition-colors line-clamp-1"
                           >
                             {item?.productName}
                           </Link>
@@ -284,7 +284,7 @@ const SuccessPageCompo = () => {
             {/* Price & Payment Summary Card */}
             <div className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-6 shadow-xs">
               <h3 className="text-sm sm:text-base font-bold text-slate-800 pb-3 mb-3 border-b border-slate-100 flex items-center gap-2">
-                <Receipt className="w-4 h-4 text-orange-500" />
+                <Receipt className="w-4 h-4 text-brand" />
                 <span>পেমেন্ট ও মূল্য বিবরণী</span>
               </h3>
 
@@ -332,7 +332,7 @@ const SuccessPageCompo = () => {
                   <span className="text-sm sm:text-base font-bold text-slate-800">
                     সর্বমোট প্রদেয়
                   </span>
-                  <span className="text-lg sm:text-xl font-extrabold text-orange-600">
+                  <span className="text-lg sm:text-xl font-extrabold text-brand">
                     {CURRENCY} {order?.pricing?.total?.toLocaleString()}
                   </span>
                 </div>
@@ -354,7 +354,7 @@ const SuccessPageCompo = () => {
             {/* Delivery Address Card */}
             <div className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-6 shadow-xs">
               <h3 className="text-sm sm:text-base font-bold text-slate-800 pb-3 mb-3 border-b border-slate-100 flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-orange-500" />
+                <MapPin className="w-4 h-4 text-brand" />
                 <span>ডেলিভারি ঠিকানা</span>
               </h3>
 
@@ -368,7 +368,7 @@ const SuccessPageCompo = () => {
                   <Phone className="w-3.5 h-3.5 text-slate-400" />
                   <a
                     href={`tel:${order?.shippingAddress?.phone}`}
-                    className="hover:text-orange-600 transition-colors"
+                    className="hover:text-brand transition-colors"
                   >
                     {order?.shippingAddress?.phone}
                   </a>
@@ -387,7 +387,7 @@ const SuccessPageCompo = () => {
             <div className="space-y-2.5 print:hidden">
               <Link
                 href="/shop"
-                className="w-full h-11.5 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-sm rounded-xl shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full h-11.5 bg-brand hover:bg-brand-hover text-brand-foreground font-bold text-sm rounded-xl shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
               >
                 <ShoppingBag className="w-4 h-4" />
                 <span>আরও কেনাকাটা করুন</span>

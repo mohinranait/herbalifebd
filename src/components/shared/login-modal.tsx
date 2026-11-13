@@ -26,7 +26,7 @@ const LoginModal = () => {
             className={cn(
               "h-11 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer select-none",
               tabValue === "login"
-                ? "bg-linear-to-r from-orange-500 to-amber-500 text-white shadow-md shadow-orange-500/25"
+                ? "bg-brand text-brand-foreground shadow-md"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
             )}
           >
@@ -40,7 +40,7 @@ const LoginModal = () => {
             className={cn(
               "h-11 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer select-none",
               tabValue === "register"
-                ? "bg-linear-to-r from-orange-500 to-amber-500 text-white shadow-md shadow-orange-500/25"
+                ? "bg-brand text-brand-foreground shadow-md"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
             )}
           >

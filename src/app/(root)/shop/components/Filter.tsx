@@ -55,7 +55,7 @@ export function FilterSidebar({
       {brands && brands.length > 0 && (
         <div>
           <div className="flex items-center gap-1.5 pb-2 mb-2.5 border-b border-slate-100">
-            <Tag className="w-3.5 h-3.5 text-orange-500" />
+            <Tag className="w-3.5 h-3.5 text-brand" />
             <span className="text-xs font-bold text-slate-800 uppercase tracking-wide">
               ব্র্যান্ডসমূহ
             </span>
@@ -68,11 +68,11 @@ export function FilterSidebar({
                   id={`brand-${brand.id}`}
                   checked={selectedBrands.includes(brand?.id.toString())}
                   onCheckedChange={() => toggleBrand(brand?.id.toString())}
-                  className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
+                  className="data-[state=checked]:bg-brand data-[state=checked]:border-brand"
                 />
                 <Label
                   htmlFor={`brand-${brand.id}`}
-                  className="flex items-center gap-2 cursor-pointer font-medium text-xs sm:text-sm text-slate-700 hover:text-orange-600 transition-colors"
+                  className="flex items-center gap-2 cursor-pointer font-medium text-xs sm:text-sm text-slate-700 hover:text-brand transition-colors"
                 >
                   {brand.logo && (
                     <Image
@@ -94,7 +94,7 @@ export function FilterSidebar({
       {/* 3. Price Range Filter */}
       <div>
         <div className="flex items-center gap-1.5 pb-2 mb-2.5 border-b border-slate-100">
-          <DollarSign className="w-3.5 h-3.5 text-orange-500" />
+          <DollarSign className="w-3.5 h-3.5 text-brand" />
           <span className="text-xs font-bold text-slate-800 uppercase tracking-wide">
             মূল্য পরিসীমা
           </span>
@@ -110,7 +110,7 @@ export function FilterSidebar({
               placeholder="Min"
               value={minPrice || ""}
               onChange={(e) => setMinPrice(Number(e.target.value) || 0)}
-              className="w-full pl-6 pr-2 py-1.5 border border-slate-200 rounded-lg bg-white text-xs sm:text-sm focus:outline-hidden focus:border-orange-500 text-slate-800"
+              className="w-full pl-6 pr-2 py-1.5 border border-slate-200 rounded-lg bg-white text-xs sm:text-sm focus:outline-hidden focus:border-brand text-slate-800"
             />
           </div>
           <span className="text-slate-400 font-bold">–</span>
@@ -123,7 +123,7 @@ export function FilterSidebar({
               placeholder="Max"
               value={maxPrice || ""}
               onChange={(e) => setMaxPrice(Number(e.target.value) || 0)}
-              className="w-full pl-6 pr-2 py-1.5 border border-slate-200 rounded-lg bg-white text-xs sm:text-sm focus:outline-hidden focus:border-orange-500 text-slate-800"
+              className="w-full pl-6 pr-2 py-1.5 border border-slate-200 rounded-lg bg-white text-xs sm:text-sm focus:outline-hidden focus:border-brand text-slate-800"
             />
           </div>
         </div>
@@ -132,7 +132,7 @@ export function FilterSidebar({
       {/* 4. Customer Rating Filter */}
       <div>
         <div className="flex items-center gap-1.5 pb-2 mb-2.5 border-b border-slate-100">
-          <Star className="w-3.5 h-3.5 text-orange-500 fill-orange-500" />
+          <Star className="w-3.5 h-3.5 text-brand fill-brand" />
           <span className="text-xs font-bold text-slate-800 uppercase tracking-wide">
             রেটিং অনুযায়ী
           </span>
@@ -149,12 +149,12 @@ export function FilterSidebar({
                 className={cn(
                   "px-3 py-1 text-xs rounded-lg border transition-colors flex items-center gap-1 cursor-pointer",
                   isSelected
-                    ? "bg-orange-50 text-orange-600 border-orange-300 font-bold"
+                    ? "bg-brand-light text-brand border-brand-border font-bold"
                     : "border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300"
                 )}
               >
                 <span>{r}</span>
-                <Star className={cn("w-3 h-3", isSelected ? "text-orange-500 fill-orange-500" : "text-amber-400 fill-amber-400")} />
+                <Star className={cn("w-3 h-3", isSelected ? "text-brand fill-brand" : "text-amber-400 fill-amber-400")} />
                 {r < 5 && <span>+</span>}
               </button>
             );

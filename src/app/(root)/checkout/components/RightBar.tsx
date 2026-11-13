@@ -33,7 +33,7 @@ const RightBar = ({ deliveryCharge, selectedMethod, form, isLoading }: Props) =>
         <h3 className="font-bold text-base md:text-lg text-slate-800">
           {t["order-summary-title"] || "অর্ডার সারাংশ"}
         </h3>
-        <span className="text-xs font-semibold bg-orange-50 text-orange-600 px-2.5 py-0.5 rounded-full border border-orange-200">
+        <span className="text-xs font-semibold bg-brand-light text-brand px-2.5 py-0.5 rounded-full border border-brand-border">
           {totalItems} {t["item-unit"] || "টি পণ্য"}
         </span>
       </div>
@@ -123,10 +123,10 @@ const RightBar = ({ deliveryCharge, selectedMethod, form, isLoading }: Props) =>
 
       {/* Manual Payment Instructions for bKash/Nagad */}
       {(selectedMethod?.value === "BKASH" || selectedMethod?.value === "NAGAD") && selectedMethod?.number && (
-        <div className="p-4 bg-orange-50/60 rounded-xl border border-orange-200/80 space-y-2">
+        <div className="p-4 bg-brand-light rounded-xl border border-brand-border space-y-2">
           <p className="text-xs md:text-sm font-semibold text-slate-800">
             {selectedMethod?.label} নাম্বার:{" "}
-            <span className="font-bold text-orange-600 select-all">{selectedMethod?.number}</span>
+            <span className="font-bold text-brand select-all">{selectedMethod?.number}</span>
           </p>
           <p className="text-[11px] text-slate-600">
             এই নাম্বারে টাকা পাঠিয়ে নিচের ঘরে Transaction ID টি লিখে দিন:
@@ -154,7 +154,7 @@ const RightBar = ({ deliveryCharge, selectedMethod, form, isLoading }: Props) =>
       <Button
         type="submit"
         disabled={isLoading}
-        className="w-full h-12 md:h-13 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-[0.99] text-white font-bold text-sm md:text-base rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2"
+        className="w-full h-12 md:h-13 bg-brand hover:bg-brand-hover active:scale-[0.99] text-white font-bold text-sm md:text-base rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs"
       >
         <ShieldCheck className="w-5 h-5" />
         <span>

@@ -48,7 +48,7 @@ const Method: React.FC<MethodProps> = ({ payment }) => {
     <Card className="border border-slate-200/90 shadow-xs rounded-lg overflow-hidden bg-white">
       <CardHeader className="p-3.5 sm:p-4 border-b border-slate-100 bg-slate-50/50">
         <CardTitle className="text-xs sm:text-sm font-bold text-slate-800 flex items-center gap-1.5">
-          <CreditCard className="w-3.5 h-3.5 text-orange-500" />
+          <CreditCard className="w-3.5 h-3.5 text-brand" />
           <span>পেমেন্ট তথ্য</span>
         </CardTitle>
       </CardHeader>

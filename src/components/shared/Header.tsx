@@ -78,7 +78,7 @@ export default function Header() {
                   <DropdownMenuTrigger asChild>
                     <button
                       type="button"
-                      className="flex items-center gap-1.5 hover:text-orange-600 transition-colors cursor-pointer py-1 outline-hidden"
+                      className="flex items-center gap-1.5 hover:text-brand transition-colors cursor-pointer py-1 outline-hidden"
                     >
                       <span>ক্যাটাগরি</span>
                       <ChevronDown className="w-4 h-4 text-slate-400" />
@@ -92,7 +92,7 @@ export default function Header() {
                       <DropdownMenuItem key={cat.id} asChild>
                         <Link
                           href={`/shop?category=${cat.id}`}
-                          className="flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 hover:text-orange-600 hover:bg-orange-50 rounded-md cursor-pointer transition-colors"
+                          className="flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 hover:text-brand hover:bg-brand-light rounded-md cursor-pointer transition-colors"
                         >
                           <div className="w-5 h-5 rounded overflow-hidden bg-slate-100 flex items-center justify-center shrink-0">
                             <Image
@@ -110,7 +110,7 @@ export default function Header() {
                     <div className="p-1 border-t border-slate-100 mt-1">
                       <Link
                         href="/categories"
-                        className="block text-center text-xs font-semibold text-orange-600 hover:underline py-1"
+                        className="block text-center text-xs font-semibold text-brand hover:underline py-1"
                       >
                         সব ক্যাটাগরি দেখুন →
                       </Link>
@@ -121,16 +121,16 @@ export default function Header() {
                 {/* Flash Sale */}
                 <Link
                   href="/offers"
-                  className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                  className="flex items-center gap-1 hover:text-brand transition-colors"
                 >
-                  <Zap className="w-4 h-4 text-orange-500 fill-orange-500" />
+                  <Zap className="w-4 h-4 text-brand fill-brand" />
                   <span>{t["flash-sale"] || "ফ্ল্যাশ সেল"}</span>
                 </Link>
 
                 {/* All Products */}
                 <Link
                   href="/shop"
-                  className="hover:text-orange-600 transition-colors"
+                  className="hover:text-brand transition-colors"
                 >
                   {t["all-products-title"] || "সকল প্রডাক্ট"}
                 </Link>
@@ -148,11 +148,11 @@ export default function Header() {
                   placeholder={t["search-placeholder"] || "আপনার কাঙ্খিত পণ্য সার্চ করুন..."}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-10 px-3.5 text-sm bg-slate-50 border border-slate-200 border-r-0 rounded-l-lg focus:outline-hidden focus:bg-white focus:border-orange-500 text-slate-800 placeholder:text-slate-400 transition-colors"
+                  className="w-full h-10 px-3.5 text-sm bg-slate-50 border border-slate-200 border-r-0 rounded-l-lg focus:outline-hidden focus:bg-white focus:border-brand text-slate-800 placeholder:text-slate-400 transition-colors"
                 />
                 <button
                   type="submit"
-                  className="h-10 px-4 bg-orange-500 hover:bg-orange-600 text-white rounded-r-lg flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                  className="h-10 px-4 bg-brand hover:bg-brand-hover text-brand-foreground rounded-r-lg flex items-center justify-center transition-colors cursor-pointer shrink-0"
                 >
                   <Search className="h-4 w-4" />
                 </button>
@@ -167,9 +167,9 @@ export default function Header() {
                 onClick={() => setIsMobileSearchOpen((prev) => !prev)}
                 aria-label="সার্চ অপশন খুলুন"
                 className={cn(
-                  "relative h-10 w-10 sm:h-11 sm:w-11 rounded-full border border-slate-200 hover:border-orange-400 hover:text-orange-600 hover:bg-orange-50/50 text-slate-700 flex items-center justify-center transition-all cursor-pointer md:hidden shadow-2xs active:scale-95",
+                  "relative h-10 w-10 sm:h-11 sm:w-11 rounded-full border border-slate-200 hover:border-brand hover:text-brand hover:bg-brand-light text-slate-700 flex items-center justify-center transition-all cursor-pointer md:hidden shadow-2xs active:scale-95",
                   isMobileSearchOpen &&
-                    "bg-orange-50 border-orange-400 text-orange-600 ring-2 ring-orange-200"
+                    "bg-brand-light border-brand text-brand ring-2 ring-brand/30"
                 )}
               >
                 {isMobileSearchOpen ? (
@@ -186,7 +186,7 @@ export default function Header() {
                   onClick={() =>
                     router.push(user?.role === "Admin" ? "/admin" : "/dashboard")
                   }
-                  className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 uppercase text-sm font-bold rounded-full border border-slate-200 hover:border-orange-400 hover:bg-orange-50/50 hover:text-orange-600 text-slate-700 transition-colors cursor-pointer shadow-2xs active:scale-95"
+                  className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 uppercase text-sm font-bold rounded-full border border-slate-200 hover:border-brand hover:bg-brand-light hover:text-brand text-slate-700 transition-colors cursor-pointer shadow-2xs active:scale-95"
                 >
                   {user?.name?.[0]?.toUpperCase()}
                 </button>
@@ -195,7 +195,7 @@ export default function Header() {
                   type="button"
                   onClick={() => dispatch(setLoginModalOpen({ isOpen: true }))}
                   aria-label="লগইন করুন"
-                  className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-slate-200 hover:border-orange-400 hover:text-orange-600 hover:bg-orange-50/50 text-slate-700 transition-colors cursor-pointer shadow-2xs active:scale-95"
+                  className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-slate-200 hover:border-brand hover:text-brand hover:bg-brand-light text-slate-700 transition-colors cursor-pointer shadow-2xs active:scale-95"
                 >
                   <User className="w-4.5 h-4.5 text-slate-600" />
                 </button>
@@ -206,11 +206,11 @@ export default function Header() {
                 type="button"
                 onClick={() => dispatch(toggleCartDroware())}
                 aria-label="শপিং ব্যাগ"
-                className="relative h-10 w-10 sm:h-11 sm:w-11 rounded-full border border-slate-200 hover:border-orange-400 hover:text-orange-600 hover:bg-orange-50/50 text-slate-700 flex items-center justify-center transition-colors cursor-pointer shadow-2xs active:scale-95"
+                className="relative h-10 w-10 sm:h-11 sm:w-11 rounded-full border border-slate-200 hover:border-brand hover:text-brand hover:bg-brand-light text-slate-700 flex items-center justify-center transition-colors cursor-pointer shadow-2xs active:scale-95"
               >
                 <ShoppingBag className="h-4.5 w-4.5" />
                 {totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-xs">
+                  <span className="absolute -top-1 -right-1 bg-brand text-brand-foreground text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-xs">
                     {totalItems}
                   </span>
                 )}
@@ -228,7 +228,7 @@ export default function Header() {
                   placeholder={t["search-placeholder"] || "আপনার কাঙ্খিত পণ্য সার্চ করুন..."}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-10 pl-3.5 pr-20 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-hidden focus:bg-white focus:border-orange-500 text-slate-800 placeholder:text-slate-400 transition-all shadow-xs"
+                  className="w-full h-10 pl-3.5 pr-20 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-hidden focus:bg-white focus:border-brand text-slate-800 placeholder:text-slate-400 transition-all shadow-xs"
                 />
                 <div className="absolute right-1 flex items-center gap-1">
                   {searchQuery && (
@@ -243,7 +243,7 @@ export default function Header() {
                   )}
                   <button
                     type="submit"
-                    className="h-8 px-3 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-md flex items-center justify-center transition-colors cursor-pointer text-xs font-medium gap-1 shadow-xs"
+                    className="h-8 px-3 bg-brand hover:bg-brand-hover text-brand-foreground rounded-md flex items-center justify-center transition-colors cursor-pointer text-xs font-medium gap-1 shadow-xs"
                   >
                     <Search className="h-3.5 w-3.5" />
                     <span>খুঁজুন</span>

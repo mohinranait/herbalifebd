@@ -3,22 +3,19 @@ import { NextResponse } from "next/server";
 // Logout user
 export async function DELETE() {
   try {
-
-    
-    // Clear the access_token cookie by setting it with past expiry
     const response = NextResponse.json(
       { message: "User logout", success: true },
       { status: 200 }
     );
 
-    response.cookies.set({
-      name: "access_token",
-      value: "",
-      path: "/",
+    // Clear the access_token cookie
+    response.cookies.delete("access_token");
+    response.cookies.set("access_token", "", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      expires: new Date(0), 
+      sameSite: "lax",
+      maxAge: 0,
+      path: "/",
     });
 
     return response;

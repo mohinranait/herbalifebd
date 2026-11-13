@@ -10,6 +10,7 @@ import BottomNav from '@/components/shared/MobileNavigation'
 import FloatingCartButton from '@/components/shared/PriceCartButton'
 import ScrollToTop from '@/components/shared/ScrollToTop'
 import WhatsAppButton from '@/components/shared/WhatsAppButton'
+import ThemeStyle from '@/components/shared/ThemeStyle'
 import { BASE_URL } from '@/lib/envSecret'
 import { getAppSetting, getAppSettingForMeta } from '@/lib/get-app-setting'
 import { getCategoryList, safe } from '@/lib/storefront-data'
@@ -85,6 +86,7 @@ const MyRootLayout = async ({ children }: Props) => {
 
   return (
     <main className='min-h-screen bg-background'>
+      <ThemeStyle themeColor={settings?.themeColor} />
       <QueryHydrator
         entries={[
           { endpointName: 'getAppSetting', value: settings },

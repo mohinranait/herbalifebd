@@ -3,7 +3,6 @@ import { IProduct } from "@/redux/service/products/type";
 import { ArrowRight, ShoppingCart, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { CURRENCY } from "@/lib/envSecret";
 import { cn } from "@/lib/utils";
 import { ICartItem } from "@/redux/service/orders/type";
@@ -132,7 +131,7 @@ const ProductCard = ({ product }: Props) => {
   const brandName = brand?.name || 'No Brand';
 
   return (
-    <div className="group relative bg-white border border-slate-200 hover:border-orange-400 rounded-xl overflow-hidden p-2 flex flex-col justify-between transition-all duration-300 h-full">
+    <div className="group relative bg-white border border-slate-200 hover:border-brand rounded-xl overflow-hidden p-2 flex flex-col justify-between transition-all duration-300 h-full">
       {/* Top Badges */}
       <div className="absolute top-3 left-3 right-3 z-10 flex items-center justify-between pointer-events-none">
         {discountPercent > 0 ? (
@@ -190,7 +189,7 @@ const ProductCard = ({ product }: Props) => {
 
         {/* Brand Tag */}
         <div className="px-0.5 mb-1 flex items-center justify-between">
-          <span className="text-[11px] md:text-xs font-medium text-orange-500 capitalize line-clamp-1">
+          <span className="text-[11px] md:text-xs font-medium text-brand capitalize line-clamp-1">
             {brandName}
           </span>
           <div className="flex items-center gap-1 text-[11px] text-slate-500">
@@ -203,7 +202,7 @@ const ProductCard = ({ product }: Props) => {
 
         {/* Title */}
         <Link href={`/products/${slug}`} className="block px-0.5">
-          <h3 className="text-xs md:text-sm font-semibold text-slate-800 hover:text-orange-600 line-clamp-2 md:line-clamp-1 transition-colors leading-snug">
+          <h3 className="text-xs md:text-sm font-semibold text-slate-800 hover:text-brand line-clamp-2 md:line-clamp-1 transition-colors leading-snug">
             {name}
           </h3>
         </Link>
@@ -243,7 +242,7 @@ const ProductCard = ({ product }: Props) => {
           disabled={isStockOut}
           onClick={(e) => handleAddToCart('cart', e)}
           title={t["add-to-cart"] || "কার্টে যোগ করুন"}
-          className="h-9 w-9 rounded-lg border border-orange-400 text-orange-500 hover:bg-orange-50 active:bg-orange-100 flex items-center justify-center transition-all shrink-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="h-9 w-9 rounded-lg border border-brand text-brand hover:bg-brand-light active:bg-brand-light flex items-center justify-center transition-all shrink-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           <ShoppingCart className="w-4 h-4" />
         </button>
@@ -253,7 +252,7 @@ const ProductCard = ({ product }: Props) => {
           type="button"
           disabled={isStockOut}
           onClick={(e) => handleAddToCart('buy', e)}
-          className="flex-1 h-9 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:opacity-95 text-white font-medium text-xs md:text-sm rounded-lg flex items-center justify-center gap-1.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="flex-1 h-9 bg-brand hover:bg-brand-hover active:opacity-95 text-white font-medium text-xs md:text-sm rounded-lg flex items-center justify-center gap-1.5 transition-all shadow-xs disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           <span>{t["buy-now"] || "এখনই কিনুন"}</span>
           <ArrowRight className="w-3.5 h-3.5" />

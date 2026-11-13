@@ -57,18 +57,18 @@ const Footer = async () => {
 
             <div className="space-y-2.5 pt-2 text-xs md:text-sm text-slate-300">
               <div className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
+                <MapPin className="w-4 h-4 text-brand shrink-0 mt-0.5" />
                 <span className="line-clamp-2">{fullAddress}</span>
               </div>
               {contactPhone && (
                 <div className="flex items-center gap-2.5">
-                  <Phone className="w-4 h-4 text-orange-400 shrink-0" />
+                  <Phone className="w-4 h-4 text-brand shrink-0" />
                   <span>{contactPhone}</span>
                 </div>
               )}
               {contactEmail && (
                 <div className="flex items-center gap-2.5">
-                  <Mail className="w-4 h-4 text-orange-400 shrink-0" />
+                  <Mail className="w-4 h-4 text-brand shrink-0" />
                   <span>{contactEmail}</span>
                 </div>
               )}
@@ -82,27 +82,27 @@ const Footer = async () => {
             </h4>
             <ul className="space-y-2.5 text-xs md:text-sm">
               <li>
-                <Link href="/" className="hover:text-orange-400 transition-colors">
+                <Link href="/" className="hover:text-brand transition-colors">
                   হোম
                 </Link>
               </li>
               <li>
-                <Link href="/about-us" className="hover:text-orange-400 transition-colors">
+                <Link href="/about-us" className="hover:text-brand transition-colors">
                   আমাদের সম্পর্কে
                 </Link>
               </li>
               <li>
-                <Link href="/privacy-policy" className="hover:text-orange-400 transition-colors">
+                <Link href="/privacy-policy" className="hover:text-brand transition-colors">
                   প্রাইভেসি পলিসি
                 </Link>
               </li>
               <li>
-                <Link href="/terms-conditions" className="hover:text-orange-400 transition-colors">
+                <Link href="/terms-conditions" className="hover:text-brand transition-colors">
                   শর্তাবলী ও নিয়মাবলী
                 </Link>
               </li>
               <li>
-                <Link href="/shipping-and-delivery" className="hover:text-orange-400 transition-colors">
+                <Link href="/shipping-and-delivery" className="hover:text-brand transition-colors">
                   ডেলিভারি ও রিটার্ন পলিসি
                 </Link>
               </li>
@@ -116,27 +116,27 @@ const Footer = async () => {
             </h4>
             <ul className="space-y-2.5 text-xs md:text-sm">
               <li>
-                <Link href="/contact-us" className="hover:text-orange-400 transition-colors">
+                <Link href="/contact-us" className="hover:text-brand transition-colors">
                   যোগাযোগ করুন
                 </Link>
               </li>
               <li>
-                <Link href="/faqs" className="hover:text-orange-400 transition-colors">
+                <Link href="/faqs" className="hover:text-brand transition-colors">
                   প্রশ্ন ও উত্তর (FAQ)
                 </Link>
               </li>
               <li>
-                <Link href="/shop" className="hover:text-orange-400 transition-colors">
+                <Link href="/shop" className="hover:text-brand transition-colors">
                   সকল প্রডাক্ট
                 </Link>
               </li>
               <li>
-                <Link href="/offers" className="hover:text-orange-400 transition-colors">
+                <Link href="/offers" className="hover:text-brand transition-colors">
                   হট অফার
                 </Link>
               </li>
               <li>
-                <Link href="/brands" className="hover:text-orange-400 transition-colors">
+                <Link href="/brands" className="hover:text-brand transition-colors">
                   আমাদের ব্র্যান্ডসমূহ
                 </Link>
               </li>
@@ -155,7 +155,7 @@ const Footer = async () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Facebook"
-                  className="w-9 h-9 rounded-full bg-slate-800 hover:bg-orange-500 text-white flex items-center justify-center transition-colors shadow-xs"
+                  className="w-9 h-9 rounded-full bg-slate-800 hover:bg-brand text-white flex items-center justify-center transition-colors shadow-xs"
                 >
                   <FacebookIcon />
                 </a>
@@ -164,7 +164,7 @@ const Footer = async () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="YouTube"
-                  className="w-9 h-9 rounded-full bg-slate-800 hover:bg-orange-500 text-white flex items-center justify-center transition-colors shadow-xs"
+                  className="w-9 h-9 rounded-full bg-slate-800 hover:bg-brand text-white flex items-center justify-center transition-colors shadow-xs"
                 >
                   <YoutubeIcon />
                 </a>
@@ -173,7 +173,7 @@ const Footer = async () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
-                  className="w-9 h-9 rounded-full bg-slate-800 hover:bg-orange-500 text-white flex items-center justify-center transition-colors shadow-xs"
+                  className="w-9 h-9 rounded-full bg-slate-800 hover:bg-brand text-white flex items-center justify-center transition-colors shadow-xs"
                 >
                   <InstagramIcon />
                 </a>

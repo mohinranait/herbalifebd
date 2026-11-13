@@ -13,7 +13,7 @@ const Breadcrumb = ({ name }: BreadcrumbProps) => {
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs sm:text-sm text-slate-500 overflow-x-auto no-scrollbar">
           <Link
             href="/"
-            className="text-slate-600 hover:text-[#ff7a00] transition-colors shrink-0"
+            className="text-slate-600 hover:text-brand transition-colors shrink-0"
           >
             হোম
           </Link>
@@ -22,7 +22,7 @@ const Breadcrumb = ({ name }: BreadcrumbProps) => {
 
           <Link
             href="/shop"
-            className="text-slate-600 hover:text-[#ff7a00] transition-colors shrink-0"
+            className="text-slate-600 hover:text-brand transition-colors shrink-0"
           >
             প্রডাক্টস
           </Link>

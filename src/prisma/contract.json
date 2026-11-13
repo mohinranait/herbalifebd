@@ -416,6 +416,13 @@
                   "kind": "scalar"
                 }
               },
+              "themeColor": {
+                "nullable": true,
+                "type": {
+                  "codecId": "mongo/string@1",
+                  "kind": "scalar"
+                }
+              },
               "timezone": {
                 "nullable": true,
                 "type": {
@@ -518,6 +525,9 @@
                 },
                 "tax": {
                   "field": "tax"
+                },
+                "themeColor": {
+                  "field": "themeColor"
                 },
                 "timezone": {
                   "field": "timezone"
@@ -3412,6 +3422,12 @@
                         "null"
                       ]
                     },
+                    "themeColor": {
+                      "bsonType": [
+                        "null",
+                        "string"
+                      ]
+                    },
                     "timezone": {
                       "bsonType": [
                         "null",
@@ -5497,7 +5513,7 @@
         "kind": "mongo-database"
       }
     },
-    "storageHash": "c3ad9d0bb12f7bd2254269288a0e06a167dbaff9f5701447ee3cf6e247abd63d"
+    "storageHash": "bd9448d3484d4272b8b1046166e1c5f193fa4f0a1700ea544439f910785cc509"
   },
   "execution": {
     "executionHash": "1c0dfe3a6c1d3bb5477e1a8299b10be2909cb255a024b7bea56b2702c745892c",

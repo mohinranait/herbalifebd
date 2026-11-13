@@ -66,17 +66,21 @@ const url = tuneConnectionUrl(rawUrl);
 // open its own connection pool and pay the ~2s connect on its first request
 // (and in development on every hot reload).
 const globalForDb = globalThis as unknown as {
-  __mongoClient?: ReturnType<typeof mongo>;
+  __mongoClient?: any;
+  __contractHash?: string;
 };
 
-const rawClient: any =
-  globalForDb.__mongoClient ??
-  mongo({
+const currentContractHash = (contractJson as any)?.profileHash || "initial";
+
+if (!globalForDb.__mongoClient || globalForDb.__contractHash !== currentContractHash) {
+  globalForDb.__mongoClient = mongo({
     contract,
     ...(url && url.trim().startsWith("mongodb") ? { url } : {}),
   });
+  globalForDb.__contractHash = currentContractHash;
+}
 
-globalForDb.__mongoClient = rawClient;
+const rawClient: any = globalForDb.__mongoClient;
 
 /* -------------------------------------------------------------------------- */
 /*              Storefront cache invalidation on every write                   */

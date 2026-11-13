@@ -24,7 +24,7 @@ export async function GET() {
   }
 }
 
-// PATCH - Update Settings
+// PATCH - Update Settings (Auto-reloaded for schema changes)
 export async function PATCH(req: NextRequest) {
   try {
     const body = await req.json();

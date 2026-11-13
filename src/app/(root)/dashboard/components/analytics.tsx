@@ -29,8 +29,8 @@ const Analytics = () => {
       value: `${CURRENCY} ${(analaytics?.totalShopping || 0).toLocaleString("en-IN")}`,
       description: "সফলভাবে পরিশোধিত মূল্য",
       icon: CreditCard,
-      iconColor: "text-orange-600",
-      bgColor: "bg-orange-50 border border-orange-100",
+      iconColor: "text-brand",
+      bgColor: "bg-brand-light border border-brand-border",
     },
     {
       title: "চলতি অর্ডার",

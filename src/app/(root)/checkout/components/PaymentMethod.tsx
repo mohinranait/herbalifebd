@@ -15,7 +15,7 @@ const PaymentMethod = ({ paymentMethod, callBack, paymentMethodss }: Props) => {
     <div className="bg-white border border-slate-200 rounded-xl p-5 md:p-6 space-y-4">
       {/* Title */}
       <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-        <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
+        <div className="w-8 h-8 rounded-lg bg-brand-light text-brand flex items-center justify-center">
           <CreditCard className="w-4 h-4" />
         </div>
         <h2 className="text-base md:text-lg font-bold text-slate-800">
@@ -35,7 +35,7 @@ const PaymentMethod = ({ paymentMethod, callBack, paymentMethodss }: Props) => {
               key={method.value}
               className={`flex items-center gap-3 border rounded-xl p-3.5 cursor-pointer transition-all ${
                 isSelected
-                  ? "border-2 border-orange-500 bg-orange-50/40 text-slate-900"
+                  ? "border-2 border-brand bg-brand-light text-slate-900 shadow-xs"
                   : "border-slate-200 hover:border-slate-300 bg-white text-slate-700"
               }`}
             >
@@ -51,7 +51,7 @@ const PaymentMethod = ({ paymentMethod, callBack, paymentMethodss }: Props) => {
                   />
                 </div>
               ) : (
-                <Truck className="w-5 h-5 text-orange-500 shrink-0" />
+                <Truck className="w-5 h-5 text-brand shrink-0" />
               )}
               <div className="min-w-0">
                 <span className="font-semibold text-xs md:text-sm block">

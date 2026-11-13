@@ -37,9 +37,9 @@ const FloatingCartButton = ({ className }: Props) => {
     >
       <div className="flex flex-col min-w-20 md:min-w-22">
         {/* Top: Icon & Item Count */}
-        <div className="bg-white px-3 py-2.5 flex flex-col items-center justify-center border-b border-slate-100 transition-colors group-hover:bg-orange-50/40">
+        <div className="bg-white px-3 py-2.5 flex flex-col items-center justify-center border-b border-slate-100 transition-colors group-hover:bg-brand-light">
           <div className="relative mb-1 transition-transform duration-300 group-hover:scale-110">
-            <ShoppingBag className="w-5 h-5 md:w-6 md:h-6 text-orange-500" />
+            <ShoppingBag className="w-5 h-5 md:w-6 md:h-6 text-brand" />
             {totalItems > 0 && (
               <span className="absolute -top-1 -right-1.5 w-2 h-2 rounded-full bg-rose-500" />
             )}
@@ -49,8 +49,8 @@ const FloatingCartButton = ({ className }: Props) => {
           </span>
         </div>
 
-        {/* Bottom: Price in Vibrant Orange */}
-        <div className="bg-linear-to-b from-orange-500 to-amber-600 text-white py-2 px-3 text-center font-bold text-xs md:text-sm transition-opacity group-hover:opacity-95">
+        {/* Bottom: Price in Brand Color */}
+        <div className="bg-brand text-brand-foreground py-2 px-3 text-center font-bold text-xs md:text-sm transition-colors group-hover:bg-brand-hover">
           <span>{CURRENCY} {subtotal}</span>
         </div>
       </div>

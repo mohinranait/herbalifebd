@@ -13,7 +13,7 @@ const CategoryCard = ({ category }: { category: ICategory }) => {
       href={`/shop?category=${category?.id}`}
       className="group flex flex-col items-center cursor-pointer transition-transform"
     >
-      <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-34 md:h-34 rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-orange-200/80 group-hover:border-orange-500 group-hover:scale-105 transition-all duration-300 p-1 shrink-0">
+      <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-34 md:h-34 rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-brand-border group-hover:border-brand group-hover:scale-105 transition-all duration-300 p-1 shrink-0">
         <Image
           src={category?.thumbnail || `/${PRODUCT_IMG}`}
           width={180}
@@ -23,7 +23,7 @@ const CategoryCard = ({ category }: { category: ICategory }) => {
         />
       </div>
       <div className="text-center mt-2.5 max-w-[120px] md:max-w-[140px]">
-        <p className="text-xs sm:text-sm font-semibold text-slate-800 leading-snug line-clamp-1 group-hover:text-orange-600 transition-colors">
+        <p className="text-xs sm:text-sm font-semibold text-slate-800 leading-snug line-clamp-1 group-hover:text-brand transition-colors">
           {category.name}
         </p>
         <span className="text-[10px] sm:text-xs text-slate-400 mt-0.5 block">
@@ -42,11 +42,11 @@ const Categories = () => {
   return (
     <section className="py-4 md:py-6">
       <div className="container px-2 md:px-4 mx-auto max-w-[1276px]">
-        <div className="bg-linear-to-r from-orange-50/70 via-amber-50/40 to-orange-50/70 border border-orange-200/60 rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8">
+        <div className="bg-brand-light border border-brand-border rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8">
           {/* Header */}
-          <div className="flex items-center justify-between mb-5 md:mb-7 pb-3 border-b border-orange-200/50">
+          <div className="flex items-center justify-between mb-5 md:mb-7 pb-3 border-b border-brand-border">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-brand text-brand-foreground flex items-center justify-center shrink-0">
                 <LayoutGrid className="w-4 h-4" />
               </div>
               <div>
@@ -61,7 +61,7 @@ const Categories = () => {
 
             <Link
               href="/categories"
-              className="text-xs md:text-sm font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1 transition-colors"
+              className="text-xs md:text-sm font-semibold text-brand hover:opacity-80 flex items-center gap-1 transition-colors"
             >
               <span>সবগুলো দেখুন</span>
               <ArrowRight className="w-4 h-4" />
@@ -72,8 +72,8 @@ const Categories = () => {
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="flex flex-col items-center">
-                  <div className="w-20 h-20 md:w-32 md:h-32 rounded-full bg-white/70 border border-orange-100 animate-pulse" />
-                  <div className="h-4 w-16 bg-orange-100/60 rounded mt-2 animate-pulse" />
+                  <div className="w-20 h-20 md:w-32 md:h-32 rounded-full bg-white/70 border border-brand-border animate-pulse" />
+                  <div className="h-4 w-16 bg-brand-light rounded mt-2 animate-pulse" />
                 </div>
               ))}
             </div>

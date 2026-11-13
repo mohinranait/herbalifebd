@@ -97,9 +97,9 @@ const RequestQuote = ({ image, title, productId, sku, price }: Props) => {
       <DialogTrigger asChild>
         <button
           type="button"
-          className="w-full h-11 px-4 rounded-lg text-xs sm:text-sm font-semibold transition-all border border-slate-200 bg-white text-slate-700 hover:border-[#ff7a00] hover:text-[#ff7a00] hover:bg-orange-50/40 cursor-pointer flex items-center justify-center gap-2 group"
+          className="w-full h-11 px-4 rounded-lg text-xs sm:text-sm font-semibold transition-all border border-slate-200 bg-white text-slate-700 hover:border-brand hover:text-brand hover:bg-brand-light cursor-pointer flex items-center justify-center gap-2 group"
         >
-          <FileText className="w-4 h-4 text-slate-400 group-hover:text-[#ff7a00] transition-colors" />
+          <FileText className="w-4 h-4 text-slate-400 group-hover:text-brand transition-colors" />
           <span>পাইকারি বা বিশেষ কোটেশন চান? (Request Quote)</span>
         </button>
       </DialogTrigger>
@@ -108,7 +108,7 @@ const RequestQuote = ({ image, title, productId, sku, price }: Props) => {
         {/* Modal Header */}
         <div className="px-6 pt-6 pb-4 border-b border-slate-100 bg-gradient-to-b from-slate-50/60 to-white">
           <div className="flex items-start gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-[#ff7a00] shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-brand-light border border-brand-border flex items-center justify-center text-brand shrink-0">
               <FileText className="w-5 h-5" />
             </div>
 
@@ -168,7 +168,7 @@ const RequestQuote = ({ image, title, productId, sku, price }: Props) => {
             <Input
               id="req-name"
               placeholder="যেমন: মোঃ করিম হোসাইন"
-              className="h-10 text-xs sm:text-sm border-slate-200 focus-visible:ring-[#ff7a00]"
+              className="h-10 text-xs sm:text-sm border-slate-200 focus-visible:ring-brand"
               {...form.register("request.name")}
             />
             {nameError && (
@@ -190,7 +190,7 @@ const RequestQuote = ({ image, title, productId, sku, price }: Props) => {
                 id="req-phone"
                 type="tel"
                 placeholder="017xxxxxxxx (১১ ডিজিট)"
-                className="h-10 text-xs sm:text-sm border-slate-200 focus-visible:ring-[#ff7a00]"
+                className="h-10 text-xs sm:text-sm border-slate-200 focus-visible:ring-brand"
                 {...form.register("request.phone")}
               />
               {phoneError && (
@@ -210,7 +210,7 @@ const RequestQuote = ({ image, title, productId, sku, price }: Props) => {
                 id="req-whatsapp"
                 type="tel"
                 placeholder="হোয়াটসঅ্যাপ নম্বর"
-                className="h-10 text-xs sm:text-sm border-slate-200 focus-visible:ring-[#ff7a00]"
+                className="h-10 text-xs sm:text-sm border-slate-200 focus-visible:ring-brand"
                 {...form.register("request.whatsappNumber")}
               />
             </div>
@@ -229,7 +229,7 @@ const RequestQuote = ({ image, title, productId, sku, price }: Props) => {
                 type="number"
                 min={1}
                 placeholder="যেমন: ১০"
-                className="h-10 text-xs sm:text-sm border-slate-200 focus-visible:ring-[#ff7a00]"
+                className="h-10 text-xs sm:text-sm border-slate-200 focus-visible:ring-brand"
                 {...form.register("quantity")}
               />
               {quantityError && (
@@ -248,7 +248,7 @@ const RequestQuote = ({ image, title, productId, sku, price }: Props) => {
               <Input
                 id="req-district"
                 placeholder="যেমন: ঢাকা, চট্টগ্রাম"
-                className="h-10 text-xs sm:text-sm border-slate-200 focus-visible:ring-[#ff7a00]"
+                className="h-10 text-xs sm:text-sm border-slate-200 focus-visible:ring-brand"
                 {...form.register("location.district")}
               />
             </div>
@@ -263,7 +263,7 @@ const RequestQuote = ({ image, title, productId, sku, price }: Props) => {
             <Input
               id="req-address"
               placeholder="রোড/বাড়ি নং, এলাকা বা থানা"
-              className="h-10 text-xs sm:text-sm border-slate-200 focus-visible:ring-[#ff7a00]"
+              className="h-10 text-xs sm:text-sm border-slate-200 focus-visible:ring-brand"
               {...form.register("location.address")}
             />
             {addressError && (
@@ -282,7 +282,7 @@ const RequestQuote = ({ image, title, productId, sku, price }: Props) => {
               id="req-notes"
               rows={2}
               placeholder="আপনার নির্দিষ্ট কোনো ডেলিভারি সময় বা রিকোয়ারমেন্ট থাকলে লিখুন..."
-              className="text-xs sm:text-sm border-slate-200 focus-visible:ring-[#ff7a00] resize-none"
+              className="text-xs sm:text-sm border-slate-200 focus-visible:ring-brand resize-none"
               {...form.register("notes")}
             />
           </div>
@@ -291,7 +291,7 @@ const RequestQuote = ({ image, title, productId, sku, price }: Props) => {
           <div className="pt-1">
             <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-500 bg-slate-50/80 p-2.5 rounded-lg border border-slate-100">
               <div className="flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-[#ff7a00]" />
+                <Clock className="w-3.5 h-3.5 text-brand" />
                 <span>২৪ ঘণ্টার মধ্যে কল ব্যাক</span>
               </div>
               <div className="flex items-center gap-1.5">
@@ -315,7 +315,7 @@ const RequestQuote = ({ image, title, productId, sku, price }: Props) => {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-2/3 h-11 text-xs sm:text-sm font-bold bg-[#ff7a00] hover:bg-[#e06c00] text-white rounded-lg cursor-pointer flex items-center justify-center gap-2 transition-colors disabled:opacity-70"
+              className="w-2/3 h-11 text-xs sm:text-sm font-bold bg-brand hover:bg-brand-hover text-brand-foreground rounded-lg cursor-pointer flex items-center justify-center gap-2 transition-colors disabled:opacity-70"
             >
               {isLoading ? (
                 <>

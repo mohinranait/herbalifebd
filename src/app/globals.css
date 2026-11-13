@@ -38,6 +38,11 @@
     --color-card: var(--card);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
+    --color-brand: var(--brand-color);
+    --color-brand-hover: var(--brand-hover-color);
+    --color-brand-light: var(--brand-light-color);
+    --color-brand-border: var(--brand-border-color);
+    --color-brand-foreground: var(--brand-foreground-color);
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -48,6 +53,11 @@
 }
 
 :root {
+    --brand-color: #ff7a00;
+    --brand-hover-color: #e66e00;
+    --brand-light-color: rgba(255, 122, 0, 0.08);
+    --brand-border-color: rgba(255, 122, 0, 0.35);
+    --brand-foreground-color: #ffffff;
     --background: oklch(100% 0.00011 271.152);
     --foreground: oklch(0.145 0 0);
     --card: oklch(1 0 0);

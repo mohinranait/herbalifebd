@@ -67,7 +67,7 @@ const HorizontalProductCard = ({ product }: Props) => {
   return (
     <Link
       href={`/products/${slug}`}
-      className="group relative bg-white border border-slate-200/90 hover:border-amber-400/80 rounded-2xl p-2.5 sm:p-3 transition-all duration-300 hover:shadow-sm flex items-center gap-2.5 sm:gap-3.5 block overflow-hidden"
+      className="group relative bg-white border border-slate-200/90 hover:border-brand rounded-2xl p-2.5 sm:p-3 transition-all duration-300 hover:shadow-sm flex items-center gap-2.5 sm:gap-3.5 block overflow-hidden"
     >
       {/* Product Image */}
       <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 shrink-0 rounded-xl overflow-hidden bg-slate-50 border border-slate-100">
@@ -94,13 +94,13 @@ const HorizontalProductCard = ({ product }: Props) => {
       <div className="flex-1 min-w-0 flex flex-col justify-between self-stretch py-0.5">
         {/* Brand */}
         <div>
-          <span className="text-[11px] sm:text-xs font-medium text-amber-500 capitalize block truncate">
+          <span className="text-[11px] sm:text-xs font-medium text-brand capitalize block truncate">
             {brandName}
           </span>
 
           {/* Title */}
           <h3
-            className="text-xs sm:text-sm md:text-[15px] font-bold text-slate-800 group-hover:text-amber-600 transition-colors line-clamp-1 leading-snug mt-0.5"
+            className="text-xs sm:text-sm md:text-[15px] font-bold text-slate-800 group-hover:text-brand transition-colors line-clamp-1 leading-snug mt-0.5"
             title={name}
           >
             {name}

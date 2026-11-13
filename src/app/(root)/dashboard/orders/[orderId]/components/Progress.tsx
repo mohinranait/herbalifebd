@@ -136,7 +136,7 @@ const Progress: React.FC<ProgressProps> = ({
                 aria-hidden="true"
               >
                 <div
-                  className="h-full bg-orange-500 transition-all duration-500"
+                  className="h-full bg-brand transition-all duration-500"
                   style={{
                     width: `${(currentStepIndex / (positiveSteps.length - 1)) * 100}%`,
                   }}
@@ -158,7 +158,7 @@ const Progress: React.FC<ProgressProps> = ({
                         isCompleted
                           ? "bg-emerald-600 text-white"
                           : isCurrent
-                          ? "bg-orange-500 text-white ring-2 ring-orange-200"
+                          ? "bg-brand text-brand-foreground ring-2 ring-brand/30"
                           : "bg-slate-100 text-slate-400"
                       }`}
                     >
@@ -173,7 +173,7 @@ const Progress: React.FC<ProgressProps> = ({
                         isCompleted
                           ? "text-emerald-700"
                           : isCurrent
-                          ? "text-orange-600"
+                          ? "text-brand"
                           : "text-slate-400"
                       }`}
                     >

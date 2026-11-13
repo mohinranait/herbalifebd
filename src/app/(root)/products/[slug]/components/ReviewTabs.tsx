@@ -52,7 +52,7 @@ const ReviewTabs = ({ product }: Props) => {
           <TabsList className="bg-slate-200/60 p-1 rounded-xl h-auto flex flex-wrap gap-1 max-w-md">
             <TabsTrigger
               value="details"
-              className="flex-1 py-2.5 px-4 rounded-lg font-bold text-xs sm:text-sm text-slate-600 data-[state=active]:bg-white data-[state=active]:text-orange-600 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="flex-1 py-2.5 px-4 rounded-lg font-bold text-xs sm:text-sm text-slate-600 data-[state=active]:bg-white data-[state=active]:text-brand transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <FileText className="w-4 h-4" />
               <span>পণ্যের বিবরণ</span>
@@ -61,7 +61,7 @@ const ReviewTabs = ({ product }: Props) => {
             {appSetting?.features?.review && (
               <TabsTrigger
                 value="reviews"
-                className="flex-1 py-2.5 px-4 rounded-lg font-bold text-xs sm:text-sm text-slate-600 data-[state=active]:bg-white data-[state=active]:text-orange-600 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="flex-1 py-2.5 px-4 rounded-lg font-bold text-xs sm:text-sm text-slate-600 data-[state=active]:bg-white data-[state=active]:text-brand transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <MessageSquareQuote className="w-4 h-4" />
                 <span>রিভিউ ({reviews?.length || 0})</span>
@@ -116,7 +116,7 @@ const ReviewTabs = ({ product }: Props) => {
                   <StarRating value={avgRating} />
                 </div>
 
-                <span className="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold bg-orange-100 text-orange-700">
+                <span className="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold bg-brand-light text-brand">
                   {avgRating >= 4.5
                     ? 'টপ রেটেড'
                     : avgRating >= 4.0
@@ -142,7 +142,7 @@ const ReviewTabs = ({ product }: Props) => {
 
                     <div className="flex-1 h-2.5 rounded-full bg-slate-200 overflow-hidden">
                       <div
-                        className="h-full bg-orange-500 rounded-full transition-all duration-300"
+                        className="h-full bg-brand rounded-full transition-all duration-300"
                         style={{ width: `${star.width}%` }}
                       />
                     </div>
@@ -167,7 +167,7 @@ const ReviewTabs = ({ product }: Props) => {
                     <div key={index} className="py-4 space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-xs shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-brand-light text-brand flex items-center justify-center font-bold text-xs shrink-0">
                             {review?.userId?.name ? review.userId.name.charAt(0).toUpperCase() : <User className="w-4 h-4" />}
                           </div>
                           <div>

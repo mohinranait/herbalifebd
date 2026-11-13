@@ -24,6 +24,7 @@ model AppSetting {
   logo               String?
   footerLogo         String?
   favicon            String?
+  themeColor         String?
   contactEmail       String?
   contactPhone       String?
   address            Json?

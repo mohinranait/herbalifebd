@@ -37,7 +37,7 @@ export default function MyOrders() {
           </p>
         </div>
         <Link href="/shop">
-          <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs sm:text-sm rounded-xl h-10 px-4">
+          <Button className="bg-brand hover:bg-brand-hover text-brand-foreground font-semibold text-xs sm:text-sm rounded-xl h-10 px-4">
             নতুন অর্ডার করুন
           </Button>
         </Link>
@@ -61,7 +61,7 @@ export default function MyOrders() {
           <p className="text-base font-bold text-slate-700">কোনো অর্ডার পাওয়া যায়নি</p>
           <p className="text-xs text-slate-400 mt-1">শপ ব্রাউজ করে পছন্দের পণ্য অর্ডার করুন</p>
           <Link href="/shop" className="inline-block mt-4">
-            <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs rounded-xl h-9 px-4">
+            <Button size="sm" className="bg-brand hover:bg-brand-hover text-brand-foreground font-semibold text-xs rounded-xl h-9 px-4">
               শপিং করুন
             </Button>
           </Link>
@@ -82,7 +82,7 @@ export default function MyOrders() {
                         অর্ডারের তারিখ
                       </p>
                       <div className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-700 mt-0.5">
-                        <Calendar className="h-3.5 w-3.5 text-orange-500" />
+                        <Calendar className="h-3.5 w-3.5 text-brand" />
                         <span>{format(new Date(order.createdAt), "dd MMM yyyy, hh:mm a")}</span>
                       </div>
                     </div>
@@ -112,7 +112,7 @@ export default function MyOrders() {
                   </div>
 
                   <Link href={`/dashboard/orders/${order.id}`}>
-                    <Button variant="outline" size="sm" className="border-slate-200 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-600 rounded-xl text-xs font-semibold h-9">
+                    <Button variant="outline" size="sm" className="border-slate-200 hover:border-brand hover:bg-brand-light hover:text-brand rounded-xl text-xs font-semibold h-9">
                       <Eye className="h-3.5 w-3.5 mr-1.5" />
                       বিস্তারিত দেখুন
                     </Button>

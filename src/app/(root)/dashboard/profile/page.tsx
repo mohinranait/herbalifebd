@@ -40,7 +40,7 @@ export default function UpdateProfile() {
       <div className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
-            <UserCheck className="w-5 h-5 text-orange-500" />
+            <UserCheck className="w-5 h-5 text-brand" />
             <span>প্রোফাইল সেটিংস</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">

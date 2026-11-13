@@ -198,7 +198,7 @@ const ImageGallery = ({ product, images, stock }: Props) => {
                 type="button"
                 onClick={() => api?.scrollPrev()}
                 aria-label="Previous image"
-                className="absolute left-2.5 top-1/2 -translate-y-1/2 rounded-full bg-white/90 border border-slate-200 p-1.5 text-slate-700 opacity-0 group-hover:opacity-100 hover:bg-[#ff7a00] hover:text-white hover:border-[#ff7a00] transition-all cursor-pointer z-20"
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 rounded-full bg-white/90 border border-slate-200 p-1.5 text-slate-700 opacity-0 group-hover:opacity-100 hover:bg-brand hover:text-brand-foreground hover:border-brand transition-all cursor-pointer z-20"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
@@ -207,7 +207,7 @@ const ImageGallery = ({ product, images, stock }: Props) => {
                 type="button"
                 onClick={() => api?.scrollNext()}
                 aria-label="Next image"
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-full bg-white/90 border border-slate-200 p-1.5 text-slate-700 opacity-0 group-hover:opacity-100 hover:bg-[#ff7a00] hover:text-white hover:border-[#ff7a00] transition-all cursor-pointer z-20"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-full bg-white/90 border border-slate-200 p-1.5 text-slate-700 opacity-0 group-hover:opacity-100 hover:bg-brand hover:text-brand-foreground hover:border-brand transition-all cursor-pointer z-20"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>
@@ -248,7 +248,7 @@ const ImageGallery = ({ product, images, stock }: Props) => {
                     aria-label={`View image ${index + 1}`}
                     className={`relative w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-lg overflow-hidden border-2 transition-all cursor-pointer bg-white p-1 ${
                       isSelected
-                        ? "border-[#ff7a00] ring-2 ring-[#ff7a00]/30 scale-102"
+                        ? "border-brand ring-2 ring-brand/30 scale-102"
                         : "border-slate-200 hover:border-slate-400 opacity-70 hover:opacity-100"
                     }`}
                   >
@@ -270,7 +270,7 @@ const ImageGallery = ({ product, images, stock }: Props) => {
                 type="button"
                 onClick={() => scrollThumbs("left")}
                 aria-label="Previous thumbnails"
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 w-7 h-7 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-[#ff7a00] hover:text-white hover:border-[#ff7a00] flex items-center justify-center transition-colors cursor-pointer z-10 opacity-90 hover:opacity-100"
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 w-7 h-7 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-brand hover:text-brand-foreground hover:border-brand flex items-center justify-center transition-colors cursor-pointer z-10 opacity-90 hover:opacity-100"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -282,7 +282,7 @@ const ImageGallery = ({ product, images, stock }: Props) => {
                 type="button"
                 onClick={() => scrollThumbs("right")}
                 aria-label="Next thumbnails"
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 w-7 h-7 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-[#ff7a00] hover:text-white hover:border-[#ff7a00] flex items-center justify-center transition-colors cursor-pointer z-10 opacity-90 hover:opacity-100"
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 w-7 h-7 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-brand hover:text-brand-foreground hover:border-brand flex items-center justify-center transition-colors cursor-pointer z-10 opacity-90 hover:opacity-100"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
