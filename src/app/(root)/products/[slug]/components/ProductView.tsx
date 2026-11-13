@@ -7,6 +7,7 @@ import { IProduct, IProductVariant } from '@/redux/service/products/type';
 import { useGetAppSettingQuery } from '@/redux/service/setting';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import ImageGallary from './image-gallary';
 import {
   Building2,
@@ -17,6 +18,7 @@ import {
   Share2,
   ShieldCheck,
   ShoppingCart,
+  Sparkles,
   Star,
   Truck,
   Zap,
@@ -433,11 +435,20 @@ const ProductView = ({ product }: Props) => {
       {/* RIGHT COLUMN: SCROLLABLE INFO, ACTIONS, DYNAMIC ZONES & TABS          */}
       {/* --------------------------------------------------------------------- */}
       <div className="lg:col-span-7 space-y-4">
-        {/* Brand Tag & SKU */}
-        <div className="flex items-center justify-between text-xs sm:text-sm">
-          <span className="font-semibold text-[#d97706]">
-            {product.brand?.name || 'No Brand'}
-          </span>
+        {/* Brand Tag, Landing Mode Link & SKU */}
+        <div className="flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm">
+          <div className="flex items-center gap-2.5">
+            <span className="font-semibold text-[#d97706]">
+              {product.brand?.name || 'No Brand'}
+            </span>
+            <Link
+              href={`/landing/${product.slug}`}
+              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-colors"
+            >
+              <Sparkles className="w-3 h-3 text-amber-600" />
+              <span>ল্যান্ডিং পেজ মোড</span>
+            </Link>
+          </div>
           {currentVariation?.sku && (
             <span className="text-xs text-slate-400 font-mono bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
               SKU: {currentVariation.sku}

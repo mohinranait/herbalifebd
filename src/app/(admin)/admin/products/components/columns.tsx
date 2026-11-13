@@ -12,6 +12,7 @@ import {
   Sparkles,
   Truck,
   TrendingUp,
+  Rocket,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import GetDateFormate from "@/components/shared/GetDateFormate";
@@ -56,7 +57,7 @@ const tableColumns = ({ type = "active" }: TableColumnsProps) => {
 
             <div className="space-y-1 min-w-0 max-w-[280px]">
               <Link
-                href={`/product/${product.slug || product.id}`}
+                href={`/products/${product.slug || product.id}`}
                 target="_blank"
                 className="group inline-flex items-center gap-1 font-semibold text-xs text-slate-900 hover:text-primary transition-colors line-clamp-1"
                 title={product.name}
@@ -66,6 +67,18 @@ const tableColumns = ({ type = "active" }: TableColumnsProps) => {
               </Link>
 
               <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+                {product.slug && (
+                  <Link
+                    href={`/landing/${product.slug}`}
+                    target="_blank"
+                    className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 font-bold text-[10px] transition-colors"
+                    title="ভিউ ল্যান্ডিং পেজ (মার্কেটিং ফানেল)"
+                  >
+                    <Rocket className="w-2.5 h-2.5 text-amber-600" />
+                    <span>Landing</span>
+                  </Link>
+                )}
+
                 {product.category?.name && (
                   <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-medium">
                     {product.category.name}

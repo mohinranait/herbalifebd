@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Pen, RotateCcw, Trash2, ExternalLink } from "lucide-react";
+import { Pen, RotateCcw, Trash2, ExternalLink, Rocket, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { IProduct } from "@/redux/service/products/type";
@@ -74,10 +74,44 @@ const CellAction: React.FC<Props> = ({ data, type }) => {
   };
 
   return (
-    <div className="flex justify-end items-center gap-1.5">
-      {/* PREVIEW ON STORE (only if active) */}
+    <div className="flex justify-end items-center gap-1">
+      {/* LANDING PAGE LINK (only if active) */}
       {type === "active" && data.slug && (
-        <Link href={`/product/${data.slug}`} target="_blank" title="View on storefront">
+        <Link href={`/landing/${data.slug}`} target="_blank" title="ভিউ ল্যান্ডিং পেজ (মার্কেটিং ফানেল)">
+          <Button
+            size="icon"
+            variant="ghost"
+            type="button"
+            className="h-8 w-8 rounded-md text-amber-600 hover:text-amber-700 hover:bg-amber-50"
+          >
+            <Rocket className="w-3.5 h-3.5" />
+          </Button>
+        </Link>
+      )}
+
+      {/* COPY LANDING PAGE LINK */}
+      {type === "active" && data.slug && (
+        <Button
+          size="icon"
+          variant="ghost"
+          type="button"
+          onClick={() => {
+            const url = `${window.location.origin}/landing/${data.slug}`;
+            navigator.clipboard.writeText(url);
+            toast.success("ল্যান্ডিং পেজ লিংক কপি করা হয়েছে!", {
+              description: url,
+            });
+          }}
+          className="h-8 w-8 rounded-md text-slate-500 hover:text-slate-800 hover:bg-slate-100"
+          title="ল্যান্ডিং পেজ লিংক কপি করুন (বিজ্ঞাপনের জন্য)"
+        >
+          <Copy className="w-3.5 h-3.5" />
+        </Button>
+      )}
+
+      {/* PREVIEW ON STOREFRONT (only if active) */}
+      {type === "active" && data.slug && (
+        <Link href={`/products/${data.slug}`} target="_blank" title="স্টোরফ্রন্ট ক্যাটালগে দেখুন">
           <Button
             size="icon"
             variant="ghost"

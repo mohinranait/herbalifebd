@@ -1,4 +1,3 @@
-export const DB_URL = process.env.NEXT_PUBLIC_DB_URL!;
 export const DATABASE_URL = process.env.DATABASE_URL!;
 export const JWT_SECRET = process.env.JWT_SECRET!;
 export const NODE_ENV = process.env.NODE_ENV || "production";

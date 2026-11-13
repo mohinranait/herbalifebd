@@ -28,7 +28,7 @@ const modelToCollectionMap: Record<string, string> = {
   SiteTranslation: "site_translations",
 };
 
-const rawUrl = process.env["DATABASE_URL"] || process.env["NEXT_PUBLIC_DB_URL"];
+const rawUrl = process.env["DATABASE_URL"];
 
 /**
  * The database is far away: every round trip costs its full network latency and
