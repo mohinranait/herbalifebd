@@ -45,8 +45,8 @@ export default function CommentForm({
   const onSubmit = async (data: TCommentFormData) => {
 
     try {
-      if (previousData?._id) {
-        await updateComment({ payload: data, id: previousData?._id }).unwrap();
+      if (previousData?.id) {
+        await updateComment({ payload: data, id: previousData?.id }).unwrap();
       } else {
       }
 
@@ -65,8 +65,8 @@ export default function CommentForm({
   useEffect(() => {
     if (previousData) {
       form.reset({
-        productId: previousData.productId?._id || "",
-        userId: previousData.userId?._id.toString() || "",
+        productId: previousData.productId?.id || "",
+        userId: previousData.userId?.id.toString() || "",
         comment: previousData.comment || "",
         isApproved: previousData.isApproved ?? true,
         isFeature: previousData.isFeature ?? false,

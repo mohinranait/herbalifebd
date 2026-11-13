@@ -1,6 +1,5 @@
 import { appSettingsSchema } from "@/components/validations/app-setting";
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET - Fetch Settings
@@ -15,7 +14,7 @@ export async function GET() {
       });
     }
 
-    return NextResponse.json(formatMongoCompat(settings));
+    return NextResponse.json(settings);
   } catch (error: any) {
     console.error("Fetch settings error:", error);
     return NextResponse.json(
@@ -48,7 +47,7 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "Settings updated successfully",
-      data: formatMongoCompat(updated),
+      data: updated,
     });
   } catch (error: any) {
     console.error("Update settings error:", error);

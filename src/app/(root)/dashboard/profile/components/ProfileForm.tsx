@@ -51,7 +51,7 @@ const ProfileForm = ({ findUser }: Props) => {
     };
 
     try {
-      await updateUser({ payload, id: findUser._id }).unwrap();
+      await updateUser({ payload, id: findUser.id }).unwrap();
       toast.success("প্রোফাইল তথ্য সফলভাবে আপডেট করা হয়েছে!");
       setIsEditing(false);
     } catch (error) {
@@ -184,7 +184,7 @@ const ProfileForm = ({ findUser }: Props) => {
             <div className="flex items-center justify-between py-1">
               <span className="text-slate-500">গ্রাহক আইডি:</span>
               <span className="font-mono font-bold text-slate-800">
-                #{findUser?._id ? findUser._id.slice(-6).toUpperCase() : "N/A"}
+                #{findUser?.id ? findUser.id.slice(-6).toUpperCase() : "N/A"}
               </span>
             </div>
 

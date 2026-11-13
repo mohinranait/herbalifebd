@@ -22,7 +22,7 @@ import {
 import handleErrors, { ErrorResponse } from '@/lib/handle-error';
 
 interface FAQ {
-  _id?: string;
+  id?: string;
   title: string;
   contents: string[];
   priority: number;
@@ -108,9 +108,9 @@ export function FaqModal({
     }
 
     try {
-      if (faq?._id) {
+      if (faq?.id) {
         await updateFaq({
-          id: faq._id,
+          id: faq.id,
           payload: {
             ...formData,
             contents: validContents,
@@ -137,12 +137,12 @@ export function FaqModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        key={`${faq?._id ?? 'new'}-${open}`}
+        key={`${faq?.id ?? 'new'}-${open}`}
         className="max-w-2xl max-h-[90vh] overflow-y-auto"
       >
         <DialogHeader>
           <DialogTitle>
-            {faq?._id
+            {faq?.id
               ? 'Edit FAQ'
               : 'Create New FAQ'}
           </DialogTitle>
@@ -313,7 +313,7 @@ export function FaqModal({
               {createLoading ||
               updateLoading
                 ? 'Saving...'
-                : faq?._id
+                : faq?.id
                 ? 'Update'
                 : 'Create'}
             </Button>

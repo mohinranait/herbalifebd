@@ -1,5 +1,4 @@
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -25,7 +24,7 @@ export async function GET(req: NextRequest) {
 
     const formatted = quotes.map((rq: any) => ({
       ...rq,
-      productId: rq.product ? formatMongoCompat(rq.product) : rq.productId,
+      productId: rq.product ? rq.product : rq.productId,
       location: {
         address: rq.address,
         zipCode: rq.zipCode,
@@ -40,7 +39,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: formatMongoCompat(formatted),
+      data: formatted,
     });
   } catch (error: any) {
     return NextResponse.json(
@@ -70,7 +69,7 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         message: "Request quote created successfully",
-        data: formatMongoCompat(result),
+        data: result,
       },
       { status: 201 }
     );

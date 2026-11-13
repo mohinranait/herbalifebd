@@ -55,7 +55,7 @@ export async function POST(req: Request) {
       }
 
       const product = await db.orm.public.Product.first({
-        id: cartItem.productId || cartItem._id,
+        id: cartItem.productId || cartItem.id,
       });
 
       if (!product || product.isDelete || product.status === false) {
@@ -203,39 +203,58 @@ export async function POST(req: Request) {
       });
     }
 
-    const createdOrder = await db.orm.public.Order.create({
-      invoiceNumber,
-      trackingNumber,
-      // A customer orders for themselves; only an admin may place an order for someone else
-      userId: isAdmin ? body.userId || null : requester?.id || null,
-      totalItems: prepared.length,
-      totalQuantity,
-      subtotal,
-      discount: couponDiscount,
-      shippingCharge,
-      tax: 0,
-      total,
-      couponCode,
-      couponDiscount,
-      fullName: shippingAddress.fullName,
-      phone: shippingAddress.phone,
-      address: shippingAddress.address,
-      postalCode: shippingAddress.postalCode || "",
-      paymentMethod: payment?.method || "COD",
-      // Payment is confirmed by an admin, not by the request
-      paymentStatus: isAdmin ? payment?.status || "PENDING" : "PENDING",
-      transactionId: payment?.transactionId || "",
-      customerNote: customerNote || "",
-      orderStatus: "PENDING",
-      // Must be an explicit false: the order lists filter on `isDeleted: false`
-      isDeleted: false,
-    });
-
-    for (const { row } of prepared) {
-      await db.orm.public.OrderItem.create({
-        ...row,
-        orderId: createdOrder.id,
+    let createdOrder: any = null;
+    try {
+      createdOrder = await db.orm.public.Order.create({
+        invoiceNumber,
+        trackingNumber,
+        // A customer orders for themselves; only an admin may place an order for someone else
+        userId: isAdmin ? body.userId || null : requester?.id || null,
+        totalItems: prepared.length,
+        totalQuantity,
+        subtotal,
+        discount: couponDiscount,
+        shippingCharge,
+        tax: 0,
+        total,
+        couponCode,
+        couponDiscount,
+        fullName: shippingAddress.fullName,
+        phone: shippingAddress.phone,
+        address: shippingAddress.address,
+        postalCode: shippingAddress.postalCode || "",
+        paymentMethod: payment?.method || "COD",
+        // Payment is confirmed by an admin, not by the request
+        paymentStatus: isAdmin ? payment?.status || "PENDING" : "PENDING",
+        transactionId: payment?.transactionId || "",
+        customerNote: customerNote || "",
+        orderStatus: "PENDING",
+        // Must be an explicit false: the order lists filter on `isDeleted: false`
+        isDeleted: false,
       });
+
+      for (const { row } of prepared) {
+        await db.orm.public.OrderItem.create({
+          ...row,
+          orderId: createdOrder.id,
+        });
+      }
+    } catch (orderCreationError) {
+      // Rollback stock deduction if order or item creation fails
+      for (const { product, variation, quantity } of prepared) {
+        if (variation) {
+          const freshVariation = await db.orm.public.ProductVariation.first({ id: variation.id });
+          await db.orm.public.ProductVariation.where({ id: variation.id }).update({
+            stock: (freshVariation?.stock || 0) + quantity,
+          });
+        }
+        const freshProduct = await db.orm.public.Product.first({ id: product.id });
+        await db.orm.public.Product.where({ id: product.id }).update({
+          stock: (freshProduct?.stock || 0) + quantity,
+          totalSold: Math.max(0, (freshProduct?.totalSold || 0) - quantity),
+        });
+      }
+      throw orderCreationError;
     }
 
     const fullOrder = await db.orm.public.Order

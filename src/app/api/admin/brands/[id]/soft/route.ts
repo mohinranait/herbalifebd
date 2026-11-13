@@ -1,5 +1,4 @@
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(
@@ -31,7 +30,7 @@ export async function PATCH(
       {
         success: true,
         message: newDeleteStatus ? "Moved to trash" : "Restored successfully",
-        data: formatMongoCompat(updated),
+        data: updated,
       },
       { status: 200 }
     );

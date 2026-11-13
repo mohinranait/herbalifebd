@@ -1,6 +1,5 @@
 import { getAuthUser } from "@/lib/authUser";
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -36,7 +35,7 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       message: "Authenticated user fetched",
-      payload: formatMongoCompat(userWithoutPassword),
+      payload: userWithoutPassword,
     });
   } catch (err: unknown) {
     const errorMessage =

@@ -18,10 +18,11 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json(data);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Failed to filter products";
     console.error("Filter products error:", error);
     return NextResponse.json(
-      { success: false, error: error?.message || "Failed to filter products" },
+      { success: false, error: message },
       { status: 500 }
     );
   }

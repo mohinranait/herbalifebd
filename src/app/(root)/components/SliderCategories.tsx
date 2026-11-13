@@ -18,7 +18,7 @@ import { ArrowRight, LayoutGrid } from 'lucide-react';
 const CategoryCard = ({ category }: { category: ICategory }) => {
   return (
     <Link
-      href={`/shop?category=${category?._id}`}
+      href={`/shop?category=${category?.id}`}
       className="group flex flex-col items-center cursor-pointer transition-transform"
     >
       <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-34 md:h-34 rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-orange-200/80 group-hover:border-orange-500 group-hover:scale-105 transition-all duration-300 p-1 shrink-0">
@@ -109,7 +109,7 @@ const SliderCategories = () => {
                 <CarouselContent className="-ml-3 md:-ml-4">
                   {finalCategories.map((category) => (
                     <CarouselItem
-                      key={category._id}
+                      key={category.id}
                       className="pl-3 md:pl-4 basis-1/3 sm:basis-1/4 md:basis-1/5 lg:basis-1/6"
                     >
                       <CategoryCard category={category} />

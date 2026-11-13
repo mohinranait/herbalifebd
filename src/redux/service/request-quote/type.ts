@@ -19,7 +19,7 @@ export interface IBaseRequestQuote {
 
 
 export interface IRequestQuote extends IBaseRequestQuote {
-  _id: string,
+  id: string,
   createdAt: string;
   updatedAt: string;
   productId: IProduct

@@ -34,58 +34,79 @@ const calculateTotalQuantity = (carts: ICartItem[]) => {
 };
 
 
+const isSameCartItem = (
+  item: ICartItem,
+  target: {
+    productId: string;
+    sku?: string;
+    variationId?: string | null;
+    selectedVariants?: Record<string, string>;
+  }
+) => {
+  if (item.productId !== target.productId) return false;
+  if (target.variationId || item.variationId) {
+    return String(target.variationId || "") === String(item.variationId || "");
+  }
+  if (target.selectedVariants && item.selectedVariants) {
+    return JSON.stringify(item.selectedVariants) === JSON.stringify(target.selectedVariants);
+  }
+  return item.sku === target.sku;
+};
+
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
     addToCart: (state, action: PayloadAction<{ cart: ICartItem }>) => {
       const { cart } = action.payload;
-      const existingItemIndex = state.carts.findIndex(
-        (item) =>
-          item.sku === cart.sku &&
-          item.productId === cart.productId &&
-          JSON.stringify(item.selectedVariants) === JSON.stringify(cart.selectedVariants)
-      )
-
-      let updatedCart: ICartItem[]
-      if (existingItemIndex > -1) {
-        updatedCart = [...state.carts]
-        updatedCart[existingItemIndex].quantity += cart.quantity
-      } else {
-        updatedCart = [...state.carts, cart]
-      }
-      state.carts = updatedCart;
-      state.totalItems = calculateTotalQuantity(state.carts)
-      state.subtotal = calculateSubtotal(state.carts);
-    },
-    removeToCart: (state, action: PayloadAction<{ productId: string; sku: string }>) => {
-      const { productId, sku } = action.payload
-      state.carts = state.carts.filter(
-        (item) =>
-          !(
-            item.sku === sku &&
-            item.productId === productId
-          )
+      const existingItemIndex = state.carts.findIndex((item) =>
+        isSameCartItem(item, cart)
       );
 
-      state.totalItems = calculateTotalQuantity(state.carts)
+      let updatedCart: ICartItem[];
+      if (existingItemIndex > -1) {
+        updatedCart = [...state.carts];
+        updatedCart[existingItemIndex].quantity += cart.quantity;
+      } else {
+        updatedCart = [...state.carts, cart];
+      }
+      state.carts = updatedCart;
+      state.totalItems = calculateTotalQuantity(state.carts);
+      state.subtotal = calculateSubtotal(state.carts);
+    },
+    removeToCart: (
+      state,
+      action: PayloadAction<{
+        productId: string;
+        sku?: string;
+        variationId?: string | null;
+        selectedVariants?: Record<string, string>;
+      }>
+    ) => {
+      state.carts = state.carts.filter(
+        (item) => !isSameCartItem(item, action.payload)
+      );
+
+      state.totalItems = calculateTotalQuantity(state.carts);
       state.subtotal = calculateSubtotal(state.carts);
     },
     toggleCartDroware: (state) => {
-      state.open = !state.open
+      state.open = !state.open;
     },
     updateCartQuantity: (
       state,
       action: PayloadAction<{
         productId: string;
-        sku: string;
+        sku?: string;
+        variationId?: string | null;
+        selectedVariants?: Record<string, string>;
         quantity: number;
       }>
     ) => {
-      const { productId, sku, quantity } = action.payload;
+      const { quantity } = action.payload;
 
-      const itemIndex = state.carts.findIndex(
-        (item) => item.productId === productId && item.sku === sku
+      const itemIndex = state.carts.findIndex((item) =>
+        isSameCartItem(item, action.payload)
       );
 
       if (itemIndex > -1) {
@@ -96,7 +117,7 @@ const cartSlice = createSlice({
         }
       }
 
-      state.totalItems = calculateTotalQuantity(state.carts)
+      state.totalItems = calculateTotalQuantity(state.carts);
       state.subtotal = calculateSubtotal(state.carts);
     },
 

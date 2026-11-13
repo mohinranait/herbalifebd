@@ -124,7 +124,15 @@ function CartPageContent() {
                     {/* Remove Button */}
                     <button
                       type="button"
-                      onClick={() => dispatch(removeToCart({ productId: item?.productId, sku: item?.sku }))}
+                      onClick={() =>
+                        dispatch(
+                          removeToCart({
+                            productId: item?.productId,
+                            sku: item?.sku,
+                            variationId: item?.variationId,
+                          })
+                        )
+                      }
                       title="আইটেম মুছে ফেলুন"
                       className="w-8 h-8 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
                     >
@@ -142,6 +150,7 @@ function CartPageContent() {
                             updateCartQuantity({
                               productId: item.productId,
                               sku: item.sku,
+                              variationId: item.variationId,
                               quantity: item.quantity - 1,
                             })
                           )
@@ -162,6 +171,7 @@ function CartPageContent() {
                             updateCartQuantity({
                               productId: item.productId,
                               sku: item.sku,
+                              variationId: item.variationId,
                               quantity: item.quantity + 1,
                             })
                           )

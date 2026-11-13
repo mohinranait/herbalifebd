@@ -56,7 +56,7 @@ export default function CategoryForm({
 
   //  auto slug (fixed with useEffect)
   useEffect(() => {
-    if (name && !previousData?._id) {
+    if (name && !previousData?.id) {
       const slug = name.toLowerCase().replace(/\s+/g, "-");
       form.setValue("slug", slug);
     }
@@ -67,8 +67,8 @@ export default function CategoryForm({
   const onSubmit = async (data: TCategoryFormData) => {
 
     try {
-      if (previousData?._id) {
-        await updateCategory({ payload: data, id: previousData?._id }).unwrap();
+      if (previousData?.id) {
+        await updateCategory({ payload: data, id: previousData?.id }).unwrap();
       } else {
 
         await createCategory(data).unwrap();
@@ -182,8 +182,8 @@ export default function CategoryForm({
               {categories
                 ?.filter((par) => par.parentId == null)
                 ?.map((cat) => (
-                  <React.Fragment key={cat._id}>
-                    <SelectItem value={`${cat._id}`} className="cursor-pointer ">
+                  <React.Fragment key={cat.id}>
+                    <SelectItem value={`${cat.id}`} className="cursor-pointer ">
                       <div className="flex items-center gap-2">
                         <Image
                           src={cat?.thumbnail || "/default.png"}
@@ -195,11 +195,11 @@ export default function CategoryForm({
                       </div>
                     </SelectItem>
                     {categories
-                      ?.filter((p) => p?.parentId === cat._id)
+                      ?.filter((p) => p?.parentId === cat.id)
                       ?.map((child) => (
                         <SelectItem
-                          key={child._id}
-                          value={`${child._id}`}
+                          key={child.id}
+                          value={`${child.id}`}
                           className="cursor-pointer"
                         >
                           <div className="flex items-center gap-2">

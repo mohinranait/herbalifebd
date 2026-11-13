@@ -18,7 +18,7 @@ export interface IBrandBase {
 
 
 export interface IBrand extends IBrandBase {
-  _id: string;
+  id: string;
   createdAt: string;
   updatedAt: string;
 }

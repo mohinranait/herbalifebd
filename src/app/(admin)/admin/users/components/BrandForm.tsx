@@ -48,7 +48,7 @@ export default function BrandForm({
 
   //  auto slug (fixed with useEffect)
   useEffect(() => {
-    if (name && !previousData?._id) {
+    if (name && !previousData?.id) {
       const slug = name.toLowerCase().replace(/\s+/g, "-");
       form.setValue("slug", slug);
     }
@@ -59,8 +59,8 @@ export default function BrandForm({
   const onSubmit = async (data: TBrandInput) => {
 
     try {
-      if (previousData?._id) {
-        await updateBrand({ payload: data, id: previousData?._id }).unwrap();
+      if (previousData?.id) {
+        await updateBrand({ payload: data, id: previousData?.id }).unwrap();
       } else {
 
         await createBrand(data).unwrap();

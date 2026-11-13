@@ -1,75 +1,98 @@
 import { IMetaPagination } from "@/types/common.type";
-import { IBrand } from "../brand/type";
 
-interface IProductSelectedVariant {
-  attributeId: string,
-  name: string,
-  selectedValues: string[],
-  _id: string
+// These types mirror the `Product` / `ProductVariation` models of
+// src/prisma/contract.prisma: API responses are the database rows as they are.
+
+export interface IProductSelectedVariant {
+  attributeId: string;
+  name: string;
+  selectedValues: string[];
 }
-
 
 export interface IProductVariant {
-  _id: string;
-  id?: string;
-  name: string,
-  price: number,
-  offerPriceFixed: number,
-  offerPriceParcent: number,
-  costPrice: number,
-  sku: string,
-  stock: number,
-  lowStockAlert: number,
-  images: string[],
-  isDefault: false
+  id: string;
+  productId?: string;
+  name: string;
+  price?: number | null;
+  offerPriceFixed?: number | null;
+  offerPriceParcent?: number | null;
+  costPrice?: number | null;
+  sku?: string | null;
+  barcode?: string | null;
+  stock?: number | null;
+  lowStockAlert?: number | null;
+  images?: string[] | null;
+  attributeConfig?: Record<string, string> | null;
+  weight?: number | null;
+  dimensionLength?: number | null;
+  dimensionWidth?: number | null;
+  dimensionHeight?: number | null;
+  isDefault?: boolean | null;
 }
-
 
 export type TProductType = "variant" | "single";
-// Base Product
-export interface IProductBase {
+
+/** The category / brand loaded with a product (`.include("category")`, `.include("brand")`). */
+export interface IProductCategoryRef {
+  id: string;
   name: string;
   slug: string;
-  videoUrl?: string;
-  thumbnail?: string;
-  productType: TProductType,
-  gallery: string[];
-  shipping: {
-    isFreeShipping: boolean;
-  },
-  category: string,
-  brandInfo?: IBrand,
-  price?:number,
-  discountPrice?:number,
-  discountParcent?: number;
-  seo: {
-     title: string,
-    description: string,
-    keywords: string[]
-  },
-  ratings: {
-    average: number,
-    totalReviews: number;
-  },
-  shortDescription?: string;
-  description?: string;
-  logo?: string;
-  stock: number,
-  trackStock: boolean,
-  tags: string[]
-  isFeatured: boolean,
-  status: boolean;
-  isDelete: boolean;
-  variations: IProductVariant[];
-  selectedAttributes: IProductSelectedVariant[]
 }
 
+export interface IProductBrandRef {
+  id: string;
+  name: string;
+  slug: string;
+  logo?: string | null;
+}
 
+export interface IProduct {
+  id: string;
+  name: string;
+  slug: string;
+  videoUrl?: string | null;
+  shortDescription?: string | null;
+  description?: string | null;
+  thumbnail?: string | null;
+  gallery: string[];
 
+  price?: number | null;
+  discountPrice?: number | null;
+  discountParcent?: number | null;
+  costPrice?: number | null;
 
+  productType: TProductType;
+  selectedAttributes?: IProductSelectedVariant[] | null;
 
-export interface IProduct extends IProductBase {
-  _id: string;
+  categoryId?: string | null;
+  category?: IProductCategoryRef | null;
+  brandId?: string | null;
+  brand?: IProductBrandRef | null;
+
+  stock?: number | null;
+  trackStock?: boolean | null;
+
+  weight?: number | null;
+  dimensionLength?: number | null;
+  dimensionWidth?: number | null;
+  dimensionHeight?: number | null;
+  isFreeShipping?: boolean | null;
+
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  seoKeywords?: string[] | null;
+
+  ratingsAverage?: number | null;
+  totalReviews?: number | null;
+
+  tags?: string[] | null;
+  isFeatured?: boolean | null;
+  totalSold?: number | null;
+  isDelete?: boolean | null;
+  status?: boolean | null;
+
+  variations?: IProductVariant[] | null;
+
   createdAt: string;
   updatedAt: string;
 }
@@ -81,7 +104,6 @@ export interface IProductListResponse {
   meta: IMetaPagination;
 }
 
-
 export interface IProductDetailsResponse {
-  data: IProduct
+  data: IProduct;
 }

@@ -58,7 +58,7 @@ const ExpenseModal = ({ open, onOpenChange, expense }: Props) => {
   const onSubmit = async (values: TExpenseForm) => {
     try {
       if (expense) {
-        await updateExpense({ id: expense._id, payload: values }).unwrap();
+        await updateExpense({ id: expense.id, payload: values }).unwrap();
         toast.success("Expense updated");
       } else {
         await createExpense(values).unwrap();

@@ -69,7 +69,7 @@ export default function FreeShipping() {
 
 
               return (
-                <ProductCard product={product} key={product?._id} />
+                <ProductCard product={product} key={product?.id} />
               );
             })}
           </div>

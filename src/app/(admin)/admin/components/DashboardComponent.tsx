@@ -48,9 +48,10 @@ const DashboardComponent = () => {
   const chartData =
     data?.data?.map((item: any) => ({
       label:
-        period === "today"
-          ? `${item._id.hour}:00`
-          : item._id.date,
+        item.label ||
+        (period === "today"
+          ? `${item.hour ?? item._id?.hour}:00`
+          : (item.date ?? item._id?.date)),
       revenue: item.revenue,
     })) || [];
 

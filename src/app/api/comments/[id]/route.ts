@@ -1,7 +1,6 @@
 import { getAuthUser, getOptionalAuthUser, isAdminUser } from "@/lib/authUser";
 import { normalizeRating, recalculateProductRating } from "@/lib/comment-utils";
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -42,14 +41,14 @@ export async function GET(
 
     const formatted = comments.map((c: any) => ({
       ...c,
-      userId: c.user ? formatMongoCompat(c.user) : c.userId,
+      userId: c.user ? c.user : c.userId,
     }));
 
     return NextResponse.json(
       {
         success: true,
         message: "Successfully",
-        data: formatMongoCompat(formatted),
+        data: formatted,
       },
       { status: 200 }
     );
@@ -118,7 +117,7 @@ export async function PATCH(
       {
         success: true,
         message: "Successfully",
-        data: formatMongoCompat(updated),
+        data: updated,
       },
       { status: 200 }
     );
@@ -174,7 +173,7 @@ export async function DELETE(
       {
         success: true,
         message: "comment deleted successfully",
-        data: formatMongoCompat(comment),
+        data: comment,
       },
       { status: 200 }
     );

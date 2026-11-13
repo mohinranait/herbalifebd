@@ -25,7 +25,7 @@ const CellAction = ({ data }: Props) => {
 
   const handleDelete = async () => {
     try {
-      await deleteBrand(data?._id).unwrap();
+      await deleteBrand(data?.id).unwrap();
       toast.success("Deleted successfully");
       setIsDeleteOpen(false);
     } catch (error) {

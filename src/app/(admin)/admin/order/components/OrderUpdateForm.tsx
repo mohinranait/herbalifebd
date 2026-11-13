@@ -44,8 +44,8 @@ const OrderUpdateForm = ({ order }: TOrderUpdateFormProps) => {
   const handleUpdateOrder = async () => {
 
     try {
-      if (!order?._id) return;
-      await updateOrder({ payload: form, id: order?._id }).unwrap()
+      if (!order?.id) return;
+      await updateOrder({ payload: form, id: order?.id }).unwrap()
 
       // setForm({
       //   orderStatus: order?.orderStatus as TOrderStatus,

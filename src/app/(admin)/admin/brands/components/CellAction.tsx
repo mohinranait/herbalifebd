@@ -29,7 +29,7 @@ const CellAction = ({ data, type }: Props) => {
   // Soft delete
   const softDelete = async (action: "restore" | "soft" = 'restore') => {
     try {
-      await softDeleteBrand({ id: data._id, payload: { isDelete: true } }).unwrap();
+      await softDeleteBrand({ id: data.id, payload: { isDelete: true } }).unwrap();
       toast.success(action === 'restore' ? "Restore" : "Delete" + ` successfully`);
       setIsDeleteOpen(false);
     } catch (error) {
@@ -41,7 +41,7 @@ const CellAction = ({ data, type }: Props) => {
   // hard delete
   const hardDelete = async () => {
     try {
-      await deleteBrand(data?._id).unwrap();
+      await deleteBrand(data?.id).unwrap();
       toast.success("Deleted successfully");
       setIsDeleteOpen(false);
     } catch (error) {

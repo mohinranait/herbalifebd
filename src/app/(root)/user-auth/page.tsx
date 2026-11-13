@@ -5,7 +5,7 @@ import LoginForm from "../components/login-form";
 import RegisterForm from "../components/register-form";
 import HeaderLogo from "@/components/shared/HeaderLogo";
 import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 import { userLogout } from "@/redux/features/authSlice";
 import { cn } from "@/lib/utils";
@@ -30,7 +30,7 @@ function UserAuthContent() {
   const dispatch = useAppDispatch();
 
   // If user is already authenticated
-  if (user?._id) {
+  if (user?.id) {
     return (
       <div className="min-h-[calc(100vh-140px)] py-12 px-4 flex items-center justify-center bg-linear-to-b from-orange-50/40 via-slate-50 to-orange-50/20">
         <div className="w-full max-w-md bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xl text-center">

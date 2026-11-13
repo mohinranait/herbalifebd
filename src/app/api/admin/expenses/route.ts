@@ -1,5 +1,4 @@
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { parseReportDate } from "@/lib/profit-report";
 import { expenseSchema } from "@/components/validations/expense";
 import { NextRequest, NextResponse } from "next/server";
@@ -25,7 +24,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: formatMongoCompat(expenses),
+      data: expenses,
       meta: { total: expenses.length, totalAmount: Math.round(total * 100) / 100 },
     });
   } catch (error: any) {
@@ -56,7 +55,7 @@ export async function POST(req: NextRequest) {
       note: note || null,
     });
 
-    return NextResponse.json({ success: true, data: formatMongoCompat(expense) }, { status: 201 });
+    return NextResponse.json({ success: true, data: expense }, { status: 201 });
   } catch (error: any) {
     console.error("Create expense error:", error);
     return NextResponse.json(

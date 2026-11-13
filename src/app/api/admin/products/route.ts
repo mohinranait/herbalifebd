@@ -1,5 +1,4 @@
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -15,8 +14,8 @@ export async function POST(req: Request) {
       );
     }
 
-    const catId = categoryId || (typeof category === "object" ? category?.id || category?._id : category) || null;
-    const brId = brandId || (typeof brand === "object" ? brand?.id || brand?._id : brand) || null;
+    const catId = categoryId || (typeof category === "object" ? category?.id : category) || null;
+    const brId = brandId || (typeof brand === "object" ? brand?.id : brand) || null;
 
     const existing = await db.orm.public.Product.where({ slug: body.slug }).first();
     if (existing) {
@@ -89,7 +88,7 @@ export async function POST(req: Request) {
       .first();
 
     return NextResponse.json(
-      { success: true, data: formatMongoCompat(createdProduct) },
+      { success: true, data: createdProduct },
       { status: 201 }
     );
   } catch (error: any) {
@@ -147,7 +146,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: formatMongoCompat(products),
+      data: products,
       meta: {
         total,
         page,

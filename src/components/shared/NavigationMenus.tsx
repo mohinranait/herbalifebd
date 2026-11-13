@@ -20,7 +20,7 @@ function buildTree(categories:ICategory[], parentId: null | string = null): ICat
     .filter(item => String(item.parentId) === String(parentId))
     .map(item => ({
       ...item,
-      children: buildTree(categories, item._id)
+      children: buildTree(categories, item.id)
     }));
 }
 
@@ -82,7 +82,7 @@ const NavigationMenus = () => {
                     <div key={category.slug}>
                       {/* Parent */}
                       <Link
-                        href={`/shop?category=${category._id}`}
+                        href={`/shop?category=${category.id}`}
                         className="text-sm font-semibold text-gray-900 hover:text-primary transition flex gap-1 items-center"
                       >
                         <Image src={category?.thumbnail || `/${PRODUCT_IMG}`} width={20} height={20} alt={category?.name} className="w-5 h-5 rounded-md" />
@@ -93,8 +93,8 @@ const NavigationMenus = () => {
                       <div className="mt-3 space-y-2">
                         {category.children.map((child) => (
                           <Link
-                            key={child?._id}
-                            href={`/shop?category=${child._id}`}
+                            key={child?.id}
+                            href={`/shop?category=${child.id}`}
                             className=" text-sm text-muted-foreground hover:text-primary flex gap-1 items-center transition "
                           >
                             <HandHeart size={14} />

@@ -1,7 +1,6 @@
 import { contactFormSchema } from "@/components/validations/contact";
 import { getAuthUser } from "@/lib/authUser";
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -33,7 +32,7 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         message: "Successfully",
-        data: formatMongoCompat(contact),
+        data: contact,
       },
       { status: 201 }
     );
@@ -86,7 +85,7 @@ export async function GET(req: NextRequest) {
 
 
     return NextResponse.json({
-      data: formatMongoCompat(contacts),
+      data: contacts,
       meta: {
         total,
         page,

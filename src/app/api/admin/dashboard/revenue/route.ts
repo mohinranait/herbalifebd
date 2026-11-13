@@ -45,12 +45,16 @@ export async function GET(req: NextRequest) {
     const revenueData = Object.entries(groupedData).map(([key, revenue]) => {
       if (period === "today") {
         return {
-          _id: { hour: parseInt(key, 10) },
+          id: key,
+          hour: parseInt(key, 10),
+          label: `${key}:00`,
           revenue,
         };
       }
       return {
-        _id: { date: key },
+        id: key,
+        date: key,
+        label: key,
         revenue,
       };
     });

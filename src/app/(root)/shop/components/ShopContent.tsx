@@ -85,12 +85,12 @@ export function ShopContent() {
     setPage(1);
   };
 
-  const activeCatName = categories.find((c) => c._id === activeCat)?.name;
+  const activeCatName = categories.find((c) => c.id === activeCat)?.name;
 
   const activeTags = [
     activeCat && { label: activeCatName, clear: () => handleCatChange("") },
     ...selectedBrands.map((id) => {
-      const b = brands.find((br) => br._id === id);
+      const b = brands.find((br) => br.id === id);
       return b ? { label: b.name, clear: () => toggleBrand(id) } : null;
     }).filter(Boolean),
     (minPrice > 0 || maxPrice > 0) && {
@@ -247,7 +247,7 @@ export function ShopContent() {
               <>
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
                   {products.map((product) => (
-                    <ProductCard key={product._id} product={product} />
+                    <ProductCard key={product.id} product={product} />
                   ))}
                 </div>
 

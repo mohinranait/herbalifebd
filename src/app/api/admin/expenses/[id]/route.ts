@@ -1,5 +1,4 @@
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { parseReportDate } from "@/lib/profit-report";
 import { expenseSchema } from "@/components/validations/expense";
 import { NextRequest, NextResponse } from "next/server";
@@ -32,7 +31,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
     });
 
     const updated = await db.orm.expenses.where({ id }).first();
-    return NextResponse.json({ success: true, data: formatMongoCompat(updated) });
+    return NextResponse.json({ success: true, data: updated });
   } catch (error: any) {
     console.error("Update expense error:", error);
     return NextResponse.json(
@@ -51,7 +50,7 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
     }
 
     await db.orm.expenses.where({ id }).delete();
-    return NextResponse.json({ success: true, data: formatMongoCompat(existing) });
+    return NextResponse.json({ success: true, data: existing });
   } catch (error: any) {
     console.error("Delete expense error:", error);
     return NextResponse.json(

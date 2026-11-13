@@ -200,7 +200,7 @@ const SuccessPageCompo = () => {
 
                   return (
                     <div
-                      key={item._id || idx}
+                      key={item.id || idx}
                       className="py-3 sm:py-3.5 flex items-center gap-3 sm:gap-4 group"
                     >
                       {/* Product Thumbnail */}

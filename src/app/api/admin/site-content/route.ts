@@ -1,5 +1,4 @@
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 // GET Site Content
@@ -21,7 +20,7 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       message: "Site content fetched successfully",
-      data: formatMongoCompat(content),
+      data: content,
     });
   } catch (error: any) {
     console.error(error);
@@ -60,7 +59,7 @@ export async function PATCH(req: Request) {
       message: content
         ? "Site content saved successfully"
         : "Operation completed",
-      data: formatMongoCompat(content),
+      data: content,
     });
   } catch (error: any) {
     console.error(error);

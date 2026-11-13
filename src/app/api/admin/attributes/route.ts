@@ -1,6 +1,5 @@
 import { attributeSchema } from "@/components/validations/attributes";
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -44,7 +43,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: formatMongoCompat(attributes),
+      data: attributes,
       meta: {
         total,
         page,
@@ -102,7 +101,7 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         message: "Attribute created successfully",
-        data: formatMongoCompat(attribute),
+        data: attribute,
       },
       { status: 201 }
     );

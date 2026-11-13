@@ -34,7 +34,7 @@ export interface ICartItem {
 /* -------------------------------------------------------------------------- */
 
 export interface IOrderItem extends Omit<ICartItem, "productType"> {
-  _id: string;
+  id: string;
   categoryName?: string;
   brandName?: string;
 }
@@ -94,7 +94,7 @@ export interface IOrderPricing {
 /* -------------------------------------------------------------------------- */
 
 export interface IOrder {
-  _id: string;
+  id: string;
 
   userId?: string | null;
 

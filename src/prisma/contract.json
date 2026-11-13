@@ -241,6 +241,13 @@
                   "kind": "scalar"
                 }
               },
+              "maintenanceMessage": {
+                "nullable": true,
+                "type": {
+                  "codecId": "mongo/string@1",
+                  "kind": "scalar"
+                }
+              },
               "maintenanceMode": {
                 "nullable": true,
                 "type": {
@@ -325,6 +332,13 @@
                   "kind": "scalar"
                 }
               },
+              "tax": {
+                "nullable": true,
+                "type": {
+                  "codecId": "mongo/json@1",
+                  "kind": "scalar"
+                }
+              },
               "timezone": {
                 "nullable": true,
                 "type": {
@@ -386,6 +400,9 @@
                 "logo": {
                   "field": "logo"
                 },
+                "maintenanceMessage": {
+                  "field": "maintenanceMessage"
+                },
                 "maintenanceMode": {
                   "field": "maintenanceMode"
                 },
@@ -421,6 +438,9 @@
                 },
                 "socialLinks": {
                   "field": "socialLinks"
+                },
+                "tax": {
+                  "field": "tax"
                 },
                 "timezone": {
                   "field": "timezone"
@@ -3133,6 +3153,12 @@
                         "string"
                       ]
                     },
+                    "maintenanceMessage": {
+                      "bsonType": [
+                        "null",
+                        "string"
+                      ]
+                    },
                     "maintenanceMode": {
                       "bsonType": [
                         "null",
@@ -3229,6 +3255,18 @@
                         "null"
                       ]
                     },
+                    "tax": {
+                      "bsonType": [
+                        "object",
+                        "array",
+                        "string",
+                        "double",
+                        "int",
+                        "long",
+                        "bool",
+                        "null"
+                      ]
+                    },
                     "timezone": {
                       "bsonType": [
                         "null",
@@ -3262,6 +3300,20 @@
                   "kind": "mongo-index",
                   "name": "name_1",
                   "unique": true
+                },
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "status"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "isDelete"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "status_1_isDelete_1"
                 }
               ],
               "kind": "mongo-collection",
@@ -3344,6 +3396,42 @@
                   "kind": "mongo-index",
                   "name": "slug_1",
                   "unique": true
+                },
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "status"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "isDelete"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "priority"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "status_1_isDelete_1_priority_1"
+                },
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "status"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "isDelete"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "createdAt"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "status_1_isDelete_1_createdAt_1"
                 }
               ],
               "kind": "mongo-collection",
@@ -3429,6 +3517,34 @@
                   "kind": "mongo-index",
                   "name": "slug_1",
                   "unique": true
+                },
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "status"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "isDelete"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "priority"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "status_1_isDelete_1_priority_1"
+                },
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "parentId"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "parentId_1"
                 }
               ],
               "kind": "mongo-collection",
@@ -3522,6 +3638,40 @@
               }
             },
             "comments": {
+              "indexes": [
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "productId"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "isApproved"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "createdAt"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "productId_1_isApproved_1_createdAt_1"
+                },
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "userId"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "createdAt"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "userId_1_createdAt_1"
+                }
+              ],
               "kind": "mongo-collection",
               "validator": {
                 "jsonSchema": {
@@ -3761,6 +3911,28 @@
               }
             },
             "media": {
+              "indexes": [
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "createdAt"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "createdAt_1"
+                },
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "public_id"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "public_id_1"
+                }
+              ],
               "kind": "mongo-collection",
               "validator": {
                 "jsonSchema": {
@@ -3831,6 +4003,28 @@
               }
             },
             "order_items": {
+              "indexes": [
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "orderId"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "orderId_1"
+                },
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "productId"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "productId_1"
+                }
+              ],
               "kind": "mongo-collection",
               "validator": {
                 "jsonSchema": {
@@ -3948,20 +4142,46 @@
                     {
                       "direction": 1,
                       "field": "userId"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "createdAt"
                     }
                   ],
                   "kind": "mongo-index",
-                  "name": "userId_1"
+                  "name": "userId_1_createdAt_1"
                 },
                 {
                   "keys": [
                     {
                       "direction": 1,
                       "field": "orderStatus"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "isDeleted"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "createdAt"
                     }
                   ],
                   "kind": "mongo-index",
-                  "name": "orderStatus_1"
+                  "name": "orderStatus_1_isDeleted_1_createdAt_1"
+                },
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "isDeleted"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "createdAt"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "isDeleted_1_createdAt_1"
                 }
               ],
               "kind": "mongo-collection",
@@ -4155,6 +4375,30 @@
                   "kind": "mongo-index",
                   "name": "sku_1",
                   "unique": true
+                },
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "productId"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "productId_1"
+                },
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "productId"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "isDefault"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "productId_1_isDefault_1"
                 }
               ],
               "kind": "mongo-collection",
@@ -4306,41 +4550,161 @@
                   "keys": [
                     {
                       "direction": 1,
-                      "field": "isFeatured"
+                      "field": "status"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "isDelete"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "createdAt"
                     }
                   ],
                   "kind": "mongo-index",
-                  "name": "isFeatured_1"
+                  "name": "status_1_isDelete_1_createdAt_1"
                 },
                 {
                   "keys": [
+                    {
+                      "direction": 1,
+                      "field": "status"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "isDelete"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "categoryId"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "createdAt"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "status_1_isDelete_1_categoryId_1_createdAt_1"
+                },
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "status"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "isDelete"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "brandId"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "createdAt"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "status_1_isDelete_1_brandId_1_createdAt_1"
+                },
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "status"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "isDelete"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "isFeatured"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "createdAt"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "status_1_isDelete_1_isFeatured_1_createdAt_1"
+                },
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "status"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "isDelete"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "isFreeShipping"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "createdAt"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "status_1_isDelete_1_isFreeShipping_1_createdAt_1"
+                },
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "status"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "isDelete"
+                    },
                     {
                       "direction": 1,
                       "field": "totalSold"
                     }
                   ],
                   "kind": "mongo-index",
-                  "name": "totalSold_1"
+                  "name": "status_1_isDelete_1_totalSold_1"
                 },
                 {
                   "keys": [
                     {
                       "direction": 1,
-                      "field": "categoryId"
+                      "field": "status"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "isDelete"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "ratingsAverage"
                     }
                   ],
                   "kind": "mongo-index",
-                  "name": "categoryId_1"
+                  "name": "status_1_isDelete_1_ratingsAverage_1"
                 },
                 {
                   "keys": [
                     {
                       "direction": 1,
-                      "field": "brandId"
+                      "field": "status"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "isDelete"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "price"
                     }
                   ],
                   "kind": "mongo-index",
-                  "name": "brandId_1"
+                  "name": "status_1_isDelete_1_price_1"
                 }
               ],
               "kind": "mongo-collection",
@@ -4568,6 +4932,28 @@
               }
             },
             "request_quotes": {
+              "indexes": [
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "productId"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "productId_1"
+                },
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "createdAt"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "createdAt_1"
+                }
+              ],
               "kind": "mongo-collection",
               "validator": {
                 "jsonSchema": {
@@ -4702,6 +5088,26 @@
               }
             },
             "sliders": {
+              "indexes": [
+                {
+                  "keys": [
+                    {
+                      "direction": 1,
+                      "field": "status"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "isDelete"
+                    },
+                    {
+                      "direction": 1,
+                      "field": "order"
+                    }
+                  ],
+                  "kind": "mongo-index",
+                  "name": "status_1_isDelete_1_order_1"
+                }
+              ],
               "kind": "mongo-collection",
               "validator": {
                 "jsonSchema": {
@@ -4852,7 +5258,7 @@
         "kind": "mongo-database"
       }
     },
-    "storageHash": "828a1a4fab636231328a0c0b2596b01481abaac3a7a815866e299388271aff85"
+    "storageHash": "f39f1fe8e2f3d2cec70bd6157c09f23bc82851b8db0c41eb3c3b90d77fea069f"
   },
   "execution": {
     "executionHash": "934e0cf7069d775533d99fda6afaece27282b0517b9613f26df335d196131318",

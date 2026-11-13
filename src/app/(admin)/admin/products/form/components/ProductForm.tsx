@@ -43,6 +43,7 @@ import { useGetBrandsQuery } from "@/redux/service/brand";
 import { useGetCategoriesQuery } from "@/redux/service/categories";
 import { useCreateProductMutation, useGetProductByIdQuery, useUpdateProductMutation } from "@/redux/service/products";
 import { productSchema, TProductFormType } from "@/components/validations/product";
+import { IProduct } from "@/redux/service/products/type";
 import SectionCard from "./SectionCard";
 import { FormField } from "./FormField";
 
@@ -64,6 +65,80 @@ interface IAttributeConfig {
 }
 
 
+
+// ---------------------------------------------------------------------------
+// Database row -> form values
+// ---------------------------------------------------------------------------
+// The API returns the product as it is stored (flat columns, `null` for empty
+// ones). The form groups shipping / SEO fields and its validation does not
+// accept `null`, so the row is translated once, here.
+const orUndefined = <T,>(value: T | null | undefined): T | undefined => value ?? undefined;
+
+function productToFormValues(product: IProduct): TProductFormType {
+  return {
+    name: product.name,
+    slug: product.slug,
+    videoUrl: product.videoUrl ?? "",
+    shortDescription: product.shortDescription ?? "",
+    description: product.description ?? "",
+    thumbnail: product.thumbnail ?? "",
+    gallery: product.gallery ?? [],
+
+    price: orUndefined(product.price),
+    discountPrice: orUndefined(product.discountPrice),
+    discountParcent: orUndefined(product.discountParcent),
+    costPrice: orUndefined(product.costPrice),
+
+    productType: product.productType || "single",
+    selectedAttributes: product.selectedAttributes ?? [],
+    variations: (product.variations ?? []).map((variation) => ({
+      name: variation.name,
+      price: variation.price ?? 0,
+      offerPriceFixed: orUndefined(variation.offerPriceFixed),
+      offerPriceParcent: orUndefined(variation.offerPriceParcent),
+      costPrice: orUndefined(variation.costPrice),
+      sku: orUndefined(variation.sku),
+      barcode: orUndefined(variation.barcode),
+      stock: variation.stock ?? 0,
+      lowStockAlert: variation.lowStockAlert ?? 5,
+      images: variation.images ?? [],
+      attributeConfig: orUndefined(variation.attributeConfig),
+      weight: orUndefined(variation.weight),
+      dimensions: {
+        length: orUndefined(variation.dimensionLength),
+        width: orUndefined(variation.dimensionWidth),
+        height: orUndefined(variation.dimensionHeight),
+      },
+      isDefault: orUndefined(variation.isDefault),
+    })),
+
+    category: product.categoryId ?? "",
+    brand: product.brandId ?? "",
+
+    stock: orUndefined(product.stock),
+    trackStock: orUndefined(product.trackStock),
+
+    shipping: {
+      weight: orUndefined(product.weight),
+      dimensions: {
+        length: orUndefined(product.dimensionLength),
+        width: orUndefined(product.dimensionWidth),
+        height: orUndefined(product.dimensionHeight),
+      },
+      isFreeShipping: Boolean(product.isFreeShipping),
+    },
+    seo: {
+      title: product.seoTitle ?? "",
+      description: product.seoDescription ?? "",
+      keywords: product.seoKeywords ?? [],
+    },
+
+    tags: product.tags ?? [],
+    isFeatured: Boolean(product.isFeatured),
+    isDelete: Boolean(product.isDelete),
+    status: product.status ?? true,
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Main Component
@@ -187,7 +262,7 @@ const isEdit = Boolean(productId);
   };
 
   const updateAttributeType = (idx: number, attrId: string) => {
-    const attr = attributes?.find((a: { _id: string }) => a._id === attrId);
+    const attr = attributes?.find((a: { id: string }) => a.id === attrId);
     const newConfigs = [...selectedConfigs];
     newConfigs[idx] = { attributeId: attrId, name: attr?.name ?? "", selectedValues: [] };
     setSelectedConfigs(newConfigs);
@@ -271,11 +346,11 @@ const isEdit = Boolean(productId);
 
       if (isEdit) {
         if(!product) return;
-        const  data  = await updateProduct({ id: product?._id, payload }).unwrap()
-        url = data?.data?._id as string;
+        const  data  = await updateProduct({ id: product?.id, payload }).unwrap()
+        url = data?.data?.id as string;
       } else {
         const data = await createProduct(payload).unwrap();
-        url = data?.data?._id as string;
+        url = data?.data?.id as string;
       }
 
 
@@ -311,11 +386,11 @@ const isEdit = Boolean(productId);
     if (!product) return;
     form.reset({
       ...form.getValues(),
-      ...product,
+      ...productToFormValues(product),
     })
 
-    setSelectedConfigs(product.selectedAttributes)
-    setProductImages(product?.gallery)
+    setSelectedConfigs(product.selectedAttributes ?? [])
+    setProductImages(product.gallery ?? [])
 
   }, [product, form])
 
@@ -579,7 +654,7 @@ const isEdit = Boolean(productId);
                 attributesLoading && <div>Loading...</div>
               }
               {selectedConfigs.map((config, idx) => {
-                const attr = attributes?.find((a) => a._id === config.attributeId);
+                const attr = attributes?.find((a) => a.id === config.attributeId);
                 return (
                   <div
                     key={idx}
@@ -599,7 +674,7 @@ const isEdit = Boolean(productId);
                           </SelectTrigger>
                           <SelectContent>
                             {attributes?.map((a) => (
-                              <SelectItem key={a._id} value={a._id}>
+                              <SelectItem key={a.id} value={a.id}>
                                 {a.displayName}
                               </SelectItem>
                             ))}
@@ -809,7 +884,7 @@ const isEdit = Boolean(productId);
                     </SelectTrigger>
                     <SelectContent>
                       {brands?.map((b) => (
-                        <SelectItem key={b._id} value={b._id}>
+                        <SelectItem key={b.id} value={b.id}>
                           {b.name}
                         </SelectItem>
                       ))}
@@ -838,7 +913,7 @@ const isEdit = Boolean(productId);
                       </SelectTrigger>
                       <SelectContent>
                         {categories?.map((c) => (
-                          <SelectItem key={c._id} value={c._id}>
+                          <SelectItem key={c.id} value={c.id}>
                             {c.name}
                           </SelectItem>
                         ))}

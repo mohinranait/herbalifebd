@@ -33,8 +33,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const image = product?.gallery?.[0] || '';
 
-  const title = product?.seo?.title || product?.name;
-  const description = product?.seo?.description || product?.shortDescription || '';
+  const title = product?.seoTitle || product?.name;
+  const description = product?.seoDescription || product?.shortDescription || '';
 
   return {
     title,
@@ -78,11 +78,11 @@ const ProductDetails = async ({ params }: Props) => {
   if (!product) notFound();
 
   // Start the related products now; that section picks up this same promise
-  if (product.category) {
-    void getProductList(relatedProductsQuery(product.category)).catch(() => null);
+  if (product.categoryId) {
+    void getProductList(relatedProductsQuery(product.categoryId)).catch(() => null);
   }
 
-  const comments = await safe(getProductComments(product._id), null);
+  const comments = await safe(getProductComments(product.id), null);
 
   return (
     <div>
@@ -91,7 +91,7 @@ const ProductDetails = async ({ params }: Props) => {
         entries={[
           {
             endpointName: 'getCommentByProductId',
-            arg: { productId: product._id, params: 'accessMode=public' },
+            arg: { productId: product.id, params: 'accessMode=public' },
             value: comments,
           },
         ]}

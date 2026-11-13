@@ -88,7 +88,7 @@ export function ProfileDropdown() {
 
         <DropdownMenuGroup>
           <DropdownMenuItem asChild className="cursor-pointer rounded-lg text-xs py-2">
-            <Link href={`/admin/users/${user?._id}`} className="flex items-center gap-2">
+            <Link href={`/admin/users/${user?.id}`} className="flex items-center gap-2">
               <User className="size-4 text-muted-foreground" />
               <span>My Profile</span>
             </Link>

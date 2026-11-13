@@ -65,7 +65,7 @@ const Orders = () => {
         <div className="space-y-2.5">
           {orders.slice(0, 5).map((order) => (
             <div
-              key={order._id}
+              key={order.id}
               className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-xl border border-slate-200/80 hover:border-slate-300 bg-white hover:bg-slate-50/40 transition-colors"
             >
               {/* Order Info */}
@@ -94,7 +94,7 @@ const Orders = () => {
                   {CURRENCY} {order.pricing?.total?.toLocaleString("en-IN")}
                 </span>
 
-                <Link href={`/dashboard/orders/${order._id}`}>
+                <Link href={`/dashboard/orders/${order.id}`}>
                   <button
                     type="button"
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 hover:border-orange-400 hover:bg-orange-50 hover:text-orange-600 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"

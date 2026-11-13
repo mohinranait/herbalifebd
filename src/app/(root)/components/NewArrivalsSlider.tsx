@@ -45,7 +45,7 @@ const NewArrivalsSlider = ({ products }: Props) => {
           <CarouselContent className="-ml-3 md:-ml-4">
             {columnPairs.map(([topProduct, bottomProduct], idx) => (
               <CarouselItem
-                key={topProduct?._id || idx}
+                key={topProduct?.id || idx}
                 className="pl-3 md:pl-4 basis-[88%] sm:basis-1/2 lg:basis-1/3"
               >
                 <div className="flex flex-col gap-3 md:gap-4 h-full">

@@ -87,9 +87,9 @@ export default function Header() {
                     className="w-56 max-h-80 overflow-y-auto p-1.5 bg-white border border-slate-200 rounded-lg z-50"
                   >
                     {categories.map((cat) => (
-                      <DropdownMenuItem key={cat._id} asChild>
+                      <DropdownMenuItem key={cat.id} asChild>
                         <Link
-                          href={`/shop?category=${cat._id}`}
+                          href={`/shop?category=${cat.id}`}
                           className="flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 hover:text-orange-600 hover:bg-orange-50 rounded-md cursor-pointer transition-colors"
                         >
                           <div className="w-5 h-5 rounded overflow-hidden bg-slate-100 flex items-center justify-center shrink-0">
@@ -178,7 +178,7 @@ export default function Header() {
               </button>
 
               {/* User Account / Login */}
-              {user?._id ? (
+              {user?.id ? (
                 <button
                   type="button"
                   onClick={() =>

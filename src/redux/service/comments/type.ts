@@ -1,5 +1,3 @@
-import { IProduct } from "../products/type";
-import { IUser } from "@/models/user.model";
 import { IMetaPagination } from "@/types/common.type";
 
 export interface IBaseComment {
@@ -11,9 +9,10 @@ export interface IBaseComment {
 }
 
 export interface IComment extends IBaseComment {
-  _id: string;
-  productId: IProduct,
-  userId: IUser,
+  id: string;
+  /** The product / user the review belongs to (the API puts the loaded rows here) */
+  productId: { id: string; name: string },
+  userId: { id: string; name: string },
   createdAt: string;
 
 }

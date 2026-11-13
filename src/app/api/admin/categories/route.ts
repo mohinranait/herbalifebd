@@ -1,6 +1,5 @@
 import { categorySchema } from "@/components/validations/categories";
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -85,7 +84,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "Successfull",
-      data: formatMongoCompat(categoriesWithCount),
+      data: categoriesWithCount,
       meta: {
         total,
         page,
@@ -161,7 +160,7 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         message: "Category created successfully",
-        data: formatMongoCompat(category),
+        data: category,
       },
       { status: 201 }
     );

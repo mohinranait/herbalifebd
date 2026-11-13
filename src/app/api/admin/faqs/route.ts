@@ -1,5 +1,4 @@
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -30,7 +29,7 @@ export async function GET(request: NextRequest) {
       .all();
 
     return NextResponse.json(
-      { success: true, data: formatMongoCompat(faqs) },
+      { success: true, data: faqs },
       { status: 200 }
     );
   } catch (error: any) {
@@ -62,7 +61,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(
-      { success: true, data: formatMongoCompat(faq) },
+      { success: true, data: faq },
       { status: 201 }
     );
   } catch (error: any) {

@@ -9,9 +9,9 @@ export default function UpdateProfile() {
   const { user } = useAppSelector((state) => state.auth);
 
   const { data, isLoading: getUserLoading } = useGetUserByIdQuery(
-    user?._id as string,
+    user?.id as string,
     {
-      skip: !user?._id,
+      skip: !user?.id,
     }
   );
 

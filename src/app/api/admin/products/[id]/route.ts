@@ -1,6 +1,5 @@
 import { productSchema } from "@/components/validations/product";
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -20,7 +19,7 @@ export async function GET(
       return NextResponse.json({ error: "Not Found" }, { status: 404 });
     }
 
-    return NextResponse.json({ data: formatMongoCompat(product) });
+    return NextResponse.json({ data: product });
   } catch (error: any) {
     return NextResponse.json(
       { error: error?.message || "Internal Server Error" },
@@ -88,8 +87,8 @@ export async function PATCH(
       );
     }
 
-    const catId = categoryId || (typeof category === "object" ? category?.id || category?._id : category) || existingProduct.categoryId;
-    const brId = brandId || (typeof brand === "object" ? brand?.id || brand?._id : brand) || existingProduct.brandId;
+    const catId = categoryId || (typeof category === "object" ? category?.id : category) || existingProduct.categoryId;
+    const brId = brandId || (typeof brand === "object" ? brand?.id : brand) || existingProduct.brandId;
 
     await db.orm.public.Product.where({ id }).update({
       name: body.name !== undefined ? body.name : existingProduct.name,
@@ -152,7 +151,7 @@ export async function PATCH(
       {
         success: true,
         message: "Product updated successfully",
-        data: formatMongoCompat(updated),
+        data: updated,
       },
       { status: 200 }
     );
@@ -192,7 +191,7 @@ export async function DELETE(
       {
         success: true,
         message: "Product delete successfully",
-        data: formatMongoCompat(product),
+        data: product,
       },
       { status: 200 }
     );

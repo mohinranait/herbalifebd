@@ -79,7 +79,7 @@ const HeroSection = () => {
 
                   if (slide.sliderType === 'directImage') {
                     return (
-                      <CarouselItem key={slide._id}>
+                      <CarouselItem key={slide.id}>
                         <div className="relative h-44 sm:h-64 md:h-80 lg:h-96 xl:h-[460px] w-full overflow-hidden rounded-2xl bg-slate-100">
                           {slide.image && (
                             <Image
@@ -106,7 +106,7 @@ const HeroSection = () => {
                   const isWithImage = slide.sliderType === 'withImage';
 
                   return (
-                    <CarouselItem key={slide._id}>
+                    <CarouselItem key={slide.id}>
                       <div
                         className={`relative h-44 sm:h-64 md:h-80 lg:h-96 xl:h-[460px] flex items-center rounded-2xl overflow-hidden
                           ${isWithImage

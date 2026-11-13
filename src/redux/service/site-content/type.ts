@@ -32,7 +32,7 @@ export interface IWhyChooseUs {
 }
 
 export interface ISiteContent {
-  _id?: string;
+  id?: string;
 
   companyIntroduction: ICompanyIntroduction;
 

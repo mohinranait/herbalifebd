@@ -22,7 +22,7 @@ import type {
 } from '@prisma/orm-mongo/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'828a1a4fab636231328a0c0b2596b01481abaac3a7a815866e299388271aff85'>;
+  StorageHashBase<'f39f1fe8e2f3d2cec70bd6157c09f23bc82851b8db0c41eb3c3b90d77fea069f'>;
 export type ExecutionHash =
   ExecutionHashBase<'934e0cf7069d775533d99fda6afaece27282b0517b9613f26df335d196131318'>;
 export type ProfileHash =
@@ -74,6 +74,7 @@ export namespace Models {
     language: FieldOutputTypes['__unbound__']['AppSetting']['language'];
     layouts: FieldOutputTypes['__unbound__']['AppSetting']['layouts'];
     logo: FieldOutputTypes['__unbound__']['AppSetting']['logo'];
+    maintenanceMessage: FieldOutputTypes['__unbound__']['AppSetting']['maintenanceMessage'];
     maintenanceMode: FieldOutputTypes['__unbound__']['AppSetting']['maintenanceMode'];
     marque: FieldOutputTypes['__unbound__']['AppSetting']['marque'];
     metaDescription: FieldOutputTypes['__unbound__']['AppSetting']['metaDescription'];
@@ -86,6 +87,7 @@ export namespace Models {
     siteDescription: FieldOutputTypes['__unbound__']['AppSetting']['siteDescription'];
     siteName: FieldOutputTypes['__unbound__']['AppSetting']['siteName'];
     socialLinks: FieldOutputTypes['__unbound__']['AppSetting']['socialLinks'];
+    tax: FieldOutputTypes['__unbound__']['AppSetting']['tax'];
     timezone: FieldOutputTypes['__unbound__']['AppSetting']['timezone'];
     updatedAt: FieldOutputTypes['__unbound__']['AppSetting']['updatedAt'];
     readonly [RelationKeys]?: never;
@@ -508,6 +510,7 @@ type ContractBase = Omit<
                       ];
                     };
                     readonly logo: { readonly bsonType: readonly ['null', 'string'] };
+                    readonly maintenanceMessage: { readonly bsonType: readonly ['null', 'string'] };
                     readonly maintenanceMode: { readonly bsonType: readonly ['null', 'bool'] };
                     readonly marque: { readonly bsonType: readonly ['null', 'string'] };
                     readonly metaDescription: { readonly bsonType: readonly ['null', 'string'] };
@@ -564,6 +567,18 @@ type ContractBase = Omit<
                         'null',
                       ];
                     };
+                    readonly tax: {
+                      readonly bsonType: readonly [
+                        'object',
+                        'array',
+                        'string',
+                        'double',
+                        'int',
+                        'long',
+                        'bool',
+                        'null',
+                      ];
+                    };
                     readonly timezone: { readonly bsonType: readonly ['null', 'string'] };
                     readonly updatedAt: { readonly bsonType: 'date' };
                   };
@@ -581,6 +596,14 @@ type ContractBase = Omit<
                   readonly kind: 'mongo-index';
                   readonly name: 'name_1';
                   readonly unique: true;
+                },
+                {
+                  readonly keys: readonly [
+                    { readonly direction: 1; readonly field: 'status' },
+                    { readonly direction: 1; readonly field: 'isDelete' },
+                  ];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'status_1_isDelete_1';
                 },
               ];
               readonly kind: 'mongo-collection';
@@ -618,6 +641,24 @@ type ContractBase = Omit<
                   readonly name: 'slug_1';
                   readonly unique: true;
                 },
+                {
+                  readonly keys: readonly [
+                    { readonly direction: 1; readonly field: 'status' },
+                    { readonly direction: 1; readonly field: 'isDelete' },
+                    { readonly direction: 1; readonly field: 'priority' },
+                  ];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'status_1_isDelete_1_priority_1';
+                },
+                {
+                  readonly keys: readonly [
+                    { readonly direction: 1; readonly field: 'status' },
+                    { readonly direction: 1; readonly field: 'isDelete' },
+                    { readonly direction: 1; readonly field: 'createdAt' },
+                  ];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'status_1_isDelete_1_createdAt_1';
+                },
               ];
               readonly kind: 'mongo-collection';
               readonly validator: {
@@ -651,6 +692,20 @@ type ContractBase = Omit<
                   readonly kind: 'mongo-index';
                   readonly name: 'slug_1';
                   readonly unique: true;
+                },
+                {
+                  readonly keys: readonly [
+                    { readonly direction: 1; readonly field: 'status' },
+                    { readonly direction: 1; readonly field: 'isDelete' },
+                    { readonly direction: 1; readonly field: 'priority' },
+                  ];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'status_1_isDelete_1_priority_1';
+                },
+                {
+                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'parentId' }];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'parentId_1';
                 },
               ];
               readonly kind: 'mongo-collection';
@@ -692,6 +747,25 @@ type ContractBase = Omit<
               };
             };
             readonly comments: {
+              readonly indexes: readonly [
+                {
+                  readonly keys: readonly [
+                    { readonly direction: 1; readonly field: 'productId' },
+                    { readonly direction: 1; readonly field: 'isApproved' },
+                    { readonly direction: 1; readonly field: 'createdAt' },
+                  ];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'productId_1_isApproved_1_createdAt_1';
+                },
+                {
+                  readonly keys: readonly [
+                    { readonly direction: 1; readonly field: 'userId' },
+                    { readonly direction: 1; readonly field: 'createdAt' },
+                  ];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'userId_1_createdAt_1';
+                },
+              ];
               readonly kind: 'mongo-collection';
               readonly validator: {
                 readonly jsonSchema: {
@@ -809,6 +883,18 @@ type ContractBase = Omit<
               };
             };
             readonly media: {
+              readonly indexes: readonly [
+                {
+                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'createdAt' }];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'createdAt_1';
+                },
+                {
+                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'public_id' }];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'public_id_1';
+                },
+              ];
               readonly kind: 'mongo-collection';
               readonly validator: {
                 readonly jsonSchema: {
@@ -834,6 +920,18 @@ type ContractBase = Omit<
               };
             };
             readonly order_items: {
+              readonly indexes: readonly [
+                {
+                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'orderId' }];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'orderId_1';
+                },
+                {
+                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'productId' }];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'productId_1';
+                },
+              ];
               readonly kind: 'mongo-collection';
               readonly validator: {
                 readonly jsonSchema: {
@@ -896,16 +994,29 @@ type ContractBase = Omit<
                   readonly unique: true;
                 },
                 {
-                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'userId' }];
+                  readonly keys: readonly [
+                    { readonly direction: 1; readonly field: 'userId' },
+                    { readonly direction: 1; readonly field: 'createdAt' },
+                  ];
                   readonly kind: 'mongo-index';
-                  readonly name: 'userId_1';
+                  readonly name: 'userId_1_createdAt_1';
                 },
                 {
                   readonly keys: readonly [
                     { readonly direction: 1; readonly field: 'orderStatus' },
+                    { readonly direction: 1; readonly field: 'isDeleted' },
+                    { readonly direction: 1; readonly field: 'createdAt' },
                   ];
                   readonly kind: 'mongo-index';
-                  readonly name: 'orderStatus_1';
+                  readonly name: 'orderStatus_1_isDeleted_1_createdAt_1';
+                },
+                {
+                  readonly keys: readonly [
+                    { readonly direction: 1; readonly field: 'isDeleted' },
+                    { readonly direction: 1; readonly field: 'createdAt' },
+                  ];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'isDeleted_1_createdAt_1';
                 },
               ];
               readonly kind: 'mongo-collection';
@@ -975,6 +1086,19 @@ type ContractBase = Omit<
                   readonly name: 'sku_1';
                   readonly unique: true;
                 },
+                {
+                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'productId' }];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'productId_1';
+                },
+                {
+                  readonly keys: readonly [
+                    { readonly direction: 1; readonly field: 'productId' },
+                    { readonly direction: 1; readonly field: 'isDefault' },
+                  ];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'productId_1_isDefault_1';
+                },
               ];
               readonly kind: 'mongo-collection';
               readonly validator: {
@@ -1040,24 +1164,80 @@ type ContractBase = Omit<
                   readonly unique: true;
                 },
                 {
-                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'isFeatured' }];
+                  readonly keys: readonly [
+                    { readonly direction: 1; readonly field: 'status' },
+                    { readonly direction: 1; readonly field: 'isDelete' },
+                    { readonly direction: 1; readonly field: 'createdAt' },
+                  ];
                   readonly kind: 'mongo-index';
-                  readonly name: 'isFeatured_1';
+                  readonly name: 'status_1_isDelete_1_createdAt_1';
                 },
                 {
-                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'totalSold' }];
+                  readonly keys: readonly [
+                    { readonly direction: 1; readonly field: 'status' },
+                    { readonly direction: 1; readonly field: 'isDelete' },
+                    { readonly direction: 1; readonly field: 'categoryId' },
+                    { readonly direction: 1; readonly field: 'createdAt' },
+                  ];
                   readonly kind: 'mongo-index';
-                  readonly name: 'totalSold_1';
+                  readonly name: 'status_1_isDelete_1_categoryId_1_createdAt_1';
                 },
                 {
-                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'categoryId' }];
+                  readonly keys: readonly [
+                    { readonly direction: 1; readonly field: 'status' },
+                    { readonly direction: 1; readonly field: 'isDelete' },
+                    { readonly direction: 1; readonly field: 'brandId' },
+                    { readonly direction: 1; readonly field: 'createdAt' },
+                  ];
                   readonly kind: 'mongo-index';
-                  readonly name: 'categoryId_1';
+                  readonly name: 'status_1_isDelete_1_brandId_1_createdAt_1';
                 },
                 {
-                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'brandId' }];
+                  readonly keys: readonly [
+                    { readonly direction: 1; readonly field: 'status' },
+                    { readonly direction: 1; readonly field: 'isDelete' },
+                    { readonly direction: 1; readonly field: 'isFeatured' },
+                    { readonly direction: 1; readonly field: 'createdAt' },
+                  ];
                   readonly kind: 'mongo-index';
-                  readonly name: 'brandId_1';
+                  readonly name: 'status_1_isDelete_1_isFeatured_1_createdAt_1';
+                },
+                {
+                  readonly keys: readonly [
+                    { readonly direction: 1; readonly field: 'status' },
+                    { readonly direction: 1; readonly field: 'isDelete' },
+                    { readonly direction: 1; readonly field: 'isFreeShipping' },
+                    { readonly direction: 1; readonly field: 'createdAt' },
+                  ];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'status_1_isDelete_1_isFreeShipping_1_createdAt_1';
+                },
+                {
+                  readonly keys: readonly [
+                    { readonly direction: 1; readonly field: 'status' },
+                    { readonly direction: 1; readonly field: 'isDelete' },
+                    { readonly direction: 1; readonly field: 'totalSold' },
+                  ];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'status_1_isDelete_1_totalSold_1';
+                },
+                {
+                  readonly keys: readonly [
+                    { readonly direction: 1; readonly field: 'status' },
+                    { readonly direction: 1; readonly field: 'isDelete' },
+                    { readonly direction: 1; readonly field: 'ratingsAverage' },
+                  ];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'status_1_isDelete_1_ratingsAverage_1';
+                },
+                {
+                  readonly keys: readonly [
+                    { readonly direction: 1; readonly field: 'status' },
+                    { readonly direction: 1; readonly field: 'isDelete' },
+                    { readonly direction: 1; readonly field: 'price' },
+                  ];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'status_1_isDelete_1_price_1';
                 },
               ];
               readonly kind: 'mongo-collection';
@@ -1139,6 +1319,18 @@ type ContractBase = Omit<
               };
             };
             readonly request_quotes: {
+              readonly indexes: readonly [
+                {
+                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'productId' }];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'productId_1';
+                },
+                {
+                  readonly keys: readonly [{ readonly direction: 1; readonly field: 'createdAt' }];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'createdAt_1';
+                },
+              ];
               readonly kind: 'mongo-collection';
               readonly validator: {
                 readonly jsonSchema: {
@@ -1208,6 +1400,17 @@ type ContractBase = Omit<
               };
             };
             readonly sliders: {
+              readonly indexes: readonly [
+                {
+                  readonly keys: readonly [
+                    { readonly direction: 1; readonly field: 'status' },
+                    { readonly direction: 1; readonly field: 'isDelete' },
+                    { readonly direction: 1; readonly field: 'order' },
+                  ];
+                  readonly kind: 'mongo-index';
+                  readonly name: 'status_1_isDelete_1_order_1';
+                },
+              ];
               readonly kind: 'mongo-collection';
               readonly validator: {
                 readonly jsonSchema: {
@@ -1435,6 +1638,10 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
               };
+              readonly maintenanceMessage: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
               readonly maintenanceMode: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/bool@1' };
@@ -1483,6 +1690,10 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/json@1' };
               };
+              readonly tax: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/json@1' };
+              };
               readonly timezone: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
@@ -1510,6 +1721,7 @@ type ContractBase = Omit<
                 readonly language: { readonly field: 'language' };
                 readonly layouts: { readonly field: 'layouts' };
                 readonly logo: { readonly field: 'logo' };
+                readonly maintenanceMessage: { readonly field: 'maintenanceMessage' };
                 readonly maintenanceMode: { readonly field: 'maintenanceMode' };
                 readonly marque: { readonly field: 'marque' };
                 readonly metaDescription: { readonly field: 'metaDescription' };
@@ -1522,6 +1734,7 @@ type ContractBase = Omit<
                 readonly siteDescription: { readonly field: 'siteDescription' };
                 readonly siteName: { readonly field: 'siteName' };
                 readonly socialLinks: { readonly field: 'socialLinks' };
+                readonly tax: { readonly field: 'tax' };
                 readonly timezone: { readonly field: 'timezone' };
                 readonly updatedAt: { readonly field: 'updatedAt' };
               };

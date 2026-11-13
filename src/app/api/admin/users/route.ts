@@ -1,5 +1,4 @@
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
@@ -43,7 +42,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: formatMongoCompat(sanitizedUsers),
+      data: sanitizedUsers,
       meta: {
         total,
         page,
@@ -96,7 +95,7 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         message: "User created successfully",
-        data: formatMongoCompat(userWithoutPass),
+        data: userWithoutPass,
       },
       { status: 201 }
     );

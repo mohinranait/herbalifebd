@@ -1,6 +1,5 @@
 import { categorySchema } from "@/components/validations/categories";
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(
@@ -72,7 +71,7 @@ export async function PATCH(
       {
         success: true,
         message: "Category updated successfully",
-        data: formatMongoCompat(updatedCategory),
+        data: updatedCategory,
       },
       { status: 200 }
     );
@@ -112,7 +111,7 @@ export async function DELETE(
       {
         success: true,
         message: "Category deleted successfully",
-        data: formatMongoCompat(category),
+        data: category,
       },
       { status: 200 }
     );

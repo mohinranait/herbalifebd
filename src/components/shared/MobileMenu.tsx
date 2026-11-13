@@ -154,7 +154,7 @@ export function MobileMenu() {
 
           {/* User Account / Welcome Banner */}
           <div className="px-3 pt-3 shrink-0">
-            {user?._id ? (
+            {user?.id ? (
               <div className="bg-linear-to-r from-orange-50/90 to-amber-50/70 border border-orange-200/80 rounded-xl p-3 flex items-center justify-between">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div className="w-10 h-10 rounded-full bg-linear-to-br from-orange-500 to-amber-500 text-white font-bold text-sm flex items-center justify-center shadow-xs shrink-0 uppercase">
@@ -307,8 +307,8 @@ export function MobileMenu() {
                 <nav className="flex flex-col gap-1">
                   {categories.map((cat) => (
                     <Link
-                      key={cat._id}
-                      href={`/shop?category=${cat._id}`}
+                      key={cat.id}
+                      href={`/shop?category=${cat.id}`}
                       onClick={close}
                       className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-orange-50/60 text-slate-700 hover:text-orange-600 transition-colors group"
                     >

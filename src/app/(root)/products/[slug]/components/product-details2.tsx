@@ -28,7 +28,7 @@ export async function ProductDetailss({ product }: { product: IProduct }) {
         </div>
 
         <Suspense fallback={<ProductsSkeleton />}>
-          <RelatedProducts catId={product?.category} />
+          {product?.categoryId && <RelatedProducts catId={product.categoryId} />}
         </Suspense>
       </div>
     </div>

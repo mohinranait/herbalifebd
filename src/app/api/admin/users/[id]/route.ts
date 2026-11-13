@@ -1,6 +1,5 @@
 import { userSchema } from "@/components/validations/user.schema";
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { getAuthUser } from "@/lib/authUser";
@@ -29,7 +28,7 @@ export async function GET(
       {
         success: true,
         message: "Successfully",
-        data: formatMongoCompat(userWithoutPass),
+        data: userWithoutPass,
       },
       { status: 200 }
     );
@@ -120,7 +119,7 @@ export async function PATCH(
       {
         success: true,
         message: "User updated successfully",
-        data: formatMongoCompat(userWithoutPass),
+        data: userWithoutPass,
       },
       { status: 200 }
     );
@@ -162,7 +161,7 @@ export async function DELETE(
       {
         success: true,
         message: "User deleted successfully",
-        data: formatMongoCompat(userWithoutPass),
+        data: userWithoutPass,
       },
       { status: 200 }
     );

@@ -2,7 +2,7 @@
 
 
 export interface User {
-  _id: string;
+  id: string;
   name: string;
   phone: string;
   email?: string;

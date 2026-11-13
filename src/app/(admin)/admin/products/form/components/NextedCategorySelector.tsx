@@ -7,7 +7,7 @@ import { ICategory } from '@/redux/service/categories/type';
 
 // ==================== Internal Type (Safe) ====================
 type InternalCategory = {
-  _id: string;
+  id: string;
   name: string;
   slug: string;
   parentId: string | null;
@@ -47,12 +47,12 @@ export default function NestedCategorySelector({
         parentId: cat.parentId ?? null,   // undefined → null
         children: [],
       };
-      map.set(cat._id, node);
+      map.set(cat.id, node);
     });
 
     // // Second pass: Build children tree
     // categories.forEach(cat => {
-    //   const node = map.get(cat._id)!;
+    //   const node = map.get(cat.id)!;
     //   if (cat.parentId && map.has(cat.parentId)) {
     //     map.get(cat.parentId)!.children!.push(node);
     //   } else {
@@ -61,7 +61,7 @@ export default function NestedCategorySelector({
     // });
 
     categories.forEach((cat) => {
-      const node = map.get(cat._id)!;
+      const node = map.get(cat.id)!;
 
       // Root category
       if (!cat.parentId) {
@@ -96,7 +96,7 @@ export default function NestedCategorySelector({
       path: InternalCategory[] = []
     ): InternalCategory[] => {
       for (const node of nodes) {
-        if (node._id === targetId) return [...path, node];
+        if (node.id === targetId) return [...path, node];
         if (node.children?.length) {
           const result = findPath(node.children, targetId, [...path, node]);
           if (result.length > path.length) return result;
@@ -111,8 +111,8 @@ export default function NestedCategorySelector({
   const handleOpen = () => {
     setOpen(prev => !prev);
     if (value && selectedPath.length > 0) {
-      setHoveredLevel1(selectedPath[0]?._id || null);
-      setHoveredLevel2(selectedPath[1]?._id || null);
+      setHoveredLevel1(selectedPath[0]?.id || null);
+      setHoveredLevel2(selectedPath[1]?.id || null);
     } else {
       setHoveredLevel1(null);
       setHoveredLevel2(null);
@@ -129,7 +129,7 @@ export default function NestedCategorySelector({
 
   const level2 = useMemo(() => {
     if (!hoveredLevel1) return [];
-    const parent = internalCategories.find(c => c._id === hoveredLevel1);
+    const parent = internalCategories.find(c => c.id === hoveredLevel1);
     return parent?.children || [];
   }, [hoveredLevel1, internalCategories]);
 
@@ -137,7 +137,7 @@ export default function NestedCategorySelector({
     if (!hoveredLevel2) return [];
     const findNode = (nodes: InternalCategory[]): InternalCategory | null => {
       for (const node of nodes) {
-        if (node._id === hoveredLevel2) return node;
+        if (node.id === hoveredLevel2) return node;
         if (node.children?.length) {
           const found = findNode(node.children);
           if (found) return found;
@@ -163,7 +163,7 @@ export default function NestedCategorySelector({
         {selectedPath.length > 0 ? (
           <div className="flex items-center gap-1.5 flex-wrap text-sm">
             {selectedPath.map((cat, index) => (
-              <span key={cat._id} className="flex items-center">
+              <span key={cat.id} className="flex items-center">
                 <span className="font-medium text-foreground">{cat.name}</span>
                 {index < selectedPath.length - 1 && (
                   <span className="text-muted-foreground mx-1.5">/</span>
@@ -191,14 +191,14 @@ export default function NestedCategorySelector({
                 <div className="p-2">
                   {level1.map((cat) => (
                     <div
-                      key={cat._id}
+                      key={cat.id}
                       onMouseEnter={() => {
-                        setHoveredLevel1(cat._id);
+                        setHoveredLevel1(cat.id);
                         setHoveredLevel2(null);
                       }}
-                      onClick={() => handleSelect(cat._id)}
-                      className={`px-4 py-3.5 flex items-center justify-between rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-all ${hoveredLevel1 === cat._id ? 'bg-slate-100 dark:bg-slate-800' : ''
-                        } ${value === cat._id ? 'text-primary font-medium bg-primary/5' : ''}`}
+                      onClick={() => handleSelect(cat.id)}
+                      className={`px-4 py-3.5 flex items-center justify-between rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-all ${hoveredLevel1 === cat.id ? 'bg-slate-100 dark:bg-slate-800' : ''
+                        } ${value === cat.id ? 'text-primary font-medium bg-primary/5' : ''}`}
                     >
                       <span>{cat.name}</span>
                       {cat.children?.length ? <ChevronRight size={18} /> : null}
@@ -218,11 +218,11 @@ export default function NestedCategorySelector({
                   {level2.length > 0 ? (
                     level2.map((cat) => (
                       <div
-                        key={cat._id}
-                        onMouseEnter={() => setHoveredLevel2(cat._id)}
-                        onClick={() => handleSelect(cat._id)}
-                        className={`px-4 py-3.5 flex items-center justify-between rounded-xl cursor-pointer hover:bg-white dark:hover:bg-slate-800 transition-all ${hoveredLevel2 === cat._id ? 'bg-white dark:bg-slate-800' : ''
-                          } ${value === cat._id ? 'text-primary font-medium bg-primary/5' : ''}`}
+                        key={cat.id}
+                        onMouseEnter={() => setHoveredLevel2(cat.id)}
+                        onClick={() => handleSelect(cat.id)}
+                        className={`px-4 py-3.5 flex items-center justify-between rounded-xl cursor-pointer hover:bg-white dark:hover:bg-slate-800 transition-all ${hoveredLevel2 === cat.id ? 'bg-white dark:bg-slate-800' : ''
+                          } ${value === cat.id ? 'text-primary font-medium bg-primary/5' : ''}`}
                       >
                         <span>{cat.name}</span>
                         {cat.children?.length ? <ChevronRight size={18} /> : null}
@@ -247,9 +247,9 @@ export default function NestedCategorySelector({
                   {level3.length > 0 ? (
                     level3.map((cat) => (
                       <div
-                        key={cat._id}
-                        onClick={() => handleSelect(cat._id)}
-                        className={`px-4 py-3.5 rounded-xl cursor-pointer hover:bg-white dark:hover:bg-slate-800 transition-all ${value === cat._id ? 'bg-primary/10 text-primary font-medium' : ''}`}
+                        key={cat.id}
+                        onClick={() => handleSelect(cat.id)}
+                        className={`px-4 py-3.5 rounded-xl cursor-pointer hover:bg-white dark:hover:bg-slate-800 transition-all ${value === cat.id ? 'bg-primary/10 text-primary font-medium' : ''}`}
                       >
                         {cat.name}
                       </div>

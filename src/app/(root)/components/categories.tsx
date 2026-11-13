@@ -10,7 +10,7 @@ import { ArrowRight, LayoutGrid } from 'lucide-react';
 const CategoryCard = ({ category }: { category: ICategory }) => {
   return (
     <Link
-      href={`/shop?category=${category?._id}`}
+      href={`/shop?category=${category?.id}`}
       className="group flex flex-col items-center cursor-pointer transition-transform"
     >
       <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-34 md:h-34 rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-orange-200/80 group-hover:border-orange-500 group-hover:scale-105 transition-all duration-300 p-1 shrink-0">
@@ -84,7 +84,7 @@ const Categories = () => {
           ) : (
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 md:gap-6">
               {finalCategories.slice(0, 12).map((category) => (
-                <CategoryCard key={category._id} category={category} />
+                <CategoryCard key={category.id} category={category} />
               ))}
             </div>
           )}

@@ -18,12 +18,12 @@ function buildCategoryTree(categories: ICategory[] = []): ITreeCategory[] {
 
   // First pass: create map with children array
   categories.forEach((cat) => {
-    categoryMap.set(cat._id, { ...cat, children: [] });
+    categoryMap.set(cat.id, { ...cat, children: [] });
   });
 
   // Second pass: build tree
   categories.forEach((cat) => {
-    const category = categoryMap.get(cat._id)!;
+    const category = categoryMap.get(cat.id)!;
 
     if (!cat.parentId) {
       rootCategories.push(category);
@@ -73,14 +73,14 @@ export default function CategoriesPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
             {categoryTree.map((category) => (
               <Card
-                key={category._id}
+                key={category.id}
                 className="overflow-hidden  transition-all duration-300 border border-gray-200 hover:border-primary group"
               >
                 {/* Top Level Header */}
                 <CardHeader className="p-6 pb-4">
                   <div className="flex items-start gap-4">
                     {category.thumbnail && (
-                      <Link href={`/shop?category=${category._id}`}>
+                      <Link href={`/shop?category=${category.id}`}>
                         <div className="relative w-20 h-20 rounded-2xl overflow-hidden border shadow-sm shrink-0">
                           <Image
                             src={category.thumbnail}
@@ -107,11 +107,11 @@ export default function CategoriesPage() {
                   <CardContent className="p-6 pt-2">
                     <div className="space-y-8">
                       {category.children.map((level1) => (
-                        <div key={level1._id} className="border-l-2 border-primary/30 pl-4">
+                        <div key={level1.id} className="border-l-2 border-primary/30 pl-4">
                           {/* Level 1 */}
                           <div className="flex items-center gap-2 mb-3">
                             <div className="w-2 h-2 bg-primary rounded-full shrink-0 mt-1.5" />
-                            <Link href={`/shop?category=${level1._id}`}>
+                            <Link href={`/shop?category=${level1.id}`}>
                               <h3 className="font-semibold text-sm text-gray-800">
                                 {level1.name}
                               </h3>
@@ -123,8 +123,8 @@ export default function CategoriesPage() {
                             <div className="pl-6 grid grid-cols-2 gap-y-2.5 gap-x-4">
                               {level1.children.map((level2) => (
                                 <Link
-                                  key={level2._id}
-                                  href={`/shop?category=${level2._id}`}
+                                  key={level2.id}
+                                  href={`/shop?category=${level2.id}`}
                                   className="text-gray-700 hover:text-primary hover:underline transition-all flex items-center gap-1.5 text-[15px] py-0.5 group/link"
                                 >
                                   <span className="text-primary/70 group-hover/link:text-primary">→</span>

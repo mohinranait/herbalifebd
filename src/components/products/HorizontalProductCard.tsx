@@ -24,8 +24,9 @@ const HorizontalProductCard = ({ product }: Props) => {
     slug,
     productType,
     variations,
-    ratings,
-    brandInfo,
+    ratingsAverage,
+    totalReviews,
+    brand,
     stock,
   } = product || {};
 
@@ -58,9 +59,8 @@ const HorizontalProductCard = ({ product }: Props) => {
     }
   }
 
-  const brandName =
-    typeof brandInfo === 'object' && brandInfo?.name ? brandInfo.name : 'No Brand';
-  const isStockOut = stock === 0;
+  const brandName = brand?.name || 'No Brand';
+  const isStockOut = (stock ?? 0) === 0;
 
   return (
     <Link
@@ -107,9 +107,9 @@ const HorizontalProductCard = ({ product }: Props) => {
 
         {/* Rating */}
         <div className="flex items-center gap-1.5 text-xs text-slate-500 my-1">
-          <span>{ratings?.average ? Number(ratings.average).toFixed(0) : '0'}</span>
+          <span>{ratingsAverage ? Number(ratingsAverage).toFixed(0) : '0'}</span>
           <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-          <span>{ratings?.totalReviews || 0}</span>
+          <span>{totalReviews || 0}</span>
         </div>
 
         {/* Price & Discount */}

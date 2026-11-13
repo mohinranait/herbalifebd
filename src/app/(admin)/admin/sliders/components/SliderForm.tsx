@@ -51,8 +51,8 @@ export default function SliderForm({
   const onSubmit = async (data: TSliderInput) => {
 
     try {
-      if (previousData?._id) {
-        await updateSlider({ payload: data, id: previousData?._id }).unwrap();
+      if (previousData?.id) {
+        await updateSlider({ payload: data, id: previousData?.id }).unwrap();
       } else {
 
         await createSlider(data).unwrap();

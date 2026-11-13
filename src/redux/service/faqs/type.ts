@@ -1,5 +1,5 @@
 export interface IFaq {
-  _id: string
+  id: string
   title: string
   contents: string[]
   priority: number

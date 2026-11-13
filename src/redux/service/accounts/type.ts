@@ -1,7 +1,7 @@
 import type { ProfitReport } from "@/lib/profit-report";
 
 export interface IExpense {
-  _id: string;
+  id: string;
   title: string;
   category?: string;
   amount: number;

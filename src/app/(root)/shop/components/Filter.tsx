@@ -65,13 +65,13 @@ export function FilterSidebar({
             {brands.map((brand, i) => (
               <div key={i} className="flex items-center gap-2.5">
                 <Checkbox
-                  id={`brand-${brand._id}`}
-                  checked={selectedBrands.includes(brand?._id.toString())}
-                  onCheckedChange={() => toggleBrand(brand?._id.toString())}
+                  id={`brand-${brand.id}`}
+                  checked={selectedBrands.includes(brand?.id.toString())}
+                  onCheckedChange={() => toggleBrand(brand?.id.toString())}
                   className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
                 />
                 <Label
-                  htmlFor={`brand-${brand._id}`}
+                  htmlFor={`brand-${brand.id}`}
                   className="flex items-center gap-2 cursor-pointer font-medium text-xs sm:text-sm text-slate-700 hover:text-orange-600 transition-colors"
                 >
                   {brand.logo && (

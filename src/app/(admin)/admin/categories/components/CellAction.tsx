@@ -30,7 +30,7 @@ const CellAction = ({ data, type }: Props) => {
   // Soft delete
   const softDelete = async () => {
     try {
-      await softDeleteCategory({ id: data._id, payload: { isDelete: true } }).unwrap();
+      await softDeleteCategory({ id: data.id, payload: { isDelete: true } }).unwrap();
       toast.success("Successfully");
       setIsDeleteOpen(false);
     } catch (error) {
@@ -42,7 +42,7 @@ const CellAction = ({ data, type }: Props) => {
   // hard delete
   const hardDelete = async () => {
     try {
-      await deleteCategory(data?._id).unwrap();
+      await deleteCategory(data?.id).unwrap();
       toast.success("Deleted successfully");
       setIsDeleteOpen(false);
     } catch (error) {

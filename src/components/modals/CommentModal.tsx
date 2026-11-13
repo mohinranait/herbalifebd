@@ -25,7 +25,7 @@ const CommentModal = () => {
   const [updateComment, {isLoading: updateLoading}] = useUpdateCommentMutation()
   // console.log({commentModalOpen});
   
-  const {data:getComments, isLoading: getCommentLoading} = useGetCommentByProductIdQuery({ productId:commentModalOpen?.pId || '1', params: `accessMode=auth&userId=${user?._id}`}, {skip: !commentModalOpen?.pId})
+  const {data:getComments, isLoading: getCommentLoading} = useGetCommentByProductIdQuery({ productId:commentModalOpen?.pId || '1', params: `accessMode=auth&userId=${user?.id}`}, {skip: !commentModalOpen?.pId})
   const comments = getComments?.data;
 
   const dispatch = useAppDispatch();
@@ -61,7 +61,7 @@ const CommentModal = () => {
 
       if (comments && comments?.length > 0) {
         // Update existing comment
-        await updateComment({payload: reviewData,id: comments[0]._id});
+        await updateComment({payload: reviewData,id: comments[0].id});
         toast.success("Review updated successfully!");
       } else {
         await placeNewComment(reviewData);
@@ -117,7 +117,7 @@ const CommentModal = () => {
               <h3 className="font-medium text-lg">Your Review</h3>
               {comments?.map((cmt) => (
                 <div
-                  key={cmt._id}
+                  key={cmt.id}
                   className="p-4 bg-card rounded-lg border space-y-2"
                 >
                   <div className="flex items-center gap-2">

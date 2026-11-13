@@ -13,7 +13,7 @@ const ImageCard = ({ media }: Props) => {
 
   const handleDelete = async () => {
     try {
-      await deleteMedia(media._id).unwrap()
+      await deleteMedia(media.id).unwrap()
       toast.success("Delete Successfull")
     } catch (err: any) {
 

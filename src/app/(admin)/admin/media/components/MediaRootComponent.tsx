@@ -31,7 +31,7 @@ const MediaRootComponent = () => {
           <TabsContent value="all-media">
             <div className="grid grid-cols-2 mb-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {
-                medias?.map((img) => <ImageCard key={img._id} media={img} />)
+                medias?.map((img) => <ImageCard key={img.id} media={img} />)
               }
             </div>
             <Pagination

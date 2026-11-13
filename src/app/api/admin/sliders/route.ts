@@ -1,6 +1,5 @@
 import { sliderSchema } from "@/components/validations/slider";
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -44,7 +43,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: formatMongoCompat(sliders),
+      data: sliders,
       meta: {
         total,
         page,
@@ -93,7 +92,7 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         message: "Slider created successfully",
-        data: formatMongoCompat(slider),
+        data: slider,
       },
       { status: 201 }
     );

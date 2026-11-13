@@ -1,7 +1,7 @@
 import { IMetaPagination } from "@/types/common.type"
 
 export interface IContact {
-  _id: string
+  id: string
   fullName: string
   email: string
   phone: string

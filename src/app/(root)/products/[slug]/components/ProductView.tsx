@@ -43,8 +43,8 @@ const ProductView = ({ product }: Props) => {
   const [activeTab, setActiveTab] = useState<'details' | 'reviews'>('details');
 
   const { data: getComments } = useGetCommentByProductIdQuery(
-    { productId: product?._id || '1', params: 'accessMode=public' },
-    { skip: !product?._id }
+    { productId: product?.id || '1', params: 'accessMode=public' },
+    { skip: !product?.id }
   );
   const reviews = getComments?.data || [];
 
@@ -327,6 +327,11 @@ const ProductView = ({ product }: Props) => {
   };
 
   const handleAddToCart = (action: 'cart' | 'order' = 'cart') => {
+    if (stock <= 0) {
+      toast.error('দুঃখিত, এই পণ্যটি বর্তমানে স্টকে নেই');
+      return;
+    }
+
     if (!areAllAttributesSelected()) {
       toast.error('অনুগ্রহ করে ভ্যারিয়েন্ট সিলেক্ট করুন');
       return;
@@ -340,7 +345,7 @@ const ProductView = ({ product }: Props) => {
     }
 
     const cartItem: ICartItem = {
-      productId: product._id,
+      productId: product.id,
       productName: product.name,
       productSlug: product?.slug,
       sku: sku || 'N/A',
@@ -350,8 +355,8 @@ const ProductView = ({ product }: Props) => {
       salePrice: offerPrice,
       productImage: images[0],
       selectedVariants: Object.keys(selectedVariantsObj).length > 0 ? selectedVariantsObj : undefined,
-      variationId: currentVariation?._id || currentVariation?.id || null,
-      freeShipping: product?.shipping?.isFreeShipping,
+      variationId: currentVariation?.id || null,
+      freeShipping: Boolean(product?.isFreeShipping),
     };
 
     dispatch(addToCart({ cart: cartItem }));
@@ -384,7 +389,7 @@ const ProductView = ({ product }: Props) => {
   const avgRating =
     reviews.length > 0
       ? reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
-      : product.ratings?.average || 0;
+      : product.ratingsAverage || 0;
 
   const ratings = [5, 4, 3, 2, 1].map((star) => {
     const totalReviews = reviews.filter((st) => st.rating === star).length;
@@ -429,7 +434,7 @@ const ProductView = ({ product }: Props) => {
         {/* Brand Tag & SKU */}
         <div className="flex items-center justify-between text-xs sm:text-sm">
           <span className="font-semibold text-[#d97706]">
-            {product.brandInfo?.name || 'No Brand'}
+            {product.brand?.name || 'No Brand'}
           </span>
           {currentVariation?.sku && (
             <span className="text-xs text-slate-400 font-mono bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
@@ -450,7 +455,7 @@ const ProductView = ({ product }: Props) => {
               <Star
                 key={i}
                 className={`w-3.5 h-3.5 ${
-                  i < Math.floor(product.ratings.average || 5)
+                  i < Math.floor(product.ratingsAverage || 5)
                     ? 'fill-amber-400 text-amber-400'
                     : 'fill-slate-200 text-slate-300'
                 }`}
@@ -459,12 +464,12 @@ const ProductView = ({ product }: Props) => {
           </div>
 
           <span className="font-semibold text-slate-700">
-            {product.ratings.average ? product.ratings.average.toFixed(1) : '5.0'}
+            {product.ratingsAverage ? product.ratingsAverage.toFixed(1) : '5.0'}
           </span>
 
           <span className="text-slate-300">|</span>
 
-          <span>{product.ratings.totalReviews || 0} রেটিং</span>
+          <span>{product.totalReviews || 0} রেটিং</span>
 
           <span className="text-slate-300">|</span>
 
@@ -576,7 +581,7 @@ const ProductView = ({ product }: Props) => {
 
                 return (
                   <button
-                    key={v._id || v.id || v.name}
+                    key={v.id || v.name}
                     type="button"
                     onClick={() => setSelectedVariation(v)}
                     className={`px-4 py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all border cursor-pointer flex items-center gap-2 ${
@@ -690,8 +695,8 @@ const ProductView = ({ product }: Props) => {
             <RequestQuote
               image={images[0] || product?.gallery?.[0]}
               title={product?.name}
-              productId={product?._id}
-              sku={currentVariation?.sku}
+              productId={product?.id}
+              sku={currentVariation?.sku ?? undefined}
               price={offerPrice}
             />
           </div>
@@ -715,7 +720,7 @@ const ProductView = ({ product }: Props) => {
           </div>
 
           {/* Free Shipping Highlight if applicable */}
-          {product?.shipping?.isFreeShipping && (
+          {product?.isFreeShipping && (
             <div className="mx-4 mt-3 p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-semibold flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>এই পণ্যটিতে ডেলিভারি সম্পূর্ণ ফ্রি!</span>

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -27,7 +26,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     }
 
     return NextResponse.json(
-      { success: true, data: formatMongoCompat(faq) },
+      { success: true, data: faq },
       { status: 200 }
     );
   } catch (error: any) {
@@ -69,7 +68,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const updated = await db.orm.public.Faq.first({ id });
 
     return NextResponse.json(
-      { success: true, data: formatMongoCompat(updated) },
+      { success: true, data: updated },
       { status: 200 }
     );
   } catch (error: any) {

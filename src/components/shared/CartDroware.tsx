@@ -149,6 +149,7 @@ const EcommerceCartDrawer = () => {
                           removeToCart({
                             productId: item.productId,
                             sku: item.sku,
+                            variationId: item.variationId,
                           })
                         )
                       }
@@ -181,6 +182,7 @@ const EcommerceCartDrawer = () => {
                             updateCartQuantity({
                               productId: item.productId,
                               sku: item.sku,
+                              variationId: item.variationId,
                               quantity: item.quantity - 1,
                             })
                           )
@@ -201,6 +203,7 @@ const EcommerceCartDrawer = () => {
                             updateCartQuantity({
                               productId: item.productId,
                               sku: item.sku,
+                              variationId: item.variationId,
                               quantity: item.quantity + 1,
                             })
                           )

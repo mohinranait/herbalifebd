@@ -111,7 +111,7 @@ export default function MyOrders() {
                     </div>
                   </div>
 
-                  <Link href={`/dashboard/orders/${order._id}`}>
+                  <Link href={`/dashboard/orders/${order.id}`}>
                     <Button variant="outline" size="sm" className="border-slate-200 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-600 rounded-xl text-xs font-semibold h-9">
                       <Eye className="h-3.5 w-3.5 mr-1.5" />
                       বিস্তারিত দেখুন

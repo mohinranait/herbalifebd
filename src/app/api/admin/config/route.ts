@@ -1,5 +1,4 @@
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET: Fetch the configuration
@@ -15,7 +14,7 @@ export async function GET() {
     }
 
     return NextResponse.json(
-      { success: true, data: formatMongoCompat(config) },
+      { success: true, data: config },
       { status: 200 }
     );
   } catch (error: any) {
@@ -72,7 +71,7 @@ export async function POST(request: NextRequest) {
       {
         success: true,
         message: "Configuration updated successfully",
-        data: formatMongoCompat(config),
+        data: config,
         timestamp: new Date().toISOString(),
       },
       { status: 200 }

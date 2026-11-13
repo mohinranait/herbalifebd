@@ -8,32 +8,32 @@ type Props = {
 const OrderStatusSection = ({ status = "PENDING" }: Props) => {
   const orderStatusArr = [
     {
-      _id: "1",
+      id: "1",
       label: "PENDING",
       title: "Pending",
     },
     {
-      _id: "2",
+      id: "2",
       label: "PROCESSING",
       title: "Processing",
     },
     {
-      _id: "3",
+      id: "3",
       label: "SHIPPED",
       title: "Shipped",
     },
     {
-      _id: "4",
+      id: "4",
       label: "DELIVERED",
       title: "Delivered",
     },
     {
-      _id: "5",
+      id: "5",
       label: "CANCELLED",
       title: "Cancelled",
     },
     {
-      _id: "6",
+      id: "6",
       label: "RETURNED",
       title: "Returned",
     },

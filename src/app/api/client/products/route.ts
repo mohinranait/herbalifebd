@@ -14,10 +14,11 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json(data);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Failed to fetch products";
     console.error("Client product GET error:", error);
     return NextResponse.json(
-      { success: false, error: error?.message || "Failed to fetch products" },
+      { success: false, error: message },
       { status: 500 }
     );
   }

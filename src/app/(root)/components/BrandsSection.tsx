@@ -55,11 +55,11 @@ const BrandsSection = () => {
               <CarouselContent className="-ml-3 md:-ml-4">
                 {brands.map((brand) => (
                   <CarouselItem
-                    key={brand._id}
+                    key={brand.id}
                     className="pl-3 md:pl-4 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6"
                   >
                     <Link
-                      href={`/shop?brand=${brand._id}`}
+                      href={`/shop?brand=${brand.id}`}
                       className="group/brand bg-white border border-slate-200 hover:border-orange-400 rounded-xl p-4 flex flex-col items-center justify-center h-28 transition-all duration-300"
                     >
                       {brand.logo ? (

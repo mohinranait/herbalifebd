@@ -13,7 +13,7 @@ export interface IUserBase {
 
 
 export interface IUser extends IUserBase {
-  _id: string;
+  id: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -1,6 +1,5 @@
 import { getAuthUser } from "@/lib/authUser";
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { normalizeRating, recalculateProductRating } from "@/lib/comment-utils";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -46,12 +45,12 @@ export async function GET(req: NextRequest) {
 
     const formattedComments = comments.map((c: any) => ({
       ...c,
-      productId: c.product ? formatMongoCompat(c.product) : c.productId,
-      userId: c.user ? formatMongoCompat(c.user) : c.userId,
+      productId: c.product ? c.product : c.productId,
+      userId: c.user ? c.user : c.userId,
     }));
 
     return NextResponse.json({
-      data: formatMongoCompat(formattedComments),
+      data: formattedComments,
       meta: {
         total,
         page,
@@ -112,7 +111,7 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         message: "Successfully",
-        data: formatMongoCompat(savedComment),
+        data: savedComment,
       },
       { status: 201 }
     );

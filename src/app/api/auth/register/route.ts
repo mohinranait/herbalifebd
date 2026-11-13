@@ -1,5 +1,4 @@
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
@@ -44,7 +43,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "User registered successfully",
-      data: formatMongoCompat(user),
+      data: user,
     });
   } catch (error: any) {
     console.error("Register error:", error);

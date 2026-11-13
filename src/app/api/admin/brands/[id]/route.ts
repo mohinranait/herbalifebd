@@ -1,6 +1,5 @@
 import { brandSchema } from "@/components/validations/brands";
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(
@@ -70,7 +69,7 @@ export async function PATCH(
       {
         success: true,
         message: "Brand updated successfully",
-        data: formatMongoCompat(updated),
+        data: updated,
       },
       { status: 200 }
     );
@@ -110,7 +109,7 @@ export async function DELETE(
       {
         success: true,
         message: "Brand deleted successfully",
-        data: formatMongoCompat(brand),
+        data: brand,
       },
       { status: 200 }
     );

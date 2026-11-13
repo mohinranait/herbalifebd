@@ -7,7 +7,6 @@ import { v2 as cloudinary } from "cloudinary";
 import { nanoid } from "nanoid";
 import { applyCloudinaryConfig } from "@/lib/loudinary";
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { getAuthUser } from "@/lib/authUser";
 
 export async function POST(request: NextRequest) {
@@ -49,7 +48,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       payload: {
-        file: formatMongoCompat(newMedia),
+        file: newMedia,
       },
     });
   } catch (error) {
@@ -93,7 +92,7 @@ export async function GET(request: NextRequest) {
       success: true,
       statusCode: 200,
       data: {
-        medias: formatMongoCompat(medias),
+        medias: medias,
       },
       meta: {
         total,

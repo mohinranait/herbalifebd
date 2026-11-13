@@ -20,7 +20,7 @@ export interface ISliderBase {
 
 
 export interface ISlider extends ISliderBase {
-  _id: string;
+  id: string;
   createdAt: string;
   updatedAt: string;
 }

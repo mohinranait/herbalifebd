@@ -28,8 +28,9 @@ const ProductCard = ({ product }: Props) => {
     productType,
     gallery,
     variations,
-    ratings,
-    brandInfo
+    ratingsAverage,
+    totalReviews,
+    brand
   } = product || {};
 
   // Find product image
@@ -51,7 +52,7 @@ const ProductCard = ({ product }: Props) => {
 
     const sku = 'N/A';
     const cartItem: ICartItem = {
-      productId: product._id,
+      productId: product.id,
       productName: product.name,
       productSlug: product?.slug,
       sku: sku || 'N/A',
@@ -60,7 +61,7 @@ const ProductCard = ({ product }: Props) => {
       price: (singleProductPrice?.price || 0),
       salePrice: (singleProductPrice?.finalPrice || 0),
       productImage: productImage,
-      freeShipping: product?.shipping?.isFreeShipping
+      freeShipping: Boolean(product?.isFreeShipping)
     };
 
     dispatch(addToCart({ cart: cartItem }));
@@ -82,10 +83,10 @@ const ProductCard = ({ product }: Props) => {
     } else if (productType === 'variant') {
       if (variations?.length) {
         const offerVariant = variations.find(
-          (variant) => variant?.offerPriceFixed > 0
+          (variant) => (variant?.offerPriceFixed ?? 0) > 0
         );
         if (offerVariant) {
-          discount = offerVariant?.offerPriceFixed;
+          discount = offerVariant.offerPriceFixed ?? 0;
         }
       }
     }
@@ -109,7 +110,7 @@ const ProductCard = ({ product }: Props) => {
     }
     if (variations?.length) {
       for (const variant of variations) {
-        if (variant?.images?.length > 1 && variant.images[1]) {
+        if (variant?.images && variant.images.length > 1 && variant.images[1]) {
           return variant.images[1];
         }
         if (variant?.images?.length && variant.images[0]) {
@@ -121,12 +122,12 @@ const ProductCard = ({ product }: Props) => {
   };
 
   const hoverImage = getHoverImage();
-  const isStockOut = product.stock === 0;
+  const isStockOut = (product.stock ?? 0) === 0;
   const discountAmount = getOfferAmount();
   const discountPercent = getDiscountPercentage();
 
   // Brand name or fallback
-  const brandName = typeof brandInfo === 'object' && brandInfo?.name ? brandInfo.name : 'No Brand';
+  const brandName = brand?.name || 'No Brand';
 
   return (
     <div className="group relative bg-white border border-slate-200 hover:border-orange-400 rounded-xl overflow-hidden p-2 flex flex-col justify-between transition-all duration-300 h-full">
@@ -192,9 +193,9 @@ const ProductCard = ({ product }: Props) => {
           </span>
           <div className="flex items-center gap-1 text-[11px] text-slate-500">
             <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-            <span>{ratings?.average ? Number(ratings.average).toFixed(1) : "5.0"}</span>
+            <span>{ratingsAverage ? Number(ratingsAverage).toFixed(1) : "5.0"}</span>
             <span className="text-slate-300">|</span>
-            <span className="text-[10px] text-slate-400">{ratings?.totalReviews || 0}</span>
+            <span className="text-[10px] text-slate-400">{totalReviews || 0}</span>
           </div>
         </div>
 

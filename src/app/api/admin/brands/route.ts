@@ -1,6 +1,5 @@
 import { brandSchema } from "@/components/validations/brands";
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -45,7 +44,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "Success",
-      data: formatMongoCompat(brands),
+      data: brands,
       meta: {
         total,
         page,
@@ -106,7 +105,7 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         message: "Brand created successfully",
-        data: formatMongoCompat(brand),
+        data: brand,
       },
       { status: 201 }
     );

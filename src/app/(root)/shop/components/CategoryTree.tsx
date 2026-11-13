@@ -14,14 +14,14 @@ interface CategoryNodeProps {
 
 function isDescendantActive(id: string, all: ICategory[], activeCat: string): boolean {
   if (activeCat === id) return true;
-  return all.filter((c) => c.parentId === id).some((c) => isDescendantActive(c._id, all, activeCat));
+  return all.filter((c) => c.parentId === id).some((c) => isDescendantActive(c.id, all, activeCat));
 }
 
 function CategoryNode({ node, all, activeCat, handleCatChange }: CategoryNodeProps) {
-  const children = all.filter((c) => c.parentId === node._id);
+  const children = all.filter((c) => c.parentId === node.id);
   const hasKids = children.length > 0;
-  const isActive = activeCat === node._id;
-  const [open, setOpen] = useState(() => isDescendantActive(node._id, all, activeCat));
+  const isActive = activeCat === node.id;
+  const [open, setOpen] = useState(() => isDescendantActive(node.id, all, activeCat));
 
   return (
     <div>
@@ -46,7 +46,7 @@ function CategoryNode({ node, all, activeCat, handleCatChange }: CategoryNodePro
         {/* Category button */}
         <button
           type="button"
-          onClick={() => handleCatChange(isActive ? "" : node._id)}
+          onClick={() => handleCatChange(isActive ? "" : node.id)}
           className={cn(
             "flex-1 flex items-center justify-between text-left px-2.5 py-1.5 rounded-lg text-xs sm:text-sm transition-colors cursor-pointer",
             isActive
@@ -68,7 +68,7 @@ function CategoryNode({ node, all, activeCat, handleCatChange }: CategoryNodePro
         <div className="ml-5 pl-2 border-l border-slate-200 mt-0.5 space-y-0.5">
           {children.map((child) => (
             <CategoryNode
-              key={child._id}
+              key={child.id}
               node={child}
               all={all}
               activeCat={activeCat}
@@ -121,7 +121,7 @@ export function CategoryTree({
 
         {roots.map((root) => (
           <CategoryNode
-            key={root._id}
+            key={root.id}
             node={root}
             all={categories}
             activeCat={activeCat}

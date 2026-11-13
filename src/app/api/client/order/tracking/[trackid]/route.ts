@@ -2,6 +2,11 @@ import { db } from "@/prisma/db";
 import { formatOrderForUI } from "@/lib/order-utils";
 import { NextResponse } from "next/server";
 
+type PrismaIncludeQuery = {
+  select: (...fields: string[]) => unknown;
+  all: () => unknown;
+};
+
 // Get order by tracking Number
 export async function GET(
   req: Request,
@@ -12,8 +17,8 @@ export async function GET(
 
     const order = await db.orm.public.Order
       .where({ trackingNumber: trackid })
-      .include("items", (i: any) => i.all())
-      .include("user", (u: any) => u.select("id", "name", "phone"))
+      .include("items", (i: PrismaIncludeQuery) => i.all())
+      .include("user", (u: PrismaIncludeQuery) => u.select("id", "name", "phone"))
       .first();
 
     if (!order) {
@@ -21,9 +26,10 @@ export async function GET(
     }
 
     return NextResponse.json({ data: formatOrderForUI(order) });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
-      { success: false, error: error?.message || "Internal server error" },
+      { success: false, error: message },
       { status: 500 }
     );
   }

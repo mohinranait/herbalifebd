@@ -15,12 +15,12 @@ export function buildCategoryTree(
 
   // First pass: create map with children array
   categories.forEach((cat) => {
-    map.set(cat._id, { ...cat, children: [] });
+    map.set(cat.id, { ...cat, children: [] });
   });
 
   // Second pass: attach children to parents
   categories.forEach((cat) => {
-    const node = map.get(cat._id)!;
+    const node = map.get(cat.id)!;
     if (cat.parentId && map.has(cat.parentId)) {
       map.get(cat.parentId)!.children.push(node);
     } else {

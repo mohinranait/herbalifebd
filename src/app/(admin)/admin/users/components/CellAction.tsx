@@ -26,7 +26,7 @@ const CellAction = ({ data,  }: Props) => {
   // hard delete
   const hardDelete = async () => {
     try {
-      await deleteUser(data?._id).unwrap();
+      await deleteUser(data?.id).unwrap();
       toast.success("Deleted successfully");
       setIsDeleteOpen(false);
     } catch (error) {
@@ -45,7 +45,7 @@ const CellAction = ({ data,  }: Props) => {
     <div className="flex justify-end items-center gap-2">
 
       {/* EDIT */}
-      <Link href={`/admin/users/${data?._id}`}>
+      <Link href={`/admin/users/${data?.id}`}>
         <Button
           size="icon"
           variant="outline"

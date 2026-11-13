@@ -45,8 +45,8 @@ export default function MediaModal({
     }
 
     setSelectedImages((prev) => {
-      const exists = prev.find((img) => img._id === image._id);
-      if (exists) return prev.filter((img) => img._id !== image._id);
+      const exists = prev.find((img) => img.id === image.id);
+      if (exists) return prev.filter((img) => img.id !== image.id);
       return [...prev, image];
     });
   };
@@ -90,12 +90,12 @@ export default function MediaModal({
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-2 lg:gap-4 pb-6">
                   {medias.map((item) => {
                     const isActive = selectedImages.some(
-                      (img) => img._id === item._id
+                      (img) => img.id === item.id
                     );
 
                     return (
                       <div
-                        key={item._id}
+                        key={item.id}
                         onClick={() => onSelected(item)}
                         className={`relative rounded-xl bg-gray-100 dark:bg-gray-800 border transition-all cursor-pointer overflow-hidden group ${isActive
                             ? "ring-2 ring-primary border-primary"

@@ -231,7 +231,7 @@ const AppSidebar = ({ state }: PropTypes) => {
                 <DropdownMenuGroup>
                   <DropdownMenuItem asChild className="cursor-pointer rounded-lg text-xs py-2">
                     <Link
-                      href={`/admin/users/${user?._id}`}
+                      href={`/admin/users/${user?.id}`}
                       onClick={() => setOpenMobile(false)}
                       className="flex items-center gap-2"
                     >

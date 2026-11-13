@@ -64,8 +64,8 @@ export default function AttributeForm({ isOpen, setIsOpen, previousData }: Props
 
   const onSubmit = async (data: TAttributeInput) => {
     try {
-      if (previousData?._id) {
-        await updateAttribute({ payload: data, id: previousData?._id }).unwrap();
+      if (previousData?.id) {
+        await updateAttribute({ payload: data, id: previousData?.id }).unwrap();
       } else {
         await createAttribute(data).unwrap();
       }

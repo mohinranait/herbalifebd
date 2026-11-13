@@ -63,7 +63,7 @@ const ExpenseList = () => {
   const handleDelete = async () => {
     if (!toDelete) return;
     try {
-      await deleteExpense(toDelete._id).unwrap();
+      await deleteExpense(toDelete.id).unwrap();
       toast.success("Expense deleted");
       setToDelete(null);
     } catch (error: any) {
@@ -121,7 +121,7 @@ const ExpenseList = () => {
                 </TableHeader>
                 <TableBody>
                   {expenses.map((expense) => (
-                    <TableRow key={expense._id}>
+                    <TableRow key={expense.id}>
                       <TableCell className="whitespace-nowrap">{formatDay(expense.date)}</TableCell>
                       <TableCell>
                         <p className="font-medium">{expense.title}</p>

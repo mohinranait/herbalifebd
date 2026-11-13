@@ -7,10 +7,11 @@ export async function GET(req: NextRequest) {
     const data = await getBrandsByCategory(category || null);
 
     return NextResponse.json(data);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Failed to fetch brands";
     console.error("Brands by category error:", error);
     return NextResponse.json(
-      { success: false, error: error?.message || "Failed to fetch brands" },
+      { success: false, error: message },
       { status: 500 }
     );
   }

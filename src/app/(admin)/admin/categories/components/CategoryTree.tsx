@@ -34,7 +34,7 @@ export function CategoryTree({ data, type }: CategoryTreeProps) {
     <div className="rounded-md border bg-card p-2">
       {data.map((node) => (
         <CategoryNode
-          key={node._id}
+          key={node.id}
           node={node}
           depth={0}
           type={type}
@@ -66,7 +66,7 @@ function CategoryNode({
   const softDelete = async (isDelete: boolean) => {
     try {
       await softDeleteCategory({
-        id: node._id,
+        id: node.id,
         payload: { isDelete },
       }).unwrap();
       toast.success("Successfully");
@@ -80,7 +80,7 @@ function CategoryNode({
   // Hard delete (permanent)
   const hardDelete = async () => {
     try {
-      await deleteCategory(node._id).unwrap();
+      await deleteCategory(node.id).unwrap();
       toast.success("Deleted successfully");
       setIsDeleteOpen(false);
     } catch (error) {
@@ -197,7 +197,7 @@ function CategoryNode({
         <div>
           {node.children.map((child) => (
             <CategoryNode
-              key={child._id}
+              key={child.id}
               node={child}
               depth={depth + 1}
               type={type}

@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 import { JWT_SECRET, NODE_ENV } from "@/lib/envSecret";
 import { loginSchema } from "@/components/validations/auth.schema";
 import { db } from "@/prisma/db";
-import { formatMongoCompat } from "@/lib/prisma";
 
 const jwtSecret = JWT_SECRET as string;
 const productionMode = NODE_ENV;
@@ -47,7 +46,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { password: _, ...userWithoutPassword } = userDoc as any;
-    const user = formatMongoCompat(userWithoutPassword);
+    const user = userWithoutPassword;
 
     const token = jwt.sign(
       { id: user.id, phone: user.phone, role: user.role },

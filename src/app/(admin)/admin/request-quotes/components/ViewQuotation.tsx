@@ -77,7 +77,7 @@ export default function ViewQuotation({
                   <div className="flex flex-wrap gap-2 mt-3">
                     {previousData.productId.selectedAttributes?.map((attr) => (
                       <div
-                        key={attr._id}
+                        key={attr.attributeId}
                         className="px-3 py-1 rounded-full bg-muted text-xs"
                       >
                         <span className="font-medium">

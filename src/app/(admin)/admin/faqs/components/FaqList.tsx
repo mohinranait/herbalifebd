@@ -27,7 +27,7 @@ import { useDeleteFaqMutation, useGetFaqsQuery } from '@/redux/service/faqs';
 import handleErrors, { ErrorResponse } from '@/lib/handle-error';
 
 interface FAQ {
-  _id: string;
+  id: string;
   title: string;
   contents: string[];
   priority: number;
@@ -64,7 +64,7 @@ export function FaqList() {
     if (!faqToDelete) return;
 
     try {
-      await deleteFaq(faqToDelete._id).unwrap()
+      await deleteFaq(faqToDelete.id).unwrap()
       setDeleteDialogOpen(false);
       setFaqToDelete(null);
        toast.success( 'Delete FAQ');
@@ -126,7 +126,7 @@ export function FaqList() {
               </TableHeader>
               <TableBody>
                 {faqs?.map((faq) => (
-                  <TableRow key={faq._id}>
+                  <TableRow key={faq.id}>
                     <TableCell className="font-medium">{faq.title}</TableCell>
 
                     <TableCell className="text-center">{faq.priority}</TableCell>

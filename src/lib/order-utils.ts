@@ -3,7 +3,6 @@ export function formatOrderForUI(order: any) {
 
   return {
     ...order,
-    _id: order.id,
     pricing: {
       subtotal: order.subtotal ?? 0,
       discount: order.discount ?? 0,
@@ -28,14 +27,10 @@ export function formatOrderForUI(order: any) {
       paidAt: order.paidAt ?? null,
     },
     items: Array.isArray(order.items)
-      ? order.items.map((item: any) => ({
-          ...item,
-          _id: item.id,
-        }))
+      ? order.items
       : [],
     userId: order.user
       ? {
-          _id: order.user.id,
           id: order.user.id,
           name: order.user.name,
           phone: order.user.phone,

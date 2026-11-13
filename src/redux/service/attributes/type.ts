@@ -17,7 +17,7 @@ export interface IAttributeBase {
 
 
 export interface IAttribute extends IAttributeBase {
-  _id: string;
+  id: string;
   createdAt: string;
   updatedAt: string;
 }

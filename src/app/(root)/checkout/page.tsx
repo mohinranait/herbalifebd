@@ -134,7 +134,7 @@ function CheckoutPageContent() {
     }
     const payload = {
       ...data,
-      userId: user?._id || null,
+      userId: user?.id || null,
       items: carts,
       pricing: {
         shippingCharge: deliveryCharge,

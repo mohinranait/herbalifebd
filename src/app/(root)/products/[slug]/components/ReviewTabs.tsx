@@ -16,15 +16,15 @@ type Props = {
 const ReviewTabs = ({ product }: Props) => {
   const { data: appSetting } = useGetAppSettingQuery();
   const { data: getComments } = useGetCommentByProductIdQuery(
-    { productId: product?._id || '1', params: 'accessMode=public' },
-    { skip: !product?._id }
+    { productId: product?.id || '1', params: 'accessMode=public' },
+    { skip: !product?.id }
   );
   const reviews = getComments?.data || [];
 
   const avgRating =
     reviews.length > 0
       ? reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
-      : product.ratings?.average || 0;
+      : product.ratingsAverage || 0;
 
   const ratings = [5, 4, 3, 2, 1].map((star) => {
     const totalReviews = reviews.filter((st) => st.rating === star).length;

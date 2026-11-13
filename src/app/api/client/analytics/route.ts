@@ -61,12 +61,13 @@ export async function GET() {
         ordersByStatus,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Internal server error";
     console.error("Customer analytics error:", error);
     return NextResponse.json(
       {
         success: false,
-        message: error?.message || "Internal server error",
+        message,
       },
       {
         status: 500,

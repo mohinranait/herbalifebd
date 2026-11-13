@@ -30,6 +30,8 @@ model Category {
   createdAt   temporal.CreatedAt
   updatedAt   temporal.UpdatedAt
 
+  @@index([status, isDelete, priority])
+  @@index([parentId])
   @@map("categories")
 }
 
@@ -46,6 +48,8 @@ model Brand {
   createdAt   temporal.CreatedAt
   updatedAt   temporal.UpdatedAt
 
+  @@index([status, isDelete, priority])
+  @@index([status, isDelete, createdAt])
   @@map("brands")
 }
 
@@ -61,6 +65,7 @@ model Attribute {
   createdAt   temporal.CreatedAt
   updatedAt   temporal.UpdatedAt
 
+  @@index([status, isDelete])
   @@map("attributes")
 }
 
@@ -104,10 +109,14 @@ model Product {
   createdAt          temporal.CreatedAt
   updatedAt          temporal.UpdatedAt
 
-  @@index([isFeatured])
-  @@index([totalSold])
-  @@index([categoryId])
-  @@index([brandId])
+  @@index([status, isDelete, createdAt])
+  @@index([status, isDelete, categoryId, createdAt])
+  @@index([status, isDelete, brandId, createdAt])
+  @@index([status, isDelete, isFeatured, createdAt])
+  @@index([status, isDelete, isFreeShipping, createdAt])
+  @@index([status, isDelete, totalSold])
+  @@index([status, isDelete, ratingsAverage])
+  @@index([status, isDelete, price])
   @@map("products")
 }
 
@@ -134,6 +143,8 @@ model ProductVariation {
   createdAt         temporal.CreatedAt
   updatedAt         temporal.UpdatedAt
 
+  @@index([productId])
+  @@index([productId, isDefault])
   @@map("product_variations")
 }
 
@@ -179,8 +190,9 @@ model Order {
   createdAt             temporal.CreatedAt
   updatedAt             temporal.UpdatedAt
 
-  @@index([userId])
-  @@index([orderStatus])
+  @@index([userId, createdAt])
+  @@index([orderStatus, isDeleted, createdAt])
+  @@index([isDeleted, createdAt])
   @@map("orders")
 }
 
@@ -203,6 +215,8 @@ model OrderItem {
   categoryName     String?
   brandName        String?
 
+  @@index([orderId])
+  @@index([productId])
   @@map("order_items")
 }
 
@@ -219,6 +233,8 @@ model Comment {
   createdAt  temporal.CreatedAt
   updatedAt  temporal.UpdatedAt
 
+  @@index([productId, isApproved, createdAt])
+  @@index([userId, createdAt])
   @@map("comments")
 }
 
@@ -260,6 +276,8 @@ model Media {
   createdAt  temporal.CreatedAt
   updatedAt  temporal.UpdatedAt
 
+  @@index([createdAt])
+  @@index([public_id])
   @@map("media")
 }
 
@@ -277,6 +295,7 @@ model Slider {
   createdAt   temporal.CreatedAt
   updatedAt   temporal.UpdatedAt
 
+  @@index([status, isDelete, order])
   @@map("sliders")
 }
 
@@ -295,6 +314,8 @@ model RequestQuote {
   createdAt      temporal.CreatedAt
   updatedAt      temporal.UpdatedAt
 
+  @@index([productId])
+  @@index([createdAt])
   @@map("request_quotes")
 }
 

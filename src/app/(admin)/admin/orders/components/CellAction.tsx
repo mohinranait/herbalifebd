@@ -25,14 +25,14 @@ const CellAction = ({ data }: Props) => {
 
   const handleEditAndRestore = () => {
 
-    router.push(`/admin/order/${data?._id}?mode=edit`)
+    router.push(`/admin/order/${data?.id}?mode=edit`)
 
   }
 
 
   const handleDelete = async () => {
     try {
-      await deleteProduct(data?._id).unwrap();
+      await deleteProduct(data?.id).unwrap();
       toast.success("Deleted successfully");
       setIsDeleteOpen(false);
     } catch (error) {
@@ -46,7 +46,7 @@ const CellAction = ({ data }: Props) => {
       {/* <Switch checked={data.status} /> */}
 
 
-      <Link href={`/admin/order/${data?._id}`}>
+      <Link href={`/admin/order/${data?.id}`}>
         <Button
           size="icon"
           variant="outline"
