@@ -160,7 +160,7 @@ const ProductCard = ({ product }: Props) => {
                 src={productImage}
                 alt={name || "Product"}
                 className={cn(
-                  "absolute inset-0 w-full h-full object-cover p-1 transition-all duration-500",
+                  "absolute inset-0 w-full h-full rounded-lg object-cover p-1 transition-all duration-500",
                   hoverImage && hoverImage !== productImage ? "group-hover:opacity-0 scale-100 group-hover:scale-105" : "group-hover:scale-105"
                 )}
               />
@@ -170,7 +170,7 @@ const ProductCard = ({ product }: Props) => {
                   height={500}
                   src={hoverImage}
                   alt={name || "Product Hover"}
-                  className="absolute inset-0 w-full h-full object-cover p-1 transition-all duration-500 opacity-0 group-hover:opacity-100 scale-105 group-hover:scale-100"
+                  className="absolute inset-0 w-full h-full rounded-lg object-cover p-1 transition-all duration-500 opacity-0 group-hover:opacity-100 scale-105 group-hover:scale-100"
                 />
               )}
             </>

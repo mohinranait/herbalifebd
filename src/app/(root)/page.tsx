@@ -9,6 +9,7 @@ import BrandsSection from './components/BrandsSection';
 import { getAppSetting } from '@/lib/get-app-setting';
 import { Suspense } from 'react';
 import ProductsSkeleton from './components/ProductsSkeleton';
+import HorizontalProductsSkeleton from './components/HorizontalProductsSkeleton';
 
 const HomePage = async () => {
   const appSetting = await getAppSetting();
@@ -39,11 +40,10 @@ const HomePage = async () => {
       <section className="py-4 md:py-6">
         <SectionHeader
           title="শপে নতুন এসেছে"
-          icon="✨"
           seeAllLink="/shop?type=new"
           seeAllText="সবগুলো দেখুন"
         />
-        <Suspense fallback={<ProductsSkeleton />}>
+        <Suspense fallback={<HorizontalProductsSkeleton />}>
           <NewProducts />
         </Suspense>
       </section>
