@@ -30,12 +30,14 @@ import ViewHTML from '@/components/shared/html-viewer/HTMLView';
 import StarRating from '@/components/shared/StarRating';
 import { formatDistanceToNow } from 'date-fns';
 import { useGetCommentByProductIdQuery } from '@/redux/service/comments';
+import { useTranslation } from '@/hooks/useTranslation';
 
 type Props = {
   product: IProduct;
 };
 
 const ProductView = ({ product }: Props) => {
+  const t = useTranslation();
   const router = useRouter();
   const { data: appSetting } = useGetAppSettingQuery();
   const dispatch = useAppDispatch();
@@ -655,7 +657,7 @@ const ProductView = ({ product }: Props) => {
               className="w-full h-11 sm:h-12 rounded-lg font-bold text-xs sm:text-sm md:text-base text-white bg-[#00afc7] hover:bg-[#009bb0] transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span>কার্টে রাখুন</span>
+              <span>{t["add-to-cart"] || "কার্টে রাখুন"}</span>
             </button>
 
             {/* Buy Now Button (Vibrant Orange) */}
@@ -666,13 +668,13 @@ const ProductView = ({ product }: Props) => {
               className="w-full h-11 sm:h-12 rounded-lg font-bold text-xs sm:text-sm md:text-base text-white bg-[#ff7a00] hover:bg-[#e66e00] transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Zap className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
-              <span>এখনই কিনুন</span>
+              <span>{t["buy-now"] || "এখনই কিনুন"}</span>
             </button>
           </div>
 
           {/* Hotline Call Box */}
           <div className="text-center pt-1 text-xs sm:text-sm text-slate-700 flex flex-wrap items-center justify-center gap-2 font-medium">
-            <span className="font-semibold text-slate-800">কল করুন</span>
+            <span className="font-semibold text-slate-800">{t["call-now-label"] || "কল করুন"}</span>
             <a
               href="tel:01602094399"
               className="inline-flex items-center gap-1 text-[#ff7a00] font-bold hover:underline"
@@ -680,7 +682,7 @@ const ProductView = ({ product }: Props) => {
               <Phone className="w-3.5 h-3.5 fill-current" />
               <span>01602094399</span>
             </a>
-            <span className="text-slate-400">অথবা</span>
+            <span className="text-slate-400">{t["or-text"] || "অথবা"}</span>
             <a
               href="tel:01315118595"
               className="inline-flex items-center gap-1 text-[#ff7a00] font-bold hover:underline"
@@ -779,7 +781,7 @@ const ProductView = ({ product }: Props) => {
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            প্রডাক্টের বিবরণ
+            {t["product-description-tab"] || "প্রডাক্টের বিবরণ"}
           </button>
 
           {appSetting?.features?.review && (
@@ -792,7 +794,7 @@ const ProductView = ({ product }: Props) => {
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              রেটিং ও রিভিউ ({reviews?.length || 0})
+              {t["ratings-and-reviews"] || "রেটিং ও রিভিউ"} ({reviews?.length || 0})
             </button>
           )}
         </div>

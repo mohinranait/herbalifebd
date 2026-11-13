@@ -24,6 +24,8 @@ const modelToCollectionMap: Record<string, string> = {
   AppSetting: "app_settings",
   SiteContent: "site_contents",
   AppConfig: "app_configs",
+  Expense: "expenses",
+  SiteTranslation: "site_translations",
 };
 
 const rawUrl = process.env["DATABASE_URL"] || process.env["NEXT_PUBLIC_DB_URL"];
@@ -104,6 +106,7 @@ const COLLECTION_CACHE_TAGS: Record<string, string[]> = {
   sliders: ["sf:sliders"],
   app_settings: ["sf:setting"],
   comments: ["sf:comments"],
+  site_translations: ["sf:translations"],
 };
 
 async function expireStorefrontCache(collName: string) {

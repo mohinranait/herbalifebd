@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { TCheckoutForm } from "@/components/validations/checkout";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type Props = {
   deliveryCharge: number;
@@ -19,6 +20,7 @@ type Props = {
 };
 
 const RightBar = ({ deliveryCharge, selectedMethod, form, isLoading }: Props) => {
+  const t = useTranslation();
   const { register, formState: { errors } } = form;
   const { carts, totalItems, subtotal } = useAppSelector((state) => state.cart);
   const discount = 0;
@@ -29,10 +31,10 @@ const RightBar = ({ deliveryCharge, selectedMethod, form, isLoading }: Props) =>
       {/* Title */}
       <div className="flex items-center justify-between pb-3 border-b border-slate-100">
         <h3 className="font-bold text-base md:text-lg text-slate-800">
-          অর্ডার সারাংশ
+          {t["order-summary-title"] || "অর্ডার সারাংশ"}
         </h3>
         <span className="text-xs font-semibold bg-orange-50 text-orange-600 px-2.5 py-0.5 rounded-full border border-orange-200">
-          {totalItems} টি পণ্য
+          {totalItems} {t["item-unit"] || "টি পণ্য"}
         </span>
       </div>
 
@@ -81,17 +83,17 @@ const RightBar = ({ deliveryCharge, selectedMethod, form, isLoading }: Props) =>
       {/* Pricing Breakdown */}
       <div className="space-y-2.5 text-xs md:text-sm">
         <div className="flex justify-between text-slate-600">
-          <span>মোট পণ্যের মূল্য</span>
+          <span>{t["subtotal-text"] || "মোট পণ্যের মূল্য"}</span>
           <span className="font-semibold text-slate-800">
             {CURRENCY} {subtotal.toLocaleString("en-IN")}
           </span>
         </div>
 
         <div className="flex justify-between text-slate-600">
-          <span>ডেলিভারি চার্জ</span>
+          <span>{t["delivery-charge-text"] || "ডেলিভারি চার্জ"}</span>
           {deliveryCharge === 0 ? (
             <span className="font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded text-xs">
-              ফ্রি
+              {t["free-text"] || "ফ্রি"}
             </span>
           ) : (
             <span className="font-semibold text-slate-800">
@@ -102,7 +104,7 @@ const RightBar = ({ deliveryCharge, selectedMethod, form, isLoading }: Props) =>
 
         {discount > 0 && (
           <div className="flex justify-between text-slate-600">
-            <span>ডিসকাউন্ট</span>
+            <span>{t["discount-text"] || "ডিসকাউন্ট"}</span>
             <span className="text-rose-600 font-semibold">-৳ {discount.toFixed(2)}</span>
           </div>
         )}
@@ -111,7 +113,7 @@ const RightBar = ({ deliveryCharge, selectedMethod, form, isLoading }: Props) =>
 
         <div className="flex justify-between items-baseline pt-1">
           <span className="text-sm md:text-base font-bold text-slate-800">
-            সর্বমোট প্রদেয়
+            {t["grand-total-payable"] || "সর্বমোট প্রদেয়"}
           </span>
           <span className="text-xl md:text-2xl font-bold text-rose-600">
             {CURRENCY} {total.toLocaleString("en-IN")}
@@ -155,13 +157,17 @@ const RightBar = ({ deliveryCharge, selectedMethod, form, isLoading }: Props) =>
         className="w-full h-12 md:h-13 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-[0.99] text-white font-bold text-sm md:text-base rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2"
       >
         <ShieldCheck className="w-5 h-5" />
-        <span>{isLoading ? "অর্ডার প্রসেস হচ্ছে..." : "অর্ডার কনফার্ম করুন"}</span>
+        <span>
+          {isLoading
+            ? t["order-processing-btn"] || "অর্ডার প্রসেস হচ্ছে..."
+            : t["place-order-btn"] || "অর্ডার কনফার্ম করুন"}
+        </span>
       </Button>
 
       {/* Trust Seal */}
       <p className="text-center text-[11px] text-slate-500 flex items-center justify-center gap-1.5 pt-1">
         <Lock className="w-3.5 h-3.5 text-emerald-600" />
-        <span>১০০% নিরাপদ ও এনক্রিপ্টেড চেকআউট</span>
+        <span>{t["checkout-trust-seal"] || "১০০% নিরাপদ ও এনক্রিপ্টেড চেকআউট"}</span>
       </p>
     </div>
   );

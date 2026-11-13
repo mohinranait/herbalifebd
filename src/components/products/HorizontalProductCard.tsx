@@ -9,6 +9,7 @@ import { CURRENCY } from '@/lib/envSecret';
 import findProductImage from '@/hooks/useFindProductImage';
 import { getSingleProductPrice } from '@/hooks/useGerPrice';
 import { showTwoDecimals } from '@/lib/helpers';
+import { useTranslation } from '@/hooks/useTranslation';
 
 type Props = {
   product: IProduct;
@@ -19,6 +20,7 @@ const formatPrice = (price: number) => {
 };
 
 const HorizontalProductCard = ({ product }: Props) => {
+  const t = useTranslation();
   const {
     name,
     slug,
@@ -82,7 +84,7 @@ const HorizontalProductCard = ({ product }: Props) => {
         {isStockOut && (
           <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center">
             <span className="bg-white text-slate-900 text-[10px] font-bold px-2 py-0.5 rounded">
-              স্টক নেই
+              {t["out-of-stock"] || "স্টক নেই"}
             </span>
           </div>
         )}

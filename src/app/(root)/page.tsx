@@ -59,9 +59,11 @@ const HomePage = async () => {
       <section className="py-4 md:py-6">
         <SectionHeader
           title="বেস্ট সেলিং প্রডাক্ট"
+          titleKey="best-selling-title"
           icon="🔥"
           seeAllLink="/shop?type=bestselling"
           seeAllText="সবগুলো দেখুন"
+          seeAllKey="see-all-text"
         />
         <Suspense fallback={<ProductsSkeleton />}>
           <TopSelling />
@@ -72,8 +74,10 @@ const HomePage = async () => {
       <section className="py-4 md:py-6">
         <SectionHeader
           title="শপে নতুন এসেছে"
+          titleKey="shop-new-asca"
           seeAllLink="/shop?type=new"
           seeAllText="সবগুলো দেখুন"
+          seeAllKey="see-all-text"
         />
         <Suspense fallback={<HorizontalProductsSkeleton />}>
           <NewProducts />
@@ -84,9 +88,11 @@ const HomePage = async () => {
       <section className="py-4 md:py-6">
         <SectionHeader
           title="সকল প্রডাক্ট"
+          titleKey="all-products-title"
           icon="📦"
           seeAllLink="/shop"
           seeAllText="সবগুলো দেখুন"
+          seeAllKey="see-all-text"
         />
         <Suspense fallback={<ProductsSkeleton />}>
           <AllProducts />

@@ -14,12 +14,14 @@ import { toast } from "sonner";
 import findProductImage from "@/hooks/useFindProductImage";
 import { getPriceRange, getSingleProductPrice } from "@/hooks/useGerPrice";
 import { showTwoDecimals } from "@/lib/helpers";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type Props = {
   product: IProduct;
 };
 
 const ProductCard = ({ product }: Props) => {
+  const t = useTranslation();
   const dispatch = useAppDispatch();
   const router = useRouter();
   const {
@@ -71,7 +73,7 @@ const ProductCard = ({ product }: Props) => {
       return;
     }
 
-    toast.success("পণ্যটি কার্টে যোগ করা হয়েছে");
+    toast.success(t["added-to-cart-success"] || "পণ্যটি কার্টে যোগ করা হয়েছে");
   };
 
   const getOfferAmount = (): number => {
@@ -139,13 +141,13 @@ const ProductCard = ({ product }: Props) => {
           </span>
         ) : discountAmount > 0 ? (
           <span className="bg-rose-500 text-white font-bold text-[10px] md:text-xs px-2 py-0.5 rounded-md">
-            ৳{discountAmount} ছাড়
+            ৳{discountAmount} {t["discount-text"] || "ছাড়"}
           </span>
         ) : <span />}
 
         {isStockOut && (
           <span className="bg-slate-900/80 text-white text-[10px] md:text-xs font-semibold px-2 py-0.5 rounded-md backdrop-blur-xs">
-            স্টক আউট
+            {t["out-of-stock"] || "স্টক আউট"}
           </span>
         )}
       </div>
@@ -240,7 +242,7 @@ const ProductCard = ({ product }: Props) => {
           type="button"
           disabled={isStockOut}
           onClick={(e) => handleAddToCart('cart', e)}
-          title="কার্টে যোগ করুন"
+          title={t["add-to-cart"] || "কার্টে যোগ করুন"}
           className="h-9 w-9 rounded-lg border border-orange-400 text-orange-500 hover:bg-orange-50 active:bg-orange-100 flex items-center justify-center transition-all shrink-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           <ShoppingCart className="w-4 h-4" />
@@ -253,7 +255,7 @@ const ProductCard = ({ product }: Props) => {
           onClick={(e) => handleAddToCart('buy', e)}
           className="flex-1 h-9 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:opacity-95 text-white font-medium text-xs md:text-sm rounded-lg flex items-center justify-center gap-1.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
-          <span>এখনই কিনুন</span>
+          <span>{t["buy-now"] || "এখনই কিনুন"}</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useAppSelector } from "@/hooks/hooks";
 
 /**
@@ -16,5 +16,14 @@ export default function PersistReady({
   fallback?: ReactNode;
 }) {
   const rehydrated = useAppSelector((state) => (state.cart as any)?._persist?.rehydrated === true);
-  return <>{rehydrated ? children : fallback}</>;
+
+  // The server always renders the fallback. A part of the page that hydrates
+  // late (inside a <Suspense>) may find the cart already restored; it still has
+  // to render the fallback first, or React reports a hydration mismatch.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  return <>{mounted && rehydrated ? children : fallback}</>;
 }

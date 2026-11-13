@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 import { removeToCart, updateCartQuantity, clearShoppingCarts } from "@/redux/features/cartSlice";
 import { CURRENCY } from "@/lib/envSecret";
 import PersistReady from "@/providers/PersistReady";
+import { useTranslation } from "@/hooks/useTranslation";
 
 // The cart lives in localStorage: wait for it instead of flashing "cart is empty"
 export default function CartPage() {
@@ -20,6 +21,7 @@ export default function CartPage() {
 }
 
 function CartPageContent() {
+  const t = useTranslation();
   const { carts, subtotal, totalItems } = useAppSelector((state) => state.cart);
   const dispatch = useAppDispatch();
 
@@ -34,14 +36,14 @@ function CartPageContent() {
             <ShoppingCart className="w-10 h-10" />
           </div>
           <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-2">
-            আপনার কার্ট বর্তমানে খালি
+            {t["cart-empty-title"] || "আপনার কার্ট বর্তমানে খালি"}
           </h2>
           <p className="text-sm text-slate-500 mb-6 leading-relaxed">
-            আপনার কার্টে এখনও কোনো পণ্য যোগ করা হয়নি। পছন্দের পণ্য খুঁজে এখনই শপিং শুরু করুন।
+            {t["cart-empty-desc"] || "আপনার কার্টে এখনও কোনো পণ্য যোগ করা হয়নি। পছন্দের পণ্য খুঁজে এখনই শপিং শুরু করুন।"}
           </p>
           <Link href="/shop">
             <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl h-11 px-8">
-              কেনাকাটা শুরু করুন
+              {t["start-shopping"] || "কেনাকাটা শুরু করুন"}
             </Button>
           </Link>
         </div>
@@ -56,19 +58,19 @@ function CartPageContent() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-200">
           <div>
             <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-800 tracking-tight flex items-center gap-2.5">
-              <span>শপিং কার্ট</span>
+              <span>{t["cart-title"] || "শপিং কার্ট"}</span>
               <span className="text-xs font-semibold bg-orange-100 text-orange-600 px-2.5 py-0.5 rounded-full border border-orange-200">
-                {totalItems} টি পণ্য
+                {totalItems} {t["cart-item-count"] || "টি পণ্য"}
               </span>
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              পণ্যগুলো যাচাই করে চেকআউট পেজে এগিয়ে যান
+              {t["cart-page-subtitle"] || "পণ্যগুলো যাচাই করে চেকআউট পেজে এগিয়ে যান"}
             </p>
           </div>
 
           <Link href="/checkout">
             <Button className="bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold text-xs sm:text-sm rounded-xl h-10 sm:h-11 px-6 flex items-center gap-2">
-              <span>চেকআউট করুন</span>
+              <span>{t["checkout-now-btn"] || "চেকআউট করুন"}</span>
               <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>
@@ -199,7 +201,7 @@ function CartPageContent() {
                 className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-700 hover:text-orange-600 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>আরও কেনাকাটা করুন</span>
+                <span>{t["continue-shopping"] || "আরও কেনাকাটা করুন"}</span>
               </Link>
 
               <button
@@ -207,7 +209,7 @@ function CartPageContent() {
                 onClick={() => dispatch(clearShoppingCarts())}
                 className="text-xs sm:text-sm text-slate-400 hover:text-rose-600 transition-colors cursor-pointer"
               >
-                সব খালি করুন
+                {t["clear-all-cart"] || "সব খালি করুন"}
               </button>
             </div>
           </div>
@@ -216,21 +218,21 @@ function CartPageContent() {
           <div className="lg:col-span-1">
             <div className="bg-white border border-slate-200 rounded-xl p-5 sticky top-20 space-y-4">
               <h2 className="text-base sm:text-lg font-bold text-slate-800 pb-3 border-b border-slate-100">
-                অর্ডার সারাংশ
+                {t["order-summary-title"] || "অর্ডার সারাংশ"}
               </h2>
 
               <div className="space-y-3 text-xs sm:text-sm">
                 <div className="flex justify-between text-slate-600">
-                  <span>মোট পণ্যের মূল্য</span>
+                  <span>{t["subtotal-text"] || "মোট পণ্যের মূল্য"}</span>
                   <span className="font-semibold text-slate-800">
                     {CURRENCY} {subtotal.toLocaleString("en-IN")}
                   </span>
                 </div>
 
                 <div className="flex justify-between text-slate-600">
-                  <span>ডেলিভারি চার্জ</span>
+                  <span>{t["delivery-charge-text"] || "ডেলিভারি চার্জ"}</span>
                   <span className="font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded text-xs">
-                    চেকআউটে নির্ধারিত হবে
+                    {t["delivery-charge-note"] || "চেকআউটে নির্ধারিত হবে"}
                   </span>
                 </div>
               </div>
@@ -239,7 +241,7 @@ function CartPageContent() {
 
               <div className="flex justify-between items-baseline pt-1">
                 <span className="text-sm sm:text-base font-bold text-slate-800">
-                  সর্বমোট
+                  {t["grand-total-text"] || "সর্বমোট"}
                 </span>
                 <span className="text-xl sm:text-2xl font-bold text-rose-600">
                   {CURRENCY} {total.toLocaleString("en-IN")}
@@ -248,7 +250,7 @@ function CartPageContent() {
 
               <Link href="/checkout" className="block pt-2">
                 <Button className="w-full h-12 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-sm sm:text-base rounded-xl transition-all cursor-pointer">
-                  <span>চেকআউট পেজে এগিয়ে যান</span>
+                  <span>{t["proceed-to-checkout"] || "চেকআউট পেজে এগিয়ে যান"}</span>
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
@@ -257,11 +259,11 @@ function CartPageContent() {
               <div className="pt-3 border-t border-slate-100 space-y-2 text-xs text-slate-500">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>১০০% নিরাপদ ও সুরক্ষিত পেমেন্ট</span>
+                  <span>{t["secure-payment"] || "১০০% নিরাপদ ও সুরক্ষিত পেমেন্ট"}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Truck className="w-4 h-4 text-orange-500 shrink-0" />
-                  <span>সারাদেশে ক্যাশ অন ডেলিভারি সুবিধা</span>
+                  <span>{t["delivery-guarantee"] || "সারাদেশে ক্যাশ অন ডেলিভারি সুবিধা"}</span>
                 </div>
               </div>
             </div>

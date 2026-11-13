@@ -22,9 +22,9 @@ import type {
 } from '@prisma/orm-mongo/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'0953e0dc46b9ee9e02e316f38d301b10f380e245073735ad77a30513cc33e91f'>;
+  StorageHashBase<'c3ad9d0bb12f7bd2254269288a0e06a167dbaff9f5701447ee3cf6e247abd63d'>;
 export type ExecutionHash =
-  ExecutionHashBase<'934e0cf7069d775533d99fda6afaece27282b0517b9613f26df335d196131318'>;
+  ExecutionHashBase<'1c0dfe3a6c1d3bb5477e1a8299b10be2909cb255a024b7bea56b2702c745892c'>;
 export type ProfileHash =
   ProfileHashBase<'251b3ce23f6c9f561892e7c1af9d2cc941a13d64ba1aa7226b90036b09568cc3'>;
 
@@ -375,6 +375,13 @@ export namespace Models {
     whyChooseUs: FieldOutputTypes['__unbound__']['SiteContent']['whyChooseUs'];
     readonly [RelationKeys]?: never;
   };
+  export type unbound_SiteTranslation = {
+    content: FieldOutputTypes['__unbound__']['SiteTranslation']['content'];
+    createdAt: FieldOutputTypes['__unbound__']['SiteTranslation']['createdAt'];
+    id: FieldOutputTypes['__unbound__']['SiteTranslation']['id'];
+    updatedAt: FieldOutputTypes['__unbound__']['SiteTranslation']['updatedAt'];
+    readonly [RelationKeys]?: never;
+  };
   export type unbound_Slider = {
     buttonName: FieldOutputTypes['__unbound__']['Slider']['buttonName'];
     createdAt: FieldOutputTypes['__unbound__']['Slider']['createdAt'];
@@ -421,6 +428,7 @@ export declare const models: {
     ProductVariation: Models.unbound_ProductVariation;
     RequestQuote: Models.unbound_RequestQuote;
     SiteContent: Models.unbound_SiteContent;
+    SiteTranslation: Models.unbound_SiteTranslation;
     Slider: Models.unbound_Slider;
     User: Models.unbound_User;
   };
@@ -1450,6 +1458,36 @@ type ContractBase = Omit<
                 readonly validationLevel: 'strict';
               };
             };
+            readonly site_translations: {
+              readonly kind: 'mongo-collection';
+              readonly validator: {
+                readonly jsonSchema: {
+                  readonly additionalProperties: false;
+                  readonly bsonType: 'object';
+                  readonly properties: {
+                    readonly _id: { readonly bsonType: 'objectId' };
+                    readonly content: {
+                      readonly bsonType: readonly [
+                        'object',
+                        'array',
+                        'string',
+                        'double',
+                        'int',
+                        'long',
+                        'bool',
+                        'null',
+                      ];
+                    };
+                    readonly createdAt: { readonly bsonType: 'date' };
+                    readonly updatedAt: { readonly bsonType: 'date' };
+                  };
+                  readonly required: readonly ['_id', 'createdAt', 'updatedAt'];
+                };
+                readonly kind: 'mongo-validator';
+                readonly validationAction: 'error';
+                readonly validationLevel: 'strict';
+              };
+            };
             readonly sliders: {
               readonly indexes: readonly [
                 {
@@ -1588,6 +1626,10 @@ type ContractBase = Omit<
     readonly site_contents: {
       readonly namespace: '__unbound__' & NamespaceId;
       readonly model: 'SiteContent';
+    };
+    readonly site_translations: {
+      readonly namespace: '__unbound__' & NamespaceId;
+      readonly model: 'SiteTranslation';
     };
     readonly sliders: { readonly namespace: '__unbound__' & NamespaceId; readonly model: 'Slider' };
     readonly users: { readonly namespace: '__unbound__' & NamespaceId; readonly model: 'User' };
@@ -3060,6 +3102,36 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly SiteTranslation: {
+            readonly fields: {
+              readonly content: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/json@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/date@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/objectId@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/date@1' };
+              };
+            };
+            readonly relations: Record<string, never>;
+            readonly storage: {
+              readonly collection: 'site_translations';
+              readonly fields: {
+                readonly content: { readonly field: 'content' };
+                readonly createdAt: { readonly field: 'createdAt' };
+                readonly id: { readonly field: '_id' };
+                readonly updatedAt: { readonly field: 'updatedAt' };
+              };
+            };
+          };
           readonly Slider: {
             readonly fields: {
               readonly buttonName: {
@@ -3494,6 +3566,23 @@ type ContractBase = Omit<
           readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
           readonly ref: {
             readonly entry: 'site_contents';
+            readonly field: 'updatedAt';
+            readonly namespace: '__unbound__';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'site_translations';
+            readonly field: 'createdAt';
+            readonly namespace: '__unbound__';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'site_translations';
             readonly field: 'updatedAt';
             readonly namespace: '__unbound__';
           };

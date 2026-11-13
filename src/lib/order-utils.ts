@@ -29,12 +29,7 @@ export function formatOrderForUI(order: any) {
     items: Array.isArray(order.items)
       ? order.items
       : [],
-    userId: order.user
-      ? {
-          id: order.user.id,
-          name: order.user.name,
-          phone: order.user.phone,
-        }
-      : order.userId,
+    // `userId` stays the id it is in the database; the loaded customer
+    // (id, name, phone) is on `user`, exactly as `.include("user")` returns it.
   };
 }

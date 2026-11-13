@@ -22,8 +22,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { PRODUCT_IMG } from "@/lib/default-import";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function Header() {
+  const t = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const mobileInputRef = useRef<HTMLInputElement>(null);
@@ -122,7 +124,7 @@ export default function Header() {
                   className="flex items-center gap-1 hover:text-orange-600 transition-colors"
                 >
                   <Zap className="w-4 h-4 text-orange-500 fill-orange-500" />
-                  <span>ফ্ল্যাশ সেল</span>
+                  <span>{t["flash-sale"] || "ফ্ল্যাশ সেল"}</span>
                 </Link>
 
                 {/* All Products */}
@@ -130,7 +132,7 @@ export default function Header() {
                   href="/shop"
                   className="hover:text-orange-600 transition-colors"
                 >
-                  সকল প্রডাক্ট
+                  {t["all-products-title"] || "সকল প্রডাক্ট"}
                 </Link>
               </nav>
             </div>
@@ -143,7 +145,7 @@ export default function Header() {
               <div className="flex w-full items-center">
                 <input
                   type="text"
-                  placeholder="আপনার কাঙ্খিত পণ্য সার্চ করুন..."
+                  placeholder={t["search-placeholder"] || "আপনার কাঙ্খিত পণ্য সার্চ করুন..."}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full h-10 px-3.5 text-sm bg-slate-50 border border-slate-200 border-r-0 rounded-l-lg focus:outline-hidden focus:bg-white focus:border-orange-500 text-slate-800 placeholder:text-slate-400 transition-colors"
@@ -223,7 +225,7 @@ export default function Header() {
                 <input
                   ref={mobileInputRef}
                   type="text"
-                  placeholder="আপনার কাঙ্খিত পণ্য সার্চ করুন..."
+                  placeholder={t["search-placeholder"] || "আপনার কাঙ্খিত পণ্য সার্চ করুন..."}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full h-10 pl-3.5 pr-20 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-hidden focus:bg-white focus:border-orange-500 text-slate-800 placeholder:text-slate-400 transition-all shadow-xs"

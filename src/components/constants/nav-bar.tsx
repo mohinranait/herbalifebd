@@ -23,6 +23,7 @@ import {
   Tag,
   FileText,
   SlidersHorizontal,
+  Languages,
 } from "lucide-react";
 
 export interface SidebarNavItem {
@@ -235,6 +236,11 @@ export const sidebarData: SidebarData = {
           title: "Site Content",
           url: "/admin/site-content",
           icon: Webhook,
+        },
+        {
+          title: "Site Translations",
+          url: "/admin/translations",
+          icon: Languages,
         },
       ],
     },

@@ -98,6 +98,9 @@ export interface IOrder {
 
   userId?: string | null;
 
+  /** The customer, when the order was placed by a logged-in user */
+  user?: { id: string; name: string; phone: string } | null;
+
   items: IOrderItem[];
 
   totalItems: number;

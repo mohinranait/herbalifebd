@@ -22,8 +22,10 @@ import {
 
 import { CURRENCY } from "@/lib/envSecret";
 import Link from "next/link";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const EcommerceCartDrawer = () => {
+  const t = useTranslation();
   const { open, carts, subtotal, totalItems } = useAppSelector(
     (state) => state.cart
   );
@@ -55,9 +57,9 @@ const EcommerceCartDrawer = () => {
               <div className="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center">
                 <ShoppingBag className="h-4 w-4" />
               </div>
-              <span>শপিং কার্ট</span>
+              <span>{t["cart-title"] || "শপিং কার্ট"}</span>
               <span className="text-xs font-semibold bg-orange-50 text-orange-600 px-2 py-0.5 rounded-full border border-orange-200">
-                {totalItems} টি পণ্য
+                {totalItems} {t["cart-item-count"] || "টি পণ্য"}
               </span>
             </DrawerTitle>
 
@@ -76,7 +78,7 @@ const EcommerceCartDrawer = () => {
         {carts.length > 0 && (
           <div className="bg-orange-50/70 border-b border-orange-100/80 px-5 py-2.5 flex items-center gap-2 text-xs font-medium text-orange-800 shrink-0">
             <Truck className="w-4 h-4 text-orange-600 shrink-0" />
-            <span>সারাদেশে দ্রুত ক্যাশ অন হোম ডেলিভারি সুবিধা রয়েছে</span>
+            <span>{t["delivery-guarantee"] || "সারাদেশে দ্রুত ক্যাশ অন হোম ডেলিভারি সুবিধা রয়েছে"}</span>
           </div>
         )}
 
@@ -89,16 +91,16 @@ const EcommerceCartDrawer = () => {
               </div>
 
               <h3 className="text-lg md:text-xl font-bold text-slate-800">
-                আপনার কার্ট খালি রয়েছে
+                {t["cart-empty-title"] || "আপনার কার্ট খালি রয়েছে"}
               </h3>
 
               <p className="mt-1.5 max-w-xs text-xs md:text-sm text-slate-500 leading-relaxed">
-                পছন্দের পণ্যগুলো কার্টে যোগ করে সহজেই অর্ডার সম্পন্ন করুন।
+                {t["cart-empty-desc"] || "পছন্দের পণ্যগুলো কার্টে যোগ করে সহজেই অর্ডার সম্পন্ন করুন।"}
               </p>
 
               <Link href="/shop" onClick={handleToggleCart} className="mt-6">
                 <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs md:text-sm h-10 px-6 rounded-xl">
-                  কেনাকাটা শুরু করুন
+                  {t["start-shopping"] || "কেনাকাটা শুরু করুন"}
                 </Button>
               </Link>
             </div>
@@ -226,7 +228,7 @@ const EcommerceCartDrawer = () => {
             <div className="space-y-3">
               {/* Subtotal */}
               <div className="flex items-center justify-between text-xs md:text-sm text-slate-600">
-                <span>মোট পণ্যের মূল্য:</span>
+                <span>{t["subtotal-text"] || "মোট পণ্যের মূল্য"}:</span>
                 <span className="font-semibold text-slate-800">
                   {CURRENCY} {subtotal}
                 </span>
@@ -234,9 +236,9 @@ const EcommerceCartDrawer = () => {
 
               {/* Shipping info */}
               <div className="flex items-center justify-between text-xs md:text-sm text-slate-600">
-                <span>ডেলিভারি চার্জ:</span>
+                <span>{t["delivery-charge-text"] || "ডেলিভারি চার্জ"}:</span>
                 <span className="font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded text-[11px]">
-                  চেকআউট পেজে নির্ধারণ হবে
+                  {t["delivery-charge-note"] || "চেকআউট পেজে নির্ধারণ হবে"}
                 </span>
               </div>
 
@@ -245,7 +247,7 @@ const EcommerceCartDrawer = () => {
               {/* Grand Total */}
               <div className="flex items-center justify-between">
                 <span className="text-sm md:text-base font-bold text-slate-800">
-                  সর্বমোট:
+                  {t["grand-total-text"] || "সর্বমোট"}:
                 </span>
                 <span className="text-lg md:text-xl font-bold text-rose-600">
                   {CURRENCY} {subtotal}
@@ -260,7 +262,7 @@ const EcommerceCartDrawer = () => {
                   onClick={handleToggleCart}
                   className="w-full bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-[0.99] text-white font-bold h-11 md:h-12 rounded-xl flex items-center justify-center gap-2 text-xs md:text-sm cursor-pointer"
                 >
-                  <span>অর্ডার কনফার্ম করতে এগিয়ে যান</span>
+                  <span>{t["proceed-to-checkout"] || "অর্ডার কনফার্ম করতে এগিয়ে যান"}</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
 
@@ -270,7 +272,7 @@ const EcommerceCartDrawer = () => {
                   onClick={handleToggleCart}
                   className="w-full border border-slate-200 hover:border-orange-300 hover:bg-orange-50/40 text-slate-700 font-medium h-9 md:h-10 rounded-xl flex items-center justify-center text-xs md:text-sm transition-colors"
                 >
-                  কার্ট পেজ দেখুন
+                  {t["view-cart-btn"] || "কার্ট পেজ দেখুন"}
                 </Link>
               </div>
             </div>

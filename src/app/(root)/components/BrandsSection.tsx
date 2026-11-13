@@ -25,9 +25,11 @@ const BrandsSection = () => {
     <section className="py-6 md:py-8">
       <SectionHeader
         title="আমাদের ব্র্যান্ড সমূহ"
+        titleKey="brands-section-title"
         icon="🏷️"
         seeAllLink="/brands"
         seeAllText="সবগুলো দেখুন"
+        seeAllKey="see-all-text"
       />
 
       <div className="container mx-auto px-2 md:px-4">

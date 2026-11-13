@@ -14,6 +14,7 @@ import { PRODUCT_IMG } from "@/lib/default-import";
 import { ICategory } from '@/redux/service/categories/type';
 import Link from 'next/link';
 import { ArrowRight, LayoutGrid } from 'lucide-react';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const CategoryCard = ({ category }: { category: ICategory }) => {
   return (
@@ -43,6 +44,7 @@ const CategoryCard = ({ category }: { category: ICategory }) => {
 };
 
 const SliderCategories = () => {
+  const t = useTranslation();
   const { data, isLoading } = useGetCategoriesQuery('page=1&limit=20&isDelete=false&status=true');
   const categories = data?.data || [];
   const finalCategories = categories?.filter((cat) => cat.thumbnail) || categories;
@@ -60,10 +62,10 @@ const SliderCategories = () => {
               </div>
               <div>
                 <h2 className="text-lg md:text-2xl font-bold text-slate-800 tracking-tight">
-                  জনপ্রিয় ক্যাটাগরি
+                  {t["popular-categories-title"] || "জনপ্রিয় ক্যাটাগরি"}
                 </h2>
                 <p className="text-[11px] md:text-xs text-slate-500 hidden sm:block">
-                  পছন্দের ক্যাটাগরি অনুযায়ী সেরা পণ্য খুঁজুন
+                  {t["popular-categories-desc"] || "পছন্দের ক্যাটাগরি অনুযায়ী সেরা পণ্য খুঁজুন"}
                 </p>
               </div>
             </div>
@@ -72,7 +74,7 @@ const SliderCategories = () => {
               href="/categories"
               className="text-xs md:text-sm font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1 transition-colors"
             >
-              <span>সবগুলো দেখুন</span>
+              <span>{t["see-all-text"] || "সবগুলো দেখুন"}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>

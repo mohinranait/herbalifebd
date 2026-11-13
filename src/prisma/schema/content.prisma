@@ -71,3 +71,12 @@ model SiteContent {
 
   @@map("site_contents")
 }
+
+model SiteTranslation {
+  id        ObjectId           @id @map("_id")
+  content   Json?
+  createdAt temporal.CreatedAt
+  updatedAt temporal.UpdatedAt
+
+  @@map("site_translations")
+}
