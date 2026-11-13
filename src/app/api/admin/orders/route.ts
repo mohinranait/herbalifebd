@@ -2,22 +2,113 @@ import { NextResponse } from "next/server";
 import { db } from "@/prisma/db";
 import { formatOrderForUI } from "@/lib/order-utils";
 import { getOptionalAuthUser, isAdminUser } from "@/lib/authUser";
-import { MongoFieldFilter, MongoOrExpr } from "@prisma/orm-mongo/query-ast/execution";
+import { IOrderSummary } from "@/redux/service/orders/type";
+
+/* -------------------------------------------------------------------------- */
+/*                                    TYPES                                   */
+/* -------------------------------------------------------------------------- */
+
+type ProductRecord = {
+  id: string;
+  name: string;
+  slug: string;
+  price?: number | null;
+  discountPrice?: number | null;
+  costPrice?: number | null;
+  stock?: number | null;
+  isFreeShipping?: boolean | null;
+  productType?: string | null;
+  thumbnail?: string | null;
+  gallery?: string[] | null;
+  isDelete?: boolean | null;
+  status?: boolean | null;
+};
+
+type ProductVariationRecord = {
+  id: string;
+  productId: string;
+  name?: string | null;
+  price?: number | null;
+  offerPriceFixed?: number | null;
+  costPrice?: number | null;
+  stock?: number | null;
+  sku?: string | null;
+  images?: string[] | null;
+};
+
+type PreparedItem = {
+  product: ProductRecord;
+  variation: ProductVariationRecord | null;
+  quantity: number;
+  row: Record<string, unknown>;
+};
+
+type CreateOrderItemInput = {
+  id?: string;
+  productId?: string;
+  variationId?: string | null;
+  productName?: string;
+  productImage?: string | null;
+  sku?: string;
+  quantity: number;
+  selectedVariants?: Record<string, string>;
+  categoryName?: string;
+  brandName?: string;
+};
+
+type CreateOrderRequestBody = {
+  items?: CreateOrderItemInput[];
+  shippingAddress?: {
+    fullName?: string;
+    phone?: string;
+    address?: string;
+    postalCode?: string;
+  };
+  payment?: {
+    method?: "COD" | "BKASH" | "NAGAD";
+    status?: "PENDING" | "PAID" | "FAILED" | "REFUNDED";
+    transactionId?: string;
+  };
+  pricing?: {
+    shippingCharge?: number;
+  };
+  customerNote?: string;
+  userId?: string | null;
+  coupon?: {
+    code?: string;
+    discountAmount?: number;
+  };
+};
+
+type ShippingZone = { fee: number | string };
+
+type ShippingConfig = {
+  defaultShippingFee?: number | string;
+  shippingZones?: ShippingZone[];
+};
+
+type QueryFieldAccessor = Record<
+  string,
+  {
+    ne: (val: unknown) => unknown;
+    neq: (val: unknown) => unknown;
+    eq: (val: unknown) => unknown;
+    gte: (val: unknown) => unknown;
+    lte: (val: unknown) => unknown;
+    ilike: (val: string) => unknown;
+    like: (val: string) => unknown;
+    desc: () => unknown;
+    asc: () => unknown;
+  }
+>;
 
 /* -------------------------------------------------------------------------- */
 /*                              CREATE ORDER API                              */
 /* -------------------------------------------------------------------------- */
 
-type PreparedItem = {
-  product: any;
-  variation: any | null;
-  quantity: number;
-  row: Record<string, unknown>;
-};
-
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const body: CreateOrderRequestBody = await req.json();
 
     const { items, shippingAddress, payment, customerNote, pricing } = body;
 
@@ -39,9 +130,6 @@ export async function POST(req: Request) {
     /* ---------------------------------------------------------------------- */
     /*                     STEP 1: CHECK EVERY ITEM FIRST                     */
     /* ---------------------------------------------------------------------- */
-    // Prices and costs always come from the database, never from the request.
-    // Nothing is written until every item has passed, so a failing item cannot
-    // leave earlier items with reduced stock and no order.
 
     const prepared: PreparedItem[] = [];
     const requestedByStockKey = new Map<string, number>();
@@ -55,15 +143,15 @@ export async function POST(req: Request) {
         throw new Error(`Invalid quantity for ${cartItem.productName || "an item"}`);
       }
 
-      const product = await db.orm.public.Product.first({
+      const product = (await db.orm.public.Product.first({
         id: cartItem.productId || cartItem.id,
-      });
+      })) as ProductRecord | null;
 
       if (!product || product.isDelete || product.status === false) {
         throw new Error(`Product is not available: ${cartItem.productName || "unknown"}`);
       }
 
-      let variation: any = null;
+      let variation: ProductVariationRecord | null = null;
       let unitPrice: number;
       let unitDiscount: number;
       let unitCost: number | null = product.costPrice ?? null;
@@ -74,7 +162,10 @@ export async function POST(req: Request) {
           throw new Error(`Variation ID is required for ${product.name}`);
         }
 
-        variation = await db.orm.public.ProductVariation.first({ id: cartItem.variationId });
+        variation = (await db.orm.public.ProductVariation.first({
+          id: cartItem.variationId,
+        })) as ProductVariationRecord | null;
+
         if (!variation || String(variation.productId) !== String(product.id)) {
           throw new Error(`Variation not found for ${product.name}`);
         }
@@ -96,7 +187,6 @@ export async function POST(req: Request) {
         throw new Error(`${product.name} has no price set and cannot be ordered`);
       }
 
-      // The same product can appear in the cart more than once
       const stockKey = variation ? `v:${variation.id}` : `p:${product.id}`;
       const requestedSoFar = (requestedByStockKey.get(stockKey) || 0) + quantity;
       if (available < requestedSoFar) {
@@ -128,8 +218,6 @@ export async function POST(req: Request) {
           quantity,
           price: unitPrice,
           salePrice,
-          // Buying cost at the moment of sale, so later cost changes do not
-          // rewrite the profit of past orders
           costPrice: unitCost,
           subtotal: itemSubtotal,
           selectedVariants: cartItem.selectedVariants || null,
@@ -143,14 +231,13 @@ export async function POST(req: Request) {
     /*                                PRICING                                 */
     /* ---------------------------------------------------------------------- */
 
-    // The delivery charge must be one the shop actually offers
     let shippingCharge = 0;
     if (needsShipping) {
       const setting = await db.orm.public.AppSetting.first();
-      const shipping = (setting?.shipping as any) || {};
+      const shipping = (setting?.shipping as ShippingConfig | undefined) || {};
       const zoneFees: number[] = Array.isArray(shipping.shippingZones)
         ? shipping.shippingZones
-            .map((zone: any) => Number(zone.fee))
+            .map((zone: ShippingZone) => Number(zone.fee))
             .filter((fee: number) => Number.isFinite(fee))
         : [];
       const requestedFee = Number(pricing?.shippingCharge);
@@ -166,8 +253,6 @@ export async function POST(req: Request) {
       }
     }
 
-    // There is no coupon system yet, so a discount sent with the order is only
-    // honoured when an admin creates the order by hand.
     const requestedDiscount = Number(body.coupon?.discountAmount) || 0;
     const couponDiscount = isAdmin ? Math.min(Math.max(requestedDiscount, 0), subtotal) : 0;
     const couponCode = isAdmin ? body.coupon?.code || "" : "";
@@ -190,26 +275,28 @@ export async function POST(req: Request) {
 
     for (const { product, variation, quantity } of prepared) {
       if (variation) {
-        const freshVariation = await db.orm.public.ProductVariation.first({ id: variation.id });
+        const freshVariation = (await db.orm.public.ProductVariation.first({
+          id: variation.id,
+        })) as ProductVariationRecord | null;
         await db.orm.public.ProductVariation.where({ id: variation.id }).update({
           stock: Math.max(0, (freshVariation?.stock || 0) - quantity),
         });
       }
 
-      // Re-read so two lines for the same product do not overwrite each other
-      const freshProduct = await db.orm.public.Product.first({ id: product.id });
+      const freshProduct = (await db.orm.public.Product.first({
+        id: product.id,
+      })) as (ProductRecord & { totalSold?: number }) | null;
       await db.orm.public.Product.where({ id: product.id }).update({
         stock: Math.max(0, (freshProduct?.stock || 0) - quantity),
         totalSold: (freshProduct?.totalSold || 0) + quantity,
       });
     }
 
-    let createdOrder: any = null;
+    let createdOrder: { id: string } | null = null;
     try {
-      createdOrder = await db.orm.public.Order.create({
+      createdOrder = (await db.orm.public.Order.create({
         invoiceNumber,
         trackingNumber,
-        // A customer orders for themselves; only an admin may place an order for someone else
         userId: isAdmin ? body.userId || null : requester?.id || null,
         totalItems: prepared.length,
         totalQuantity,
@@ -225,14 +312,12 @@ export async function POST(req: Request) {
         address: shippingAddress.address,
         postalCode: shippingAddress.postalCode || "",
         paymentMethod: payment?.method || "COD",
-        // Payment is confirmed by an admin, not by the request
         paymentStatus: isAdmin ? payment?.status || "PENDING" : "PENDING",
         transactionId: payment?.transactionId || "",
         customerNote: customerNote || "",
         orderStatus: "PENDING",
-        // Must be an explicit false: the order lists filter on `isDeleted: false`
         isDeleted: false,
-      });
+      })) as { id: string };
 
       for (const { row } of prepared) {
         await db.orm.public.OrderItem.create({
@@ -241,15 +326,18 @@ export async function POST(req: Request) {
         });
       }
     } catch (orderCreationError) {
-      // Rollback stock deduction if order or item creation fails
       for (const { product, variation, quantity } of prepared) {
         if (variation) {
-          const freshVariation = await db.orm.public.ProductVariation.first({ id: variation.id });
+          const freshVariation = (await db.orm.public.ProductVariation.first({
+            id: variation.id,
+          })) as ProductVariationRecord | null;
           await db.orm.public.ProductVariation.where({ id: variation.id }).update({
             stock: (freshVariation?.stock || 0) + quantity,
           });
         }
-        const freshProduct = await db.orm.public.Product.first({ id: product.id });
+        const freshProduct = (await db.orm.public.Product.first({
+          id: product.id,
+        })) as (ProductRecord & { totalSold?: number }) | null;
         await db.orm.public.Product.where({ id: product.id }).update({
           stock: (freshProduct?.stock || 0) + quantity,
           totalSold: Math.max(0, (freshProduct?.totalSold || 0) - quantity),
@@ -258,10 +346,14 @@ export async function POST(req: Request) {
       throw orderCreationError;
     }
 
+    if (!createdOrder) {
+      throw new Error("Failed to create order");
+    }
+
     const fullOrder = await db.orm.public.Order
       .where({ id: createdOrder.id })
-      .include("items", (i: any) => i.all())
-      .include("user", (u: any) => u.select("id", "name", "phone"))
+      .include("items", (i: { all: () => unknown }) => i.all())
+      .include("user", (u: { select: (...args: string[]) => unknown }) => u.select("id", "name", "phone"))
       .first();
 
     return NextResponse.json(
@@ -272,46 +364,110 @@ export async function POST(req: Request) {
       },
       { status: 201 }
     );
-  } catch (error: any) {
-    console.error("Order creation error:", error);
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    console.error("Order creation error:", err);
     return NextResponse.json(
       {
         success: false,
-        message: error?.message || "Failed to create order",
+        message: err.message || "Failed to create order",
       },
       { status: 400 }
     );
   }
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                GET ORDERS API                              */
+/* -------------------------------------------------------------------------- */
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
 
     const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "10");
+    const limit = parseInt(searchParams.get("limit") || "15");
     const userId = searchParams.get("userId");
     const status = searchParams.get("status");
     const method = searchParams.get("method");
+    const paymentStatus = searchParams.get("paymentStatus");
     const isDelete = searchParams.get("isDelete");
+    const search = searchParams.get("search")?.trim();
+    const date = searchParams.get("date")?.trim();
 
     const skip = (page - 1) * limit;
 
-    let query = db.orm.public.Order.where({ isDeleted: isDelete === "true" });
+    let query = db.orm.public.Order;
+    if (isDelete === "true") {
+      query = query.where({ isDeleted: true });
+    } else {
+      query = query.where((o: QueryFieldAccessor) => o.isDeleted.ne(true));
+    }
 
     if (userId) query = query.where({ userId });
-    if (status) query = query.where({ orderStatus: status });
-    if (method) query = query.where({ paymentMethod: method });
+    if (status && status !== "all") query = query.where({ orderStatus: status });
+    if (method && method !== "all") query = query.where({ paymentMethod: method });
+    if (paymentStatus && paymentStatus !== "all") query = query.where({ paymentStatus });
+
+    if (search) {
+      const cleanSearch = search.replace(/^#/, "").trim();
+      query = query.where((o: QueryFieldAccessor) => o.invoiceNumber.ilike(`%${cleanSearch}%`));
+    }
+
+    if (date) {
+      const start = new Date(`${date}T00:00:00.000+06:00`);
+      const end = new Date(`${date}T23:59:59.999+06:00`);
+      if (!Number.isNaN(start.getTime()) && !Number.isNaN(end.getTime())) {
+        query = query
+          .where((o: QueryFieldAccessor) => o.createdAt.gte(start))
+          .where((o: QueryFieldAccessor) => o.createdAt.lte(end));
+      }
+    }
 
     const totalOrders = await query.count();
 
     const orders = await query
-      .include("items", (i: any) => i.all())
-      .include("user", (u: any) => u.select("id", "name", "phone"))
-      .orderBy((o: any) => o.createdAt.desc())
+      .include("items", (i: { all: () => unknown }) => i.all())
+      .include("user", (u: { select: (...args: string[]) => unknown }) => u.select("id", "name", "phone"))
+      .orderBy((o: QueryFieldAccessor) => o.createdAt.desc())
       .offset(skip)
       .limit(limit)
       .all();
+
+    // Compute status summary and metrics for tabs and top stat cards
+    let summary: IOrderSummary | undefined = undefined;
+    try {
+      const allActive = await db.orm.public.Order
+        .where((o: QueryFieldAccessor) => o.isDeleted.ne(true))
+        .select("orderStatus", "total")
+        .all();
+
+      const summaryData: IOrderSummary = {
+        all: allActive.length,
+        pending: 0,
+        confirmed: 0,
+        processing: 0,
+        shipped: 0,
+        delivered: 0,
+        cancelled: 0,
+        returned: 0,
+        totalRevenue: 0,
+      };
+
+      for (const row of allActive) {
+        const s = String(row.orderStatus || "").toLowerCase() as keyof IOrderSummary;
+        if (s in summaryData && typeof summaryData[s] === "number") {
+          (summaryData[s] as number)++;
+        }
+        if (row.orderStatus === "DELIVERED") {
+          summaryData.totalRevenue += Number(row.total) || 0;
+        }
+      }
+
+      summary = summaryData;
+    } catch (summaryErr) {
+      console.error("Failed to compute order summary stats:", summaryErr);
+    }
 
     return NextResponse.json({
       success: true,
@@ -321,13 +477,15 @@ export async function GET(req: Request) {
         page,
         limit,
         totalPages: Math.ceil(totalOrders / limit) || 1,
+        summary,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
     return NextResponse.json(
       {
         success: false,
-        message: error?.message || "Failed to fetch orders",
+        message: err.message || "Failed to fetch orders",
       },
       { status: 500 }
     );

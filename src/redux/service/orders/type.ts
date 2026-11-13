@@ -146,10 +146,24 @@ export interface ICehckoutForm extends TCheckoutForm {
   items: ICartItem[]
 }
 
+export interface IOrderSummary {
+  all: number;
+  pending: number;
+  confirmed: number;
+  processing: number;
+  shipped: number;
+  delivered: number;
+  cancelled: number;
+  returned: number;
+  totalRevenue: number;
+}
+
 // Order list response
 export interface IOrderListResponse {
   data: IOrder[];
-  meta: IMetaPagination;
+  meta: IMetaPagination & {
+    summary?: IOrderSummary;
+  };
 }
 
 // Order details response
