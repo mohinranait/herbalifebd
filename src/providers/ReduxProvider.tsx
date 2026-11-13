@@ -1,19 +1,20 @@
 "use client";
 import { persistor, store } from "@/redux/store";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { Provider } from "react-redux";
-import {
-  PersistGate,
-} from "redux-persist/integration/react";
 import ProviderWrapper from "./ProviderWrapper";
+
 const ReduxProvider = ({ children }: { children: ReactNode }) => {
+  // No <PersistGate>: it rendered nothing until localStorage was read, which left
+  // the server HTML of every page empty. The saved cart is restored right after
+  // hydration instead, so the first client render matches the server HTML.
+  useEffect(() => {
+    persistor.persist();
+  }, []);
+
   return (
     <Provider store={store}>
-       <PersistGate loading={null} persistor={persistor}>
-       
       <ProviderWrapper>{children}</ProviderWrapper>
-      </PersistGate>
-
     </Provider>
   );
 };

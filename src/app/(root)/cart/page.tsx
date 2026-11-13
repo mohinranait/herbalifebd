@@ -8,8 +8,18 @@ import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 import { removeToCart, updateCartQuantity, clearShoppingCarts } from "@/redux/features/cartSlice";
 import { CURRENCY } from "@/lib/envSecret";
+import PersistReady from "@/providers/PersistReady";
 
+// The cart lives in localStorage: wait for it instead of flashing "cart is empty"
 export default function CartPage() {
+  return (
+    <PersistReady fallback={<div className="min-h-[70vh] bg-[#f8fafc]" />}>
+      <CartPageContent />
+    </PersistReady>
+  );
+}
+
+function CartPageContent() {
   const { carts, subtotal, totalItems } = useAppSelector((state) => state.cart);
   const dispatch = useAppDispatch();
 

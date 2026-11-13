@@ -1,18 +1,10 @@
-
-
 import ProductList from './ProductList';
-import { fetchData } from '@/lib/fetch-data';
-import { IProductListResponse } from '@/redux/service/products/type';
+import { getProductList, safe } from '@/lib/storefront-data';
 
 const OfferProducts = async () => {
-  const getProducts = await fetchData<IProductListResponse>({
-    api: `client/products?page=1&limit=10&type=offer`,
-    revalidate: 1000,
-  }, 1);
+  const result = await safe(getProductList({ page: 1, limit: 10, type: 'offer' }), null);
 
-  const newProducts = getProducts?.data;
+  return <ProductList products={result?.data} />;
+};
 
-  return <ProductList products={newProducts} />
-}
-
-export default OfferProducts
+export default OfferProducts;

@@ -19,6 +19,7 @@ import { userLogout } from "@/redux/features/authSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 import handleErrors, { ErrorResponse } from "@/lib/handle-error";
 import { cn } from "@/lib/utils";
+import PersistReady from "@/providers/PersistReady";
 
 const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
   const path = usePathname();
@@ -153,4 +154,11 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default ProfileLayout;
+// The customer dashboard is a client-only area: render it in the browser only
+const DashboardLayout = ({ children }: { children: React.ReactNode }) => (
+  <PersistReady fallback={<div className="min-h-[70vh]" />}>
+    <ProfileLayout>{children}</ProfileLayout>
+  </PersistReady>
+);
+
+export default DashboardLayout;

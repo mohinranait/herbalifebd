@@ -1,16 +1,11 @@
-import { fetchData } from "@/lib/fetch-data";
-import { IProductListResponse } from "@/redux/service/products/type";
+import { getProductList, safe } from "@/lib/storefront-data";
 import ProductList from "./ProductList";
+import { HOME_PRODUCT_LISTS } from "./home-queries";
 
 const AllProducts = async () => {
-  const getProducts = await fetchData<IProductListResponse>({
-    api: `client/products?page=1&limit=15`,
-    revalidate: 1000,
-  }, 1);
+  const result = await safe(getProductList(HOME_PRODUCT_LISTS.all), null);
 
-  const products = getProducts?.data;
-
-  return <ProductList products={products} />;
+  return <ProductList products={result?.data} />;
 };
 
 export default AllProducts;

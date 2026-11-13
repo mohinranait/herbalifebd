@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { ShoppingBag, MapPin, CheckCircle2 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 import { CURRENCY } from "@/lib/envSecret";
+import PersistReady from "@/providers/PersistReady";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { checkoutSchema, TCheckoutForm } from "@/components/validations/checkout";
@@ -43,7 +44,16 @@ export type TMethodList = {
   number?: string | null;
 };
 
+// The cart lives in localStorage: wait for it instead of flashing "nothing to check out"
 export default function CheckoutPage() {
+  return (
+    <PersistReady fallback={<div className="min-h-[70vh] bg-[#f8fafc]" />}>
+      <CheckoutPageContent />
+    </PersistReady>
+  );
+}
+
+function CheckoutPageContent() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { user } = useAppSelector((state) => state.auth);

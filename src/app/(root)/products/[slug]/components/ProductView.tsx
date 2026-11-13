@@ -429,7 +429,7 @@ const ProductView = ({ product }: Props) => {
         {/* Brand Tag & SKU */}
         <div className="flex items-center justify-between text-xs sm:text-sm">
           <span className="font-semibold text-[#d97706]">
-            {product.brand?.name || 'No Brand'}
+            {product.brandInfo?.name || 'No Brand'}
           </span>
           {currentVariation?.sku && (
             <span className="text-xs text-slate-400 font-mono bg-slate-50 px-2 py-0.5 rounded border border-slate-100">

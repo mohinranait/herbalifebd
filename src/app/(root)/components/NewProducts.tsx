@@ -1,19 +1,11 @@
-import { fetchData } from '@/lib/fetch-data';
-import { IProductListResponse } from '@/redux/service/products/type';
+import { getProductList, safe } from '@/lib/storefront-data';
 import NewArrivalsSlider from './NewArrivalsSlider';
+import { HOME_PRODUCT_LISTS } from './home-queries';
 
 const NewProducts = async () => {
-  const getProducts = await fetchData<IProductListResponse>(
-    {
-      api: `client/products?page=1&limit=12&type=new`,
-      revalidate: 1000,
-    },
-    1
-  );
+  const result = await safe(getProductList(HOME_PRODUCT_LISTS.newArrivals), null);
 
-  const newProducts = getProducts?.data;
-
-  return <NewArrivalsSlider products={newProducts} />;
+  return <NewArrivalsSlider products={result?.data} />;
 };
 
 export default NewProducts;

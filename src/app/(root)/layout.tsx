@@ -11,7 +11,9 @@ import FloatingCartButton from '@/components/shared/PriceCartButton'
 import ScrollToTop from '@/components/shared/ScrollToTop'
 import WhatsAppButton from '@/components/shared/WhatsAppButton'
 import { BASE_URL } from '@/lib/envSecret'
-import {  getAppSettingForMeta } from '@/lib/get-app-setting'
+import { getAppSetting, getAppSettingForMeta } from '@/lib/get-app-setting'
+import { getCategoryList, safe } from '@/lib/storefront-data'
+import QueryHydrator from '@/providers/QueryHydrator'
 import { Metadata } from 'next'
 import React from 'react'
 
@@ -73,9 +75,22 @@ export async function generateMetadata(): Promise<Metadata> {
 type Props = {
   children: React.ReactNode
 }
-const MyRootLayout = ({ children }: Props) => {
+const MyRootLayout = async ({ children }: Props) => {
+  // Loaded once on the server (cached) and handed to the header, logo, marquee,
+  // mobile menu, floating buttons... so none of them fetches after the page loads.
+  const [settings, categories] = await Promise.all([
+    getAppSetting(),
+    safe(getCategoryList(), null),
+  ]);
+
   return (
     <main className='min-h-screen bg-background'>
+      <QueryHydrator
+        entries={[
+          { endpointName: 'getAppSetting', value: settings },
+          { endpointName: 'getCategories', arg: 'status=true&isDelete=false', value: categories },
+        ]}
+      />
       <Header />
       {/* <EcommerceHeader /> */}
       {children}

@@ -28,7 +28,6 @@ function UserAuthContent() {
 
   const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
-  const router = useRouter();
 
   // If user is already authenticated
   if (user?._id) {

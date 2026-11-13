@@ -11,6 +11,7 @@ interface IProductSelectedVariant {
 
 export interface IProductVariant {
   _id: string;
+  id?: string;
   name: string,
   price: number,
   offerPriceFixed: number,
@@ -30,6 +31,7 @@ export interface IProductBase {
   name: string;
   slug: string;
   videoUrl?: string;
+  thumbnail?: string;
   productType: TProductType,
   gallery: string[];
   shipping: {

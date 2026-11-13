@@ -1,52 +1,55 @@
-
 import { ProductDetailss } from './components/product-details2';
-import { IProduct, IProductDetailsResponse } from '@/redux/service/products/type';
-import { fetchData } from '@/lib/fetch-data';
+import { IProduct } from '@/redux/service/products/type';
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { BASE_URL } from '@/lib/envSecret';
+import {
+  getProductBySlug,
+  getProductComments,
+  getProductList,
+  safe,
+} from '@/lib/storefront-data';
+import QueryHydrator from '@/providers/QueryHydrator';
+import { relatedProductsQuery } from './components/RelatedProducts';
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateMetadata({
-  params,
-}: Props): Promise<Metadata> {
+// generateMetadata and the page ask for the same product: it is read once
+// (and comes from the cache on every later visit).
+const loadProduct = async (slug: string) =>
+  (await safe(getProductBySlug(decodeURIComponent(slug)), null)) as IProduct | null;
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-
-  const data = await fetchData<IProductDetailsResponse>({
-    api: `client/products/${slug}`,
-    // revalidate: 60 * 60,
-  });
-
-  const product = data?.data as IProduct;
-  
+  const product = await loadProduct(slug);
 
   if (!product) {
     return {
-      title: "Product Not Found",
+      title: 'Product Not Found',
     };
   }
 
-  const image = product?.gallery[0] ||'';
+  const image = product?.gallery?.[0] || '';
 
   const title = product?.seo?.title || product?.name;
-  const description = product?.seo?.description || product?.shortDescription ||"";
+  const description = product?.seo?.description || product?.shortDescription || '';
 
   return {
     title,
     description,
-    keywords: product?.tags.join(',') || '',
+    keywords: product?.tags?.join(',') || '',
 
     alternates: {
-      canonical: `${BASE_URL}/${slug}`,
+      canonical: `${BASE_URL}/products/${slug}`,
     },
 
     openGraph: {
       title,
       description,
       url: `${BASE_URL}/products/${slug}`,
-      type: "website",
+      type: 'website',
 
       images: [
         {
@@ -60,7 +63,7 @@ export async function generateMetadata({
     },
 
     twitter: {
-      card: "summary_large_image",
+      card: 'summary_large_image',
       title,
       description,
       images: [image],
@@ -68,24 +71,34 @@ export async function generateMetadata({
   };
 }
 
-const ProductDetails = async ({ params }: { params: Promise<{ slug: string }> }) => {
+const ProductDetails = async ({ params }: Props) => {
   const { slug } = await params;
+  const product = await loadProduct(slug);
 
-  const data = await fetchData<IProductDetailsResponse>({
-    api: `client/products/${slug}`,
-    // revalidate: 3600,
-     revalidate: 0,
-  });
+  if (!product) notFound();
 
-  const product = data?.data as IProduct;
+  // Start the related products now; that section picks up this same promise
+  if (product.category) {
+    void getProductList(relatedProductsQuery(product.category)).catch(() => null);
+  }
 
-  if (!product) return;
+  const comments = await safe(getProductComments(product._id), null);
+
   return (
     <div>
+      {/* Reviews arrive inside the HTML: the rating and review tabs render at once */}
+      <QueryHydrator
+        entries={[
+          {
+            endpointName: 'getCommentByProductId',
+            arg: { productId: product._id, params: 'accessMode=public' },
+            value: comments,
+          },
+        ]}
+      />
       <ProductDetailss product={product} />
-      {/* <ProductDetails1 product={data?.data} /> */}
     </div>
-  )
-}
+  );
+};
 
-export default ProductDetails
+export default ProductDetails;

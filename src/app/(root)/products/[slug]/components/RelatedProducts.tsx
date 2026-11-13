@@ -1,19 +1,18 @@
 import ProductList from '@/app/(root)/components/ProductList';
-import { fetchData } from '@/lib/fetch-data';
-import { IProductListResponse } from '@/redux/service/products/type';
+import { getProductList, safe, type ProductListParams } from '@/lib/storefront-data';
 
+/** One definition for the page's preload and this section, so both share a single query. */
+export const relatedProductsQuery = (catId: string): ProductListParams => ({
+  page: 1,
+  limit: 8,
+  type: 'related',
+  category: catId,
+});
 
 const RelatedProducts = async ({ catId }: { catId: string }) => {
-  const getReletedProducts = await fetchData<IProductListResponse>({
-    api: `client/products?page=1&limit=8&type=related&category=${catId}`,
-    revalidate: 1000,
-  }, 1);
+  const result = await safe(getProductList(relatedProductsQuery(catId)), null);
 
-  const reletedProducts = getReletedProducts?.data;
+  return <ProductList products={result?.data} />;
+};
 
-  return (
-    <ProductList products={reletedProducts} />
-  )
-}
-
-export default RelatedProducts
+export default RelatedProducts;

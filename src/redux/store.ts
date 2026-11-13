@@ -51,7 +51,9 @@ export const store = configureStore({
 /*                                 Persistor                                  */
 /* -------------------------------------------------------------------------- */
 
-export const persistor = persistStore(store);
+// manualPersist: the saved cart is restored by ReduxProvider after hydration
+// (persistor.persist()), never before the first render.
+export const persistor = persistStore(store, { manualPersist: true } as any);
 
 /* -------------------------------------------------------------------------- */
 /*                                   Types                                    */

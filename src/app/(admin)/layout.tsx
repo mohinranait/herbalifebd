@@ -5,6 +5,7 @@ import { getAppSetting } from "@/lib/get-app-setting";
 import { Metadata } from "next";
 import React, { Suspense } from "react";
 import { Leaf } from "lucide-react";
+import PersistReady from "@/providers/PersistReady";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getAppSetting();
@@ -47,9 +48,12 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="admin-theme min-h-screen bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
       <Suspense fallback={<AdminLoadingFallback />}>
-        <SidebarProvider>
-          <AdminMainLayout>{children}</AdminMainLayout>
-        </SidebarProvider>
+        {/* The admin panel is a client-only app: render it in the browser only */}
+        <PersistReady fallback={<AdminLoadingFallback />}>
+          <SidebarProvider>
+            <AdminMainLayout>{children}</AdminMainLayout>
+          </SidebarProvider>
+        </PersistReady>
       </Suspense>
     </div>
   );

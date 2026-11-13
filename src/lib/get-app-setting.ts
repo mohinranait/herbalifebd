@@ -1,24 +1,12 @@
 import { IAppSettings } from "@/models/app-setting";
-import { cache } from "react";
-import { fetchData } from "./fetch-data";
+import { getSettings, safe } from "./storefront-data";
 
-export const getAppSetting = cache(async () => {
-  return await fetchData<IAppSettings>(
-    {
-      api: "admin/setting",
-      revalidate: 0,
-    },
-    1
-  );
-});
+/**
+ * Site settings, read straight from the database through the storefront cache.
+ * Saving the settings in the admin panel expires the cache, so there is no
+ * stale window (the reason caching was switched off here before).
+ */
+export const getAppSetting = async (): Promise<IAppSettings | null> =>
+  (await safe(getSettings(), null)) as IAppSettings | null;
 
-
-export const getAppSettingForMeta = cache(async () => {
-  return await fetchData<IAppSettings>(
-    {
-      api: "admin/setting",
-      revalidate: 60 * 60,
-    },
-    1
-  );
-});
+export const getAppSettingForMeta = getAppSetting;

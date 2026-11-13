@@ -5,6 +5,7 @@ export interface User {
   _id: string;
   name: string;
   phone: string;
+  email?: string;
   role: "User" | "Admin";
   status : "Active" | "Pending"
   createdAt: string;
